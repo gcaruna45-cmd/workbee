@@ -1,0 +1,1250 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkBee.lk - Admin Dashboard</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Links -->
+    <link rel="stylesheet" href="css/main.css?v=13">
+    <link rel="stylesheet" href="css/components.css?v=13">
+    
+    <style>
+        :root {
+            --primary: #F59E0B;
+            --dark: #0F172A;
+            --slate: #1E293B;
+            --cyan: #06B6D4;
+            --green: #10B981;
+            --surface: #F8FAFC;
+            --text-dark: #334155;
+            --text-light: #94A3B8;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #000000 0%, #F59E0B 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* High-Contrast Font Colors across Admin Dashboard */
+        .content-area {
+            color: #1E293B !important;
+        }
+
+        .content-area h1, .content-area h2, .content-area h3, .content-area h4, .content-area h5, .content-area h6 {
+            color: #0F172A !important;
+            font-weight: 700;
+        }
+
+        .topbar {
+            background: #FFFFFF !important;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .topbar .breadcrumb, .topbar .breadcrumb div {
+            color: #475569 !important;
+            font-weight: 600;
+        }
+
+        .topbar .breadcrumb span {
+            color: #0F172A !important;
+            font-weight: 700;
+        }
+
+        .topbar .user-info span {
+            color: #0F172A !important;
+            font-weight: 700;
+        }
+
+        /* Stat Cards Text Visibility */
+        .stat-card {
+            background: #FFFFFF !important;
+            border: 1px solid #E2E8F0;
+        }
+
+        .stat-card .stat-info h3 {
+            color: #64748B !important;
+            font-weight: 600;
+        }
+
+        .stat-card .stat-info p {
+            color: #0F172A !important;
+            font-weight: 800;
+        }
+
+        /* Tabs and Cards */
+        .tab-content {
+            background: #FFFFFF !important;
+            color: #1E293B !important;
+            border: 1px solid #E2E8F0;
+        }
+
+        .panel-card {
+            background: #F8FAFC !important;
+            color: #1E293B !important;
+            border: 1px solid #E2E8F0;
+        }
+
+        .panel-card label {
+            color: #334155 !important;
+            font-weight: 600;
+        }
+
+        /* Search Box & Inputs Text Visibility */
+        .search-box {
+            background: #F1F5F9 !important;
+            border: 1px solid #CBD5E1;
+        }
+
+        .search-box input {
+            color: #0F172A !important;
+            font-weight: 500;
+        }
+
+        .search-box input::placeholder {
+            color: #94A3B8;
+        }
+
+        select, input[type="text"], input[type="password"], textarea {
+            color: #0F172A !important;
+            background-color: #FFFFFF !important;
+            border: 1px solid #CBD5E1 !important;
+        }
+
+        select option {
+            color: #0F172A !important;
+            background-color: #FFFFFF !important;
+        }
+
+        /* Tables Text Visibility */
+        table {
+            color: #1E293B !important;
+        }
+
+        table th {
+            color: #0F172A !important;
+            font-weight: 700 !important;
+            background-color: #F1F5F9 !important;
+            border-bottom: 2px solid #E2E8F0 !important;
+        }
+
+        table td {
+            color: #1E293B !important;
+            font-weight: 500;
+            border-bottom: 1px solid #E2E8F0 !important;
+        }
+
+        table td strong {
+            color: #D97706 !important;
+        }
+
+        table td small {
+            color: #475569 !important;
+        }
+
+        /* Filter Buttons Text Visibility */
+        .filter-btn {
+            color: #334155 !important;
+            border: 1px solid #CBD5E1 !important;
+            background: #FFFFFF !important;
+            font-weight: 600;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            color: #FFFFFF !important;
+            background-color: #0F172A !important;
+            border-color: #0F172A !important;
+        }
+
+        /* Channel Toggles */
+        .btn-toggle {
+            color: #334155 !important;
+            background: #FFFFFF !important;
+            border: 1px solid #CBD5E1 !important;
+        }
+
+        .btn-toggle.active {
+            color: #FFFFFF !important;
+            background: #F59E0B !important;
+            border-color: #F59E0B !important;
+        }
+
+        /* Login Gate Modal */
+        #login-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 420px;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            text-align: center;
+        }
+
+        .login-card svg {
+            width: 64px;
+            height: 64px;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .login-card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .restricted-badge {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--slate);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 1rem;
+            top: 2.3rem;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #D97706;
+        }
+
+        .btn-primary:disabled {
+            background: #FCD34D;
+            cursor: not-allowed;
+        }
+
+        #login-error {
+            color: var(--danger);
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .login-note {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 1.5rem;
+        }
+
+        /* Admin Layout */
+        .admin-layout {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--dark);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header svg {
+            width: 32px;
+            height: 32px;
+            color: var(--primary);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 1.5rem 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #CBD5E1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--primary);
+            border-right: 4px solid var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Topbar */
+        .topbar {
+            height: 70px;
+            background: var(--white);
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        .breadcrumb {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .breadcrumb span {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid #E2E8F0;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            color: var(--danger);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Dashboard Content */
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--surface);
+        }
+
+        /* Stats Row */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.yellow { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .stat-icon.amber { background: rgba(217, 119, 6, 0.1); color: #D97706; }
+        .stat-icon.blue { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--green); }
+
+        .stat-info h3 {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-info p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        /* Tabs Section */
+        .tab-content {
+            display: none;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .tab-filters {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #E2E8F0;
+            background: var(--white);
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--slate);
+            color: var(--white);
+            border-color: var(--slate);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--surface);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 0.875rem;
+            width: 250px;
+        }
+
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 1rem;
+            background: var(--surface);
+            color: var(--slate);
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-bottom: 2px solid #E2E8F0;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #E2E8F0;
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background: var(--surface);
+            cursor: pointer;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .badge-approved { background: rgba(16, 185, 129, 0.1); color: var(--green); }
+        .badge-rejected { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .badge-normal { background: rgba(148, 163, 184, 0.1); color: var(--text-light); }
+        
+        /* Action Buttons */
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-approve { background: rgba(16, 185, 129, 0.1); color: var(--green); }
+        .btn-approve:hover { background: var(--green); color: var(--white); }
+        
+        .btn-reject { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .btn-reject:hover { background: var(--danger); color: var(--white); }
+        
+        .btn-delete { background: rgba(148, 163, 184, 0.1); color: var(--slate); }
+        .btn-delete:hover { background: var(--slate); color: var(--white); }
+
+        /* Broadcast Panel */
+        .broadcast-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .broadcast-grid { grid-template-columns: 1fr; }
+        }
+
+        .panel-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+        }
+
+        .panel-card h4 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-grid select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #E2E8F0;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .msg-textarea {
+            width: 100%;
+            height: 120px;
+            padding: 1rem;
+            border: 1px solid #E2E8F0;
+            border-radius: 6px;
+            resize: none;
+            margin-bottom: 0.5rem;
+            font-family: inherit;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .channel-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-toggle {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #E2E8F0;
+            background: var(--white);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-toggle.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        /* Toasts */
+        #toast-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .toast {
+            background: var(--white);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 300px;
+            border-left: 4px solid var(--primary);
+            transform: translateX(120%);
+            animation: slideIn 0.3s forwards;
+            position: relative;
+        }
+
+        .toast.success { border-left-color: var(--green); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.info { border-left-color: var(--warning); }
+
+        .toast-close {
+            position: absolute;
+            right: 0.5rem;
+            top: 0.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        @keyframes slideIn {
+            to { transform: translateX(0); }
+        }
+
+        @keyframes slideOut {
+            to { transform: translateX(120%); }
+        }
+
+        /* Detail Row Expansion */
+        .detail-row {
+            display: none;
+            background: var(--surface);
+        }
+
+        .detail-row.open {
+            display: table-row;
+        }
+
+        .detail-content {
+            padding: 1.5rem;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item h5 {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+        }
+
+        .detail-item p {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+    </style>
+    <!-- ===== PWA - Progressive Web App ===== -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WorkBee">
+    <meta name="application-name" content="WorkBee">
+    <meta name="msapplication-TileColor" content="#0f172a">
+    <meta name="msapplication-TileImage" content="/assets/icons/icon-144.png">
+    <meta name="theme-color" content="#F59E0B">
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/assets/icons/icon-180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/icon-152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/icon-144.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/assets/icons/icon-128.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/icon-96.png">
+    <!-- ===== END PWA ===== -->
+</head>
+<body>
+
+    <!-- 1. Login Gate Modal -->
+    <div id="login-gate">
+        <div class="login-card">
+            <img src="assets/logo.jpg" alt="WorkBee Logo" style="height: 240px; width: 240px; border-radius: 50%; margin: 0 auto 15px; border: 4px solid var(--primary); background: white; object-fit: contain; padding: 6px; box-shadow: 0 4px 15px rgba(245,158,11,0.4);">
+            <h2>WorkBee Admin Panel</h2>
+            <span class="restricted-badge">Restricted Access</span>
+            
+            <form id="admin-login-form">
+                <div class="form-group">
+                    <label for="admin-username">Username</label>
+                    <input type="text" id="admin-username" placeholder="Enter admin username" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Password</label>
+                    <input type="password" id="admin-password" placeholder="Enter password" required>
+                    <button type="button" class="toggle-password" id="toggle-password-btn" aria-label="Show password">👁️</button>
+                </div>
+                <button type="submit" class="btn-primary" id="login-btn">Login to Dashboard</button>
+                <div id="login-error">Invalid credentials. Please try again.</div>
+            </form>
+            <p class="login-note">🔒 This panel is restricted to WorkBee administrators only</p>
+        </div>
+    </div>
+
+    <!-- Main Admin Layout (hidden by default) -->
+    <div class="admin-layout" id="admin-dashboard" style="display: none;">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/logo.jpg" alt="WorkBee Logo" style="height: 80px; width: 80px; border-radius: 50%; border: 3px solid var(--primary); background: white; object-fit: contain; padding: 4px; flex-shrink: 0;">
+                <h1 style="font-size: 1.3rem;">WorkBee Admin</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a class="nav-item active" data-target="tab-workers">
+                    <span>👷</span> Workers
+                </a>
+                <a class="nav-item" data-target="tab-companies">
+                    <span>🏢</span> Companies
+                </a>
+                <a class="nav-item" data-target="tab-requirements">
+                    <span>📋</span> Requirements
+                </a>
+                <a class="nav-item" data-target="tab-broadcast">
+                    <span>📡</span> Broadcast
+                </a>
+                
+                <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; padding: 0 1rem; margin-bottom: 0.5rem; font-weight: 700; letter-spacing: 0.5px;">🌐 Visit Live Pages</div>
+                    <a href="index.html" class="nav-item" target="_blank" style="color: #F59E0B;">
+                        <span>🏠</span> Main Website
+                    </a>
+                    <a href="workers.html" class="nav-item" target="_blank">
+                        <span>👷</span> Find Workers Page
+                    </a>
+                    <a href="register-company.html" class="nav-item" target="_blank">
+                        <span>🏢</span> Post Job / Register
+                    </a>
+                    <a href="register-worker.html" class="nav-item" target="_blank">
+                        <span>📝</span> Worker Registration
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- 2. Admin Header -->
+            <header class="topbar">
+                <div class="breadcrumb" style="display: flex; align-items: center; gap: 15px;">
+                    <div>Dashboard &gt; <span id="current-section-title">Workers</span></div>
+                    <a href="index.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(245,158,11,0.15); color: #F59E0B; padding: 6px 14px; border-radius: 8px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); text-decoration: none; font-size: 0.875rem;">🏠 Go to Main Website</a>
+                </div>
+                <div class="user-menu">
+                    <div class="user-info">
+                        <div class="avatar">A</div>
+                        <span style="font-size: 0.875rem; font-weight: 600;">Admin User</span>
+                    </div>
+                    <button class="logout-btn" id="logout-btn">Logout</button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                
+                <!-- 3. Dashboard Stats Row -->
+                <div class="stats-grid" id="stats-container">
+                    <!-- Populated by admin.js -->
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">👷</div>
+                        <div class="stat-info">
+                            <h3>Total Workers</h3>
+                            <p id="stat-total-workers">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon amber">⏳</div>
+                        <div class="stat-info">
+                            <h3>Pending Approval</h3>
+                            <p id="stat-pending">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">🏢</div>
+                        <div class="stat-info">
+                            <h3>Partner Companies</h3>
+                            <p id="stat-companies">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">📋</div>
+                        <div class="stat-info">
+                            <h3>Active Requirements</h3>
+                            <p id="stat-requirements">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Workers Tab -->
+                <div class="tab-content active" id="tab-workers">
+                    <div class="tab-header">
+                        <div class="tab-filters" id="worker-filters">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="pending">Pending</button>
+                            <button class="filter-btn" data-filter="approved">Approved</button>
+                            <button class="filter-btn" data-filter="rejected">Rejected</button>
+                        </div>
+                        <div class="search-box">
+                            <span>🔍</span>
+                            <input type="text" id="search-workers" placeholder="Search by name, ID, skill...">
+                        </div>
+                        <button class="filter-btn" style="background: var(--green); color: white; border: none;">Export CSV</button>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table id="workers-table">
+                            <thead>
+                                <tr>
+                                    <th>Worker ID</th>
+                                    <th>Full Name</th>
+                                    <th>NIC</th>
+                                    <th>Phone</th>
+                                    <th>WhatsApp</th>
+                                    <th>Age</th>
+                                    <th>Skills</th>
+                                    <th>Districts</th>
+                                    <th>Shift</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workers-tbody">
+                                <!-- Populated by admin.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 6. Companies Tab -->
+                <div class="tab-content" id="tab-companies">
+                    <div class="tab-header">
+                        <h2>Registered Partner Companies</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="companies-table">
+                            <thead>
+                                <tr>
+                                    <th>Company Name</th>
+                                    <th>BR Number</th>
+                                    <th>Industry</th>
+                                    <th>Contact Person</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>City</th>
+                                    <th>Registered Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="companies-tbody">
+                                <!-- Populated by admin.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 7. Requirements Tab -->
+                <div class="tab-content" id="tab-requirements">
+                    <div class="tab-header">
+                        <h2>Job Requirements</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="requirements-table">
+                            <thead>
+                                <tr>
+                                    <th>Ref#</th>
+                                    <th>Company</th>
+                                    <th>Skills Needed</th>
+                                    <th>Workers Req.</th>
+                                    <th>Location</th>
+                                    <th>Shift</th>
+                                    <th>Duration & Pay</th>
+                                    <th>Applicants</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requirements-tbody">
+                                <!-- Populated by admin.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 8. Broadcast Tab -->
+                <div class="tab-content" id="tab-broadcast">
+                    <div class="broadcast-grid">
+                        
+                        <!-- Filter Section -->
+                        <div class="panel-card">
+                            <h4>📡 Send Worker Alerts via SMS / WhatsApp</h4>
+                            <div class="filter-grid">
+                                <div>
+                                    <label style="font-size: 0.875rem; color: var(--slate); display:block; margin-bottom: 0.25rem;">Category</label>
+                                    <select id="bc-category">
+                                        <option value="all">All</option>
+                                        <option value="Construction">Construction</option>
+                                        <option value="Hotel & Hospitality">Hotel & Hospitality</option>
+                                        <option value="Factory & Logistics">Factory & Logistics</option>
+                                        <option value="Cleaning">Cleaning</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.875rem; color: var(--slate); display:block; margin-bottom: 0.25rem;">District</label>
+                                    <select id="bc-district">
+                                        <option value="all">All</option>
+                                        <option value="Colombo">Colombo</option>
+                                        <option value="Gampaha">Gampaha</option>
+                                        <option value="Kandy">Kandy</option>
+                                        <!-- Other districts handled in JS -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.875rem; color: var(--slate); display:block; margin-bottom: 0.25rem;">Shift</label>
+                                    <select id="bc-shift">
+                                        <option value="all">All</option>
+                                        <option value="Day">Day</option>
+                                        <option value="Night">Night</option>
+                                        <option value="24-Hour">24-Hour</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.875rem; color: var(--slate); display:block; margin-bottom: 0.25rem;">Availability</label>
+                                    <select id="bc-availability">
+                                        <option value="all">All</option>
+                                        <option value="available">Available Now</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button id="bc-preview-btn" class="btn-primary" style="background: var(--slate); margin-bottom: 1rem;">🔍 Preview Matching Workers</button>
+                            <div id="bc-preview-result" style="font-size: 0.875rem; color: var(--green); font-weight: 600; display: none;">
+                                <span id="bc-match-count">0</span> workers match your criteria.
+                            </div>
+                        </div>
+
+                        <!-- Message Template -->
+                        <div class="panel-card">
+                            <h4>Alert Message Template</h4>
+                            <textarea id="bc-message" class="msg-textarea">WorkBee Job Alert: Urgent requirement for [Skill] in [Location] ([Shift] Shift). Reply YES or call WorkBee Hotline: 0768 XXX XXX to accept this job.</textarea>
+                            <div class="char-count"><span id="bc-char-count">149</span>/160 chars (1 SMS)</div>
+                            
+                            <div class="channel-toggle">
+                                <button class="btn-toggle active" data-channel="sms">📱 SMS</button>
+                                <button class="btn-toggle" data-channel="whatsapp">💬 WhatsApp</button>
+                                <button class="btn-toggle" data-channel="both">Both</button>
+                            </div>
+                            
+                            <button id="bc-send-btn" class="btn-primary" disabled>🚀 Send Alert</button>
+                            <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 1rem; text-align: center;">Integration: Notify.lk SMS Gateway (configured in admin settings)</p>
+                        </div>
+                    </div>
+
+                    <!-- Recent Broadcasts Log -->
+                    <div class="panel-card" style="margin-top: 1.5rem;">
+                        <h4>Recent Broadcasts</h4>
+                        <div class="table-responsive">
+                            <table id="broadcast-log-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Filter Used</th>
+                                        <th>Workers Reached</th>
+                                        <th>Channel</th>
+                                        <th>Sent By</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="broadcast-log-tbody">
+                                    <!-- Populated by admin.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- 9. Toast Notification System -->
+    <div id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/admin.js?v=61"></script>
+    <!-- PWA Install Banner (Android + iOS smart detection) -->
+    <div id="pwa-install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:white;padding:14px 16px;box-shadow:0 -4px 24px rgba(0,0,0,0.4);border-top:2px solid #F59E0B;">
+      <!-- Android install row -->
+      <div id="pwa-android-row" style="display:none;align-items:center;gap:12px;">
+        <img src="assets/icons/icon-72.png" style="width:44px;height:44px;border-radius:10px;flex-shrink:0;" alt="WorkBee">
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:0.9rem;">Install WorkBee App</div>
+          <div style="font-size:0.75rem;color:#94a3b8;">Add to Home Screen for quick access</div>
+        </div>
+        <button onclick="window._installPWA()" style="background:#F59E0B;color:#0f172a;border:none;border-radius:8px;padding:9px 16px;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;">Install</button>
+        <button onclick="window._dismissInstall()" style="background:none;border:none;color:#94a3b8;font-size:1.6rem;cursor:pointer;line-height:1;">&times;</button>
+      </div>
+      <!-- iOS instructions row -->
+      <div id="pwa-ios-row" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <img src="assets/icons/icon-72.png" style="width:40px;height:40px;border-radius:10px;flex-shrink:0;" alt="WorkBee">
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:0.9rem;">Install WorkBee on iPhone/iPad</div>
+            <div style="font-size:0.72rem;color:#94a3b8;">Open in Safari to install</div>
+          </div>
+          <button onclick="window._dismissInstall()" style="background:none;border:none;color:#94a3b8;font-size:1.6rem;cursor:pointer;line-height:1;">&times;</button>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;background:#1e293b;border-radius:10px;padding:10px 12px;">
+          <div style="font-size:0.78rem;color:#94a3b8;line-height:1.7;">
+            1&nbsp; Open <strong style="color:#F59E0B;">Safari</strong> browser on your iPhone<br>
+            2&nbsp; Tap the <strong style="color:#F59E0B;">Share</strong> button <span style="font-size:1.1em;">&#9633;&#8593;</span> at the bottom<br>
+            3&nbsp; Scroll down and tap <strong style="color:#F59E0B;">"Add to Home Screen"</strong><br>
+            4&nbsp; Tap <strong style="color:#F59E0B;">Add</strong> — done! WorkBee is installed &#10003;
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- PWA Service Worker + Smart Install Detection -->
+    <script>
+      // Register Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('sw.js')
+            .then(function(reg) {
+              console.log('[WorkBee] SW registered:', reg.scope);
+              setInterval(function() { reg.update(); }, 30 * 60 * 1000);
+            })
+            .catch(function(err) { console.log('[WorkBee] SW failed:', err); });
+        });
+      }
+
+      // Detect iOS
+      var _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      var _isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+      var deferredPrompt = null;
+
+      // Android: intercept install prompt
+      window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        setTimeout(function() {
+          if (!_isInStandaloneMode) { window._showInstallBanner('android'); }
+        }, 4000);
+      });
+
+      // iOS: show instructions if in Safari and not installed
+      window.addEventListener('load', function() {
+        if (_isIOS && !_isInStandaloneMode) {
+          var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+          if (isSafari) {
+            setTimeout(function() { window._showInstallBanner('ios'); }, 4000);
+          }
+        }
+      });
+
+      window._showInstallBanner = function(type) {
+        var banner = document.getElementById('pwa-install-banner');
+        var androidRow = document.getElementById('pwa-android-row');
+        var iosRow = document.getElementById('pwa-ios-row');
+        if (!banner) return;
+        if (type === 'ios' && iosRow) {
+          iosRow.style.display = 'block';
+          banner.style.display = 'block';
+        } else if (type === 'android' && androidRow) {
+          androidRow.style.display = 'flex';
+          banner.style.display = 'block';
+        }
+      };
+
+      window._installPWA = function() {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(function(result) {
+            console.log('[WorkBee] PWA install:', result.outcome);
+            deferredPrompt = null;
+            window._dismissInstall();
+          });
+        }
+      };
+
+      window._dismissInstall = function() {
+        var b = document.getElementById('pwa-install-banner');
+        if (b) b.style.display = 'none';
+        deferredPrompt = null;
+        // Remember dismissed for 24h
+        try { sessionStorage.setItem('pwa_dismissed', '1'); } catch(e) {}
+      };
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

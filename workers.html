@@ -1,0 +1,614 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verified Worker Directory | WorkBee.lk</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css?v=13">
+    <link rel="stylesheet" href="css/components.css?v=13">
+    <style>
+        body { background: linear-gradient(to bottom, #000000 0%, #F59E0B 100%) !important; background-attachment: fixed !important; }
+        #navbar { min-height: auto !important; height: auto !important; overflow: visible !important; }
+        #navbar .container { height: auto !important; min-height: 0 !important; padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+    </style>
+    <!-- ===== PWA - Progressive Web App ===== -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WorkBee">
+    <meta name="application-name" content="WorkBee">
+    <meta name="msapplication-TileColor" content="#0f172a">
+    <meta name="msapplication-TileImage" content="/assets/icons/icon-144.png">
+    <meta name="theme-color" content="#F59E0B">
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/assets/icons/icon-180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/icon-152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/icon-144.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/assets/icons/icon-128.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/icon-96.png">
+    <!-- ===== END PWA ===== -->
+</head>
+<body class="bg-slate-50 font-poppins text-slate-800">
+    <!-- 1. Fixed Navbar -->
+    <nav class="navbar">
+        <div style="display: flex; align-items: center; gap: 14px; white-space: nowrap;">
+            <button onclick="window.history.back()" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap;">← Back</button>
+            <a href="index.html" class="logo-container" style="display: flex; align-items: center; gap: 14px; text-decoration: none;">
+                <img src="assets/logo.jpg" alt="WorkBee.lk Logo" style="height: 240px; width: 240px; border-radius: 50%; box-shadow: 0 4px 15px rgba(245,158,11,0.4); border: 4px solid #F59E0B; background: white; object-fit: contain; padding: 6px; flex-shrink: 0;">
+                <span class="logo-text" style="font-size: 2.8rem; font-weight: 800; color: white; white-space: nowrap;">WorkBee<span class="logo-ext" style="color: #F59E0B;">.lk</span></span>
+            </a>
+        </div>
+
+        <div class="nav-links" style="display: flex; align-items: center; gap: 1.8rem; white-space: nowrap;">
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(245,158,11,0.15); color: #F59E0B; padding: 6px 14px; border-radius: 8px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); white-space: nowrap;">🏠 Home</a>
+            <a href="workers.html" class="active" style="color: #F59E0B; font-weight: 700; white-space: nowrap;">Find Workers</a>
+            <a href="register-company.html" style="white-space: nowrap;">Post a Job</a>
+            <a href="index.html#sectors" style="white-space: nowrap;">About</a>
+        </div>
+
+        <div class="nav-actions" style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <a href="register-company.html" class="btn-primary" style="white-space: nowrap;">Request Workers</a>
+                <a href="register-worker.html" class="btn-dark" style="white-space: nowrap;">Join as Worker</a>
+            </div>
+            <div class="lang-switcher">
+                <button class="lang-btn active">EN</button>
+                <button class="lang-btn">SI</button>
+                <button class="lang-btn">TA</button>
+            </div>
+        </div>
+
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+    </nav>
+
+    <!-- 2. Page Header -->
+    <header class="bg-slate-900 text-white pb-16 relative overflow-hidden" style="padding-top: 290px;">
+        <!-- Animated hex background -->
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#F59E0B 1px, transparent 1px); background-size: 20px 20px;"></div>
+        
+        <div class="container mx-auto px-4 relative z-10 text-center">
+            <!-- Breadcrumb -->
+            <nav class="text-sm text-slate-300 mb-4 flex justify-center items-center gap-2">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <span>&gt;</span>
+                <span class="text-white font-medium">Worker Directory</span>
+            </nav>
+            
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-white">Verified Worker Directory</h1>
+            <p class="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto">Browse available, pre-screened workers. All personal contact details handled privately by WorkBee admin.</p>
+        </div>
+    </header>
+
+    <!-- 3. Main Content Layout -->
+    <main class="container mx-auto px-4 py-10 relative">
+        
+        <!-- Tab Switcher: Worker Directory vs Job Board -->
+        <div class="flex justify-center mb-8">
+            <div class="bg-slate-200 p-1.5 rounded-xl flex gap-2 max-w-md w-full shadow-inner">
+                <button id="view-workers-tab" class="flex-1 py-3 px-4 rounded-lg font-bold text-sm transition-all shadow-sm bg-primary text-dark flex items-center justify-center gap-2" onclick="switchViewTab('workers')">
+                    <span>👷</span> Worker Directory
+                </button>
+                <button id="view-jobs-tab" class="flex-1 py-3 px-4 rounded-lg font-bold text-sm transition-all text-slate-600 hover:text-dark flex items-center justify-center gap-2" onclick="switchViewTab('jobs')">
+                    <span>💼</span> Available Jobs Board
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Filter Toggle -->
+        <div class="md:hidden flex justify-between items-center mb-6" id="mobile-filter-bar">
+            <h2 class="text-xl font-bold text-dark">Find Workers</h2>
+            <button onclick="toggleMobileFilter()" class="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm text-sm font-semibold border border-slate-200 text-dark hover:border-primary transition-colors">
+                <span>🔧</span> Filter Workers
+            </button>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-8">
+            
+            <!-- Left Column - Filter Panel -->
+            <aside class="w-full md:w-72 flex-shrink-0 relative" id="filter-aside">
+                <!-- Mobile Overlay (hidden by default) -->
+                <div id="filter-overlay" class="fixed inset-0 bg-dark/50 z-40 hidden md:hidden transition-opacity" onclick="toggleMobileFilter()"></div>
+                
+                <!-- Filter Drawer/Panel -->
+                <div id="filter-panel" class="fixed md:sticky top-0 left-0 h-full md:h-auto md:top-72 w-72 md:w-full bg-white z-40 shadow-xl md:shadow-lg rounded-none md:rounded-xl p-5 transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto max-h-screen md:max-h-[calc(100vh-19rem)]">
+                    
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+                        <h3 class="text-lg font-bold text-dark flex items-center gap-2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                            Filters
+                        </h3>
+                        <button class="md:hidden text-slate-400 hover:text-dark" onclick="toggleMobileFilter()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                        <button type="button" class="text-sm text-primary hover:underline font-medium hidden md:block" onclick="resetFilters()">Reset</button>
+                    </div>
+
+                    <!-- Filter Form -->
+                    <form id="filter-form" class="space-y-6">
+                        
+                        <!-- 1. Industry / Category -->
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wider">Category</h4>
+                            <div class="space-y-2" id="filter-category">
+                                <label class="flex items-center gap-3 p-2 rounded hover:bg-slate-50 cursor-pointer transition-colors group">
+                                    <input type="checkbox" name="category" value="all" class="w-4 h-4 text-primary bg-white border-slate-300 rounded focus:ring-primary focus:ring-2" checked>
+                                    <span class="text-sm font-medium text-slate-700 group-hover:text-dark">All Categories</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-2 rounded hover:bg-slate-50 cursor-pointer transition-colors group">
+                                    <input type="checkbox" name="category" value="construction" class="w-4 h-4 text-primary bg-white border-slate-300 rounded focus:ring-primary focus:ring-2">
+                                    <span class="text-sm font-medium text-slate-700 group-hover:text-dark">🏗️ Construction</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-2 rounded hover:bg-slate-50 cursor-pointer transition-colors group">
+                                    <input type="checkbox" name="category" value="hospitality" class="w-4 h-4 text-primary bg-white border-slate-300 rounded focus:ring-primary focus:ring-2">
+                                    <span class="text-sm font-medium text-slate-700 group-hover:text-dark">🍽️ Hotel & Hospitality</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-2 rounded hover:bg-slate-50 cursor-pointer transition-colors group">
+                                    <input type="checkbox" name="category" value="factory" class="w-4 h-4 text-primary bg-white border-slate-300 rounded focus:ring-primary focus:ring-2">
+                                    <span class="text-sm font-medium text-slate-700 group-hover:text-dark">⚙️ Factory & Logistics</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-2 rounded hover:bg-slate-50 cursor-pointer transition-colors group">
+                                    <input type="checkbox" name="category" value="cleaning" class="w-4 h-4 text-primary bg-white border-slate-300 rounded focus:ring-primary focus:ring-2">
+                                    <span class="text-sm font-medium text-slate-700 group-hover:text-dark">✨ Cleaning Services</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-2 rounded hover:bg-slate-50 cursor-pointer transition-colors group">
+                                    <input type="checkbox" name="category" value="it" class="w-4 h-4 text-primary bg-white border-slate-300 rounded focus:ring-primary focus:ring-2">
+                                    <span class="text-sm font-medium text-slate-700 group-hover:text-dark">💻 Information Technology</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-2 rounded hover:bg-slate-50 cursor-pointer transition-colors group">
+                                    <input type="checkbox" name="category" value="electronics" class="w-4 h-4 text-primary bg-white border-slate-300 rounded focus:ring-primary focus:ring-2">
+                                    <span class="text-sm font-medium text-slate-700 group-hover:text-dark">⚡ Electronics & Electrical</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 2. District / Location -->
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wider">Location</h4>
+                            <select name="location" id="filter-location" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white text-slate-700">
+                                <option value="all">All Districts</option>
+                                <option value="Colombo">Colombo</option>
+                                <option value="Gampaha">Gampaha</option>
+                                <option value="Kalutara">Kalutara</option>
+                                <option value="Kandy">Kandy</option>
+                                <option value="Matale">Matale</option>
+                                <option value="Galle">Galle</option>
+                                <option value="Matara">Matara</option>
+                                <option value="Kurunegala">Kurunegala</option>
+                                <option value="Puttalam">Puttalam</option>
+                                <option value="Anuradhapura">Anuradhapura</option>
+                                <option value="Polonnaruwa">Polonnaruwa</option>
+                                <option value="Badulla">Badulla</option>
+                                <option value="Ratnapura">Ratnapura</option>
+                                <option value="Kegalle">Kegalle</option>
+                                <option value="Hambantota">Hambantota</option>
+                                <option value="Jaffna">Jaffna</option>
+                                <option value="Trincomalee">Trincomalee</option>
+                                <option value="Batticaloa">Batticaloa</option>
+                            </select>
+                        </div>
+
+                        <!-- 3. Preferred Shift -->
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wider">Preferred Shift</h4>
+                            <div class="flex flex-wrap gap-2" id="filter-shift">
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="shift" value="Day Shift" class="peer hidden">
+                                    <span class="inline-block px-3 py-1.5 text-xs font-medium rounded-full border border-slate-200 text-slate-600 bg-white peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all">Day Shift</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="shift" value="Night Shift" class="peer hidden">
+                                    <span class="inline-block px-3 py-1.5 text-xs font-medium rounded-full border border-slate-200 text-slate-600 bg-white peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all">Night Shift</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="shift" value="24-Hour" class="peer hidden">
+                                    <span class="inline-block px-3 py-1.5 text-xs font-medium rounded-full border border-slate-200 text-slate-600 bg-white peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all">24-Hour</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="shift" value="Flexible" class="peer hidden">
+                                    <span class="inline-block px-3 py-1.5 text-xs font-medium rounded-full border border-slate-200 text-slate-600 bg-white peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all">Flexible</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 4. Work Duration -->
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wider">Work Duration</h4>
+                            <div class="flex flex-wrap gap-2" id="filter-duration">
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="duration" value="Daily Wage" class="peer hidden">
+                                    <span class="inline-block px-3 py-1.5 text-xs font-medium rounded-full border border-slate-200 text-slate-600 bg-white peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all">Daily Wage</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="duration" value="Weekdays Only" class="peer hidden">
+                                    <span class="inline-block px-3 py-1.5 text-xs font-medium rounded-full border border-slate-200 text-slate-600 bg-white peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all">Weekdays Only</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="duration" value="Weekends Only" class="peer hidden">
+                                    <span class="inline-block px-3 py-1.5 text-xs font-medium rounded-full border border-slate-200 text-slate-600 bg-white peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all">Weekends Only</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="duration" value="Full-Month Contract" class="peer hidden">
+                                    <span class="inline-block px-3 py-1.5 text-xs font-medium rounded-full border border-slate-200 text-slate-600 bg-white peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all">Full-Month Contract</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 5. Availability -->
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wider">Availability</h4>
+                            <div class="space-y-2" id="filter-availability">
+                                <label class="flex items-center gap-3 p-1 cursor-pointer group">
+                                    <input type="radio" name="availability" value="All" class="w-4 h-4 text-primary focus:ring-primary focus:ring-2 border-slate-300" checked>
+                                    <span class="text-sm font-medium text-slate-600 group-hover:text-dark">All</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-1 cursor-pointer group">
+                                    <input type="radio" name="availability" value="Available Now" class="w-4 h-4 text-primary focus:ring-primary focus:ring-2 border-slate-300">
+                                    <span class="text-sm font-medium text-slate-600 group-hover:text-dark flex items-center gap-2">Available Now <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-1 cursor-pointer group">
+                                    <input type="radio" name="availability" value="On Assignment" class="w-4 h-4 text-primary focus:ring-primary focus:ring-2 border-slate-300">
+                                    <span class="text-sm font-medium text-slate-600 group-hover:text-dark">On Assignment</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-100 flex flex-col gap-3">
+                            <button type="button" onclick="applyFilters()" class="w-full bg-primary text-dark font-bold py-3 rounded-lg shadow-md hover:bg-yellow-500 transition-colors">Apply Filters</button>
+                            <button type="button" onclick="resetFilters()" class="w-full text-sm font-medium text-slate-500 hover:text-dark transition-colors md:hidden">Clear All</button>
+                        </div>
+                    </form>
+                </div>
+            </aside>
+
+            <!-- Right Column - Workers Grid -->
+            <div class="flex-1 w-full">
+                
+                <!-- Search and Sort Top Bar -->
+                <div class="bg-white rounded-xl shadow-sm p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 border border-slate-100">
+                    
+                    <div class="relative w-full md:w-96">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                        </div>
+                        <input type="text" id="search-input" class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-colors" placeholder="Search by skill, category...">
+                    </div>
+
+                    <div class="flex items-center justify-between w-full md:w-auto gap-4">
+                        <span class="text-sm font-medium text-slate-500" id="results-count">Showing <span class="font-bold text-dark">0</span> verified workers</span>
+                        
+                        <div class="relative">
+                            <select id="sort-select" class="block w-full pl-3 pr-10 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white text-dark font-medium appearance-none cursor-pointer">
+                                <option value="recent">Most Recent</option>
+                                <option value="exp_high">Experience: High-Low</option>
+                                <option value="exp_low">Experience: Low-High</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workers Grid -->
+                <div id="workers-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Data will be populated by workers.js -->
+                </div>
+
+                <!-- Empty State (hidden by default) -->
+                <div id="empty-state" class="hidden flex-col items-center justify-center py-20 bg-white rounded-xl border border-slate-100 shadow-sm text-center px-4">
+                    <div class="w-24 h-24 mb-6 opacity-30">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="#e2e8f0" />
+                            <path d="M50 25 C30 25, 20 40, 25 60 C30 80, 70 80, 75 60 C80 40, 70 25, 50 25 Z" fill="#94a3b8" />
+                            <path d="M40 70 Q50 80 60 70" stroke="#cbd5e1" stroke-width="4" fill="none" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-2">No workers match your filters</h3>
+                    <p class="text-slate-500 mb-6 max-w-md mx-auto">Try adjusting your filters, location, or search terms to find available workers.</p>
+                    <button onclick="resetFilters()" class="px-6 py-2 bg-primary text-dark font-bold rounded-lg hover:bg-yellow-500 transition-colors">Clear All Filters</button>
+                </div>
+
+                <!-- Pagination -->
+                <div class="mt-10 flex justify-center" id="pagination-container">
+                    <button id="load-more-btn" class="px-8 py-3 bg-white border-2 border-slate-200 text-dark font-bold rounded-lg hover:border-primary hover:text-primary transition-colors shadow-sm flex items-center gap-2">
+                        Load More Workers
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- 4. Request Worker Modal -->
+    <div id="request-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-dark/70 backdrop-blur-sm transition-opacity" onclick="closeRequestModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10 transform scale-95 opacity-0 transition-all duration-300" id="request-modal-content">
+            
+            <!-- Header -->
+            <div class="p-6 border-b border-slate-100 flex justify-between items-start">
+                <div>
+                    <h3 class="text-2xl font-bold text-dark flex items-center gap-2 mb-1">
+                        🐝 Request Worker <span class="text-primary font-mono" id="modal-worker-id">#WB-XXXX</span>
+                    </h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">WorkBee admin will connect you with this worker. Your details are kept private.</p>
+                </div>
+                <button onclick="closeRequestModal()" class="text-slate-400 hover:text-dark hover:bg-slate-100 p-2 rounded-full transition-colors focus:outline-none">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+
+            <!-- Form Body -->
+            <div class="p-6">
+                <form id="request-worker-form" onsubmit="handleRequestSubmit(event)">
+                    <input type="hidden" id="request-worker-id-hidden" name="worker_id">
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Your Full Name <span class="text-red-500">*</span></label>
+                            <input type="text" required class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-slate-50 focus:bg-white transition-colors" placeholder="e.g. John Doe">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Company Name <span class="text-red-500">*</span></label>
+                            <input type="text" required class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-slate-50 focus:bg-white transition-colors" placeholder="e.g. ABC Construction">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Phone / WhatsApp <span class="text-red-500">*</span></label>
+                                <input type="tel" required class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-slate-50 focus:bg-white transition-colors" placeholder="07X XXX XXXX">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Email</label>
+                                <input type="email" class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-slate-50 focus:bg-white transition-colors" placeholder="john@example.com">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Message to WorkBee Admin</label>
+                            <textarea id="modal-message" rows="3" class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-slate-50 focus:bg-white transition-colors resize-none">I am interested in Worker #WB-XXXX for [purpose].</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Note -->
+                    <div class="mt-5 p-3 bg-slate-50 rounded-lg border border-slate-100 flex items-start gap-3">
+                        <span class="text-xl">🔒</span>
+                        <p class="text-xs text-slate-500 leading-tight">
+                            Worker personal contact details will never be shared directly. WorkBee coordinates all communication to ensure safety and quality.
+                        </p>
+                    </div>
+
+                    <div class="mt-6">
+                        <button type="submit" class="w-full py-3.5 bg-primary text-dark font-bold rounded-lg hover:bg-yellow-500 transition-colors shadow-md flex justify-center items-center gap-2">
+                            Send Request to WorkBee
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Success State (hidden initially) -->
+                <div id="request-success" class="hidden flex-col items-center justify-center py-8 text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-sm">
+                        <svg class="w-8 h-8 text-green-500 checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                    <h4 class="text-xl font-bold text-dark mb-2">Request Received!</h4>
+                    <p class="text-slate-500 mb-6">WorkBee admin will contact you via Phone/WhatsApp within 2 hours to coordinate.</p>
+                    <button onclick="closeRequestModal()" class="px-6 py-2 border-2 border-slate-200 text-dark font-bold rounded-lg hover:bg-slate-50 transition-colors">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Privacy Notice Banner -->
+    <div id="privacy-banner" class="fixed bottom-0 left-0 w-full bg-dark text-white p-4 shadow-2xl z-40 transform translate-y-0 transition-transform duration-500 border-t-4 border-primary">
+        <div class="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-start sm:items-center gap-3">
+                <span class="text-2xl hidden sm:inline-block">ℹ️</span>
+                <p class="text-sm text-slate-300 font-medium">
+                    <strong class="text-white">Worker Directory is Privacy-Protected.</strong> Personal contact details are handled exclusively by WorkBee Admin to ensure safety for both workers and employers.
+                </p>
+            </div>
+            <button onclick="dismissPrivacyBanner()" class="whitespace-nowrap px-5 py-2 bg-primary text-dark text-sm font-bold rounded-lg hover:bg-yellow-500 transition-colors w-full sm:w-auto">
+                Got It
+            </button>
+        </div>
+    </div>
+
+    <!-- 6. Footer (same as index.html) -->
+    <footer class="bg-dark text-white pt-16 pb-8 border-t border-slate-800">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                <!-- Brand -->
+                <div>
+                    <a href="index.html" class="flex items-center gap-3 text-2xl font-bold text-white mb-4">
+                        <img src="assets/logo.jpg" alt="WorkBee.lk Logo" style="height: 240px; width: 240px; border-radius: 50%; border: 4px solid #F59E0B; background: white; object-fit: contain; padding: 6px; flex-shrink: 0;">
+                        <span class="text-white font-extrabold" style="font-size: 2.8rem;">WorkBee<span class="text-primary">.lk</span></span>
+                    </a>
+                    <p class="text-slate-400 text-sm mb-6 leading-relaxed">Connecting reliable daily wage and contract workers with employers across Sri Lanka. Fast, verified, and secure.</p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-bold mb-4 text-white">Quick Links</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="index.html" class="hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="workers.html" class="hover:text-primary transition-colors text-primary font-medium">Find Workers</a></li>
+                        <li><a href="join-worker.html" class="hover:text-primary transition-colors">Join as Worker</a></li>
+                        <li><a href="about.html" class="hover:text-primary transition-colors">About Us</a></li>
+                        <li><a href="contact.html" class="hover:text-primary transition-colors">Contact Support</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal -->
+                <div>
+                    <h4 class="text-lg font-bold mb-4 text-white">Legal</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="#" class="hover:text-primary transition-colors">Terms & Conditions</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Worker Verification Process</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h4 class="text-lg font-bold mb-4 text-white">Contact Info</h4>
+                    <ul class="space-y-3 text-slate-400 text-sm">
+                        <li class="flex items-start gap-3">
+                            <span class="text-primary">📍</span>
+                            <span>123 Main Street, Colombo 03, Sri Lanka</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="text-primary">📞</span>
+                            <span>+94 11 234 5678 (Hotline)</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="text-primary">📱</span>
+                            <span>+94 77 123 4567 (WhatsApp)</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="text-primary">✉️</span>
+                            <span>admin@workbee.lk</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-slate-800 text-center text-slate-500 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                <p>&copy; 2026 WorkBee.lk. All rights reserved.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-primary transition-colors">FB</a>
+                    <a href="#" class="hover:text-primary transition-colors">IG</a>
+                    <a href="#" class="hover:text-primary transition-colors">LI</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/workers.js"></script>
+    <!-- PWA Install Banner (Android + iOS smart detection) -->
+    <div id="pwa-install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:white;padding:14px 16px;box-shadow:0 -4px 24px rgba(0,0,0,0.4);border-top:2px solid #F59E0B;">
+      <!-- Android install row -->
+      <div id="pwa-android-row" style="display:none;align-items:center;gap:12px;">
+        <img src="assets/icons/icon-72.png" style="width:44px;height:44px;border-radius:10px;flex-shrink:0;" alt="WorkBee">
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:0.9rem;">Install WorkBee App</div>
+          <div style="font-size:0.75rem;color:#94a3b8;">Add to Home Screen for quick access</div>
+        </div>
+        <button onclick="window._installPWA()" style="background:#F59E0B;color:#0f172a;border:none;border-radius:8px;padding:9px 16px;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;">Install</button>
+        <button onclick="window._dismissInstall()" style="background:none;border:none;color:#94a3b8;font-size:1.6rem;cursor:pointer;line-height:1;">&times;</button>
+      </div>
+      <!-- iOS instructions row -->
+      <div id="pwa-ios-row" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <img src="assets/icons/icon-72.png" style="width:40px;height:40px;border-radius:10px;flex-shrink:0;" alt="WorkBee">
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:0.9rem;">Install WorkBee on iPhone/iPad</div>
+            <div style="font-size:0.72rem;color:#94a3b8;">Open in Safari to install</div>
+          </div>
+          <button onclick="window._dismissInstall()" style="background:none;border:none;color:#94a3b8;font-size:1.6rem;cursor:pointer;line-height:1;">&times;</button>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;background:#1e293b;border-radius:10px;padding:10px 12px;">
+          <div style="font-size:0.78rem;color:#94a3b8;line-height:1.7;">
+            1&nbsp; Open <strong style="color:#F59E0B;">Safari</strong> browser on your iPhone<br>
+            2&nbsp; Tap the <strong style="color:#F59E0B;">Share</strong> button <span style="font-size:1.1em;">&#9633;&#8593;</span> at the bottom<br>
+            3&nbsp; Scroll down and tap <strong style="color:#F59E0B;">"Add to Home Screen"</strong><br>
+            4&nbsp; Tap <strong style="color:#F59E0B;">Add</strong> — done! WorkBee is installed &#10003;
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- PWA Service Worker + Smart Install Detection -->
+    <script>
+      // Register Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('sw.js')
+            .then(function(reg) {
+              console.log('[WorkBee] SW registered:', reg.scope);
+              setInterval(function() { reg.update(); }, 30 * 60 * 1000);
+            })
+            .catch(function(err) { console.log('[WorkBee] SW failed:', err); });
+        });
+      }
+
+      // Detect iOS
+      var _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      var _isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+      var deferredPrompt = null;
+
+      // Android: intercept install prompt
+      window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        setTimeout(function() {
+          if (!_isInStandaloneMode) { window._showInstallBanner('android'); }
+        }, 4000);
+      });
+
+      // iOS: show instructions if in Safari and not installed
+      window.addEventListener('load', function() {
+        if (_isIOS && !_isInStandaloneMode) {
+          var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+          if (isSafari) {
+            setTimeout(function() { window._showInstallBanner('ios'); }, 4000);
+          }
+        }
+      });
+
+      window._showInstallBanner = function(type) {
+        var banner = document.getElementById('pwa-install-banner');
+        var androidRow = document.getElementById('pwa-android-row');
+        var iosRow = document.getElementById('pwa-ios-row');
+        if (!banner) return;
+        if (type === 'ios' && iosRow) {
+          iosRow.style.display = 'block';
+          banner.style.display = 'block';
+        } else if (type === 'android' && androidRow) {
+          androidRow.style.display = 'flex';
+          banner.style.display = 'block';
+        }
+      };
+
+      window._installPWA = function() {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(function(result) {
+            console.log('[WorkBee] PWA install:', result.outcome);
+            deferredPrompt = null;
+            window._dismissInstall();
+          });
+        }
+      };
+
+      window._dismissInstall = function() {
+        var b = document.getElementById('pwa-install-banner');
+        if (b) b.style.display = 'none';
+        deferredPrompt = null;
+        // Remember dismissed for 24h
+        try { sessionStorage.setItem('pwa_dismissed', '1'); } catch(e) {}
+      };
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

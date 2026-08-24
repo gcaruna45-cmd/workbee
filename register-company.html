@@ -1,0 +1,816 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner with WorkBee - Register Company</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css?v=13">
+    <link rel="stylesheet" href="css/components.css?v=13">
+    <link rel="stylesheet" href="css/forms.css?v=13">
+    <style>
+        :root {
+            --primary: #F59E0B;
+            --primary-dark: #D97706;
+            --dark: #0F172A;
+            --dark-slate: #1E293B;
+            --light: #F8FAFC;
+            --success: #10B981;
+            --gray: #64748B;
+            --accent-cyan: #06B6D4;
+        }
+        body { margin: 0; font-family: 'Poppins', system-ui, -apple-system, sans-serif; background: linear-gradient(to bottom, #000000 0%, #F59E0B 100%); background-attachment: fixed; color: #ffffff; }
+        .navbar { background: var(--dark); padding: 12px 2rem; color: white; display: flex; align-items: center; position: fixed; top: 0; width: 100%; z-index: 50; box-sizing: border-box; border-bottom: 2px solid rgba(245, 158, 11, 0.3); }
+        .navbar svg { width: 32px; height: 32px; margin-right: 10px; fill: var(--primary); }
+        .navbar h1 { margin: 0; font-size: 1.5rem; font-weight: bold; }
+        
+        .page-header { background: var(--dark); color: white; padding: 290px 2rem 3rem; text-align: center; background-image: radial-gradient(#374151 1px, transparent 1px); background-size: 20px 20px; }
+        .page-header h2 { margin: 0 0 1rem; font-size: 2.5rem; color: var(--primary); }
+        .page-header p { margin: 0; font-size: 1.2rem; opacity: 0.9; max-width: 700px; margin: 0 auto; }
+
+        .container { max-width: 900px; margin: -2rem auto 4rem; padding: 0 1rem; position: relative; z-index: 10; }
+        
+        /* Tabs */
+        .tabs { display: flex; background: white; border-radius: 12px 12px 0 0; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .tab { flex: 1; text-align: center; padding: 1.25rem; font-weight: bold; cursor: pointer; background: #f8f9fa; color: var(--gray); border-bottom: 2px solid #e5e7eb; transition: all 0.2s; font-size: 1.1rem; }
+        .tab:hover { background: #f3f4f6; color: var(--dark); }
+        .tab.active { background: white; color: var(--dark); border-bottom: 2px solid var(--primary); }
+        
+        .tab-content { display: none; background: white; color: var(--dark) !important; padding: 2rem; border-radius: 0 0 12px 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Forms */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--dark) !important; }
+        .form-control { width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; box-sizing: border-box; transition: border-color 0.2s; color: #0F172A !important; background-color: #ffffff !important; font-weight: 500; }
+        .form-control::placeholder { color: #94a3b8 !important; opacity: 1; }
+        .form-control option { color: #0F172A !important; background-color: #ffffff !important; }
+        .form-control:focus { outline: none; border-color: var(--primary-dark); box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+        
+        .chip-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .chip { padding: 0.6rem 1.2rem; border: 2px solid #94a3b8; border-radius: 999px; cursor: pointer; user-select: none; transition: all 0.2s; background: #ffffff !important; color: #0F172A !important; font-weight: 700 !important; }
+        .chip:hover { border-color: var(--primary); color: #0F172A !important; }
+        .chip.selected { background: var(--dark) !important; color: #ffffff !important; border-color: var(--dark) !important; font-weight: 700 !important; }
+
+        .radio-group { display: flex; gap: 1.5rem; }
+        .radio-group label { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; cursor: pointer; color: #0F172A !important; }
+
+        .btn { padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; font-size: 1.1rem; cursor: pointer; border: none; transition: all 0.2s; width: 100%; display: block; text-align: center; }
+        .btn-primary { background: var(--primary); color: var(--dark); }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-dark { background: var(--dark); color: white; }
+        .btn-dark:hover { background: #374151; }
+
+        /* Info Banner */
+        .info-banner { background: var(--dark); color: white; border-radius: 12px; padding: 1.5rem; margin-top: 2rem; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .info-features { display: flex; justify-content: center; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary); }
+        
+        .success-box { display: none; text-align: center; padding: 3rem 1rem; color: #0F172A !important; }
+        .success-box h3 { color: var(--success); font-size: 2rem; margin-top: 0; }
+        .success-box p { color: #475569 !important; }
+        .ref-number { font-size: 2.5rem; font-family: monospace; font-weight: bold; background: #f3f4f6; padding: 1rem 2rem; border-radius: 8px; display: inline-block; margin: 1rem 0; border: 2px dashed #d1d5db; color: #0F172A !important; }
+        
+        footer { background: #111827; color: #9ca3af; padding: 3rem 2rem; text-align: center; margin-top: 4rem; }
+    </style>
+    <!-- ===== PWA - Progressive Web App ===== -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WorkBee">
+    <meta name="application-name" content="WorkBee">
+    <meta name="msapplication-TileColor" content="#0f172a">
+    <meta name="msapplication-TileImage" content="/assets/icons/icon-144.png">
+    <meta name="theme-color" content="#F59E0B">
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/assets/icons/icon-180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/icon-152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/icon-144.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/assets/icons/icon-128.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/icon-96.png">
+    <!-- ===== END PWA ===== -->
+</head>
+<body>
+    <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 14px; white-space: nowrap;">
+            <button onclick="window.history.back()" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap;">← Back</button>
+            <a href="index.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none;">
+                <img src="assets/logo.jpg" alt="WorkBee.lk Logo" style="height: 240px; width: 240px; border-radius: 50%; border: 4px solid var(--primary); background: white; object-fit: contain; padding: 6px; box-shadow: 0 4px 15px rgba(245,158,11,0.4); flex-shrink: 0;">
+                <h1 style="color: white; margin: 0; font-size: 2.8rem; font-weight: 800; white-space: nowrap;">WorkBee<span style="color: var(--primary);">.lk</span></h1>
+            </a>
+        </div>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 1.8rem; white-space: nowrap;">
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(245,158,11,0.15); color: #F59E0B; padding: 6px 14px; border-radius: 8px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); text-decoration: none; font-size: 0.95rem; white-space: nowrap;">🏠 Home</a>
+            <a href="workers.html" style="color: white; text-decoration: none; font-weight: 600; white-space: nowrap;">Find Workers</a>
+            <a href="register-company.html" style="color: #F59E0B; text-decoration: none; font-weight: 700; white-space: nowrap;">Post a Job</a>
+            <a href="index.html#sectors" style="color: white; text-decoration: none; font-weight: 600; white-space: nowrap;">About</a>
+        </div>
+        <div class="nav-actions" style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <a href="register-company.html" class="btn-primary" style="white-space: nowrap;">Request Workers</a>
+                <a href="register-worker.html" class="btn-dark" style="white-space: nowrap;">Join as Worker</a>
+            </div>
+            <div class="lang-switcher">
+                <button class="lang-btn active">EN</button>
+                <button class="lang-btn">SI</button>
+                <button class="lang-btn">TA</button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h2>🏢 Partner with WorkBee</h2>
+        <p>Register your company or post a job requirement to access Sri Lanka's largest verified worker database</p>
+    </header>
+
+    <main class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(0)">Register Company</div>
+            <div class="tab" onclick="switchTab(1)">Post a Requirement</div>
+        </div>
+
+        <!-- TAB 1: Register Company -->
+        <div class="tab-content active" id="tab0">
+                        <form id="formRegister" onsubmit="submitRegister(event)">
+                <div style="background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%);border:2px solid #F59E0B;padding:16px;border-radius:10px;margin-bottom:1.5rem;">
+                    <h4 style="color:#F59E0B;margin:0 0 10px;font-size:1rem;">🔑 Create Account Login Details (ගිණුම් පිවිසුම් තොරතුරු)</h4>
+                    <div class="grid-2">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label style="color:white !important;">Username (පරිශීලක නාමය) *</label>
+                            <input type="text" class="form-control" id="compUsername" placeholder="e.g. abccompanylk or 0771234567" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label style="color:white !important;">Password (මුරපදය) *</label>
+                            <input type="password" class="form-control" id="compPassword" placeholder="Minimum 4 characters" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Company Name *</label>
+                        <input type="text" class="form-control" id="companyName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Business Registration (BR) Number *</label>
+                        <input type="text" class="form-control" id="brNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Industry/Sector *</label>
+                        <select class="form-control" id="companyIndustry" required>
+                            <option value="">Select Industry</option>
+                            <option>Construction</option>
+                            <option>Hotel & Hospitality</option>
+                            <option>Factory & Logistics</option>
+                            <option>Cleaning Services</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Employees</label>
+                        <select class="form-control" id="companySize">
+                            <option>1-10</option><option>11-50</option><option>51-200</option><option>200+</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Person Name *</label>
+                        <input type="text" class="form-control" id="contactPerson" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Designation</label>
+                        <input type="text" class="form-control" id="contactDesignation">
+                    </div>
+                    <div class="form-group">
+                        <label>Direct Phone *</label>
+                        <input type="tel" class="form-control" id="contactPhone" placeholder="+94 7X XXX XXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp Number</label>
+                        <input type="tel" class="form-control" id="contactWhatsapp" placeholder="+94 7X XXX XXXX">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Email Address *</label>
+                        <input type="email" class="form-control" id="contactEmail" required>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Company Address</label>
+                        <textarea class="form-control" id="companyAddress" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>City/District</label>
+                        <select class="form-control" id="companyCity">
+                            <option value="">Select District</option>
+                            <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option><option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option><option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option><option>Kilinochchi</option><option>Kurunegala</option><option>Mannar</option><option>Matale</option><option>Matara</option><option>Moneragala</option><option>Mullaitivu</option><option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option><option>Ratnapura</option><option>Trincomalee</option><option>Vavuniya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>How did you hear about us?</label>
+                        <select class="form-control" id="hearAboutUs">
+                            <option>Google</option><option>Facebook</option><option>Referral</option><option>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-dark" style="margin-top: 1rem;">📋 Register Our Company</button>
+            </form>
+            
+            <div id="successRegister" class="success-box">
+                <h3>Company Registration Submitted!</h3>
+                <p>Your Company Reference Number:</p>
+                <div class="ref-number" id="generatedCompRef">C-XXXX</div>
+                <p style="font-size: 1.1rem; color: var(--gray);">Company registered successfully! You can now post job requirements for workers.</p>
+                <button type="button" class="btn btn-primary" onclick="switchTab(1)" style="margin-top: 15px; font-size: 1.1rem; padding: 14px;">🚀 Proceed to Post Job Requirement &rarr;</button>
+            </div>
+        </div>
+
+        <!-- TAB 2: Post Requirement -->
+        <div class="tab-content" id="tab1">
+            <form id="formJob" onsubmit="submitJob(event)">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Contact Phone (Enter Registered Phone) *</label>
+                        <input type="tel" class="form-control" id="jobContactPhone" required placeholder="+94 7X XXX XXXX" oninput="lookupCompanyByPhone()">
+                        <div id="phoneAutoFillStatus" style="display:none; margin-top:6px; font-size:0.85rem; background:#dcfce7; color:#166534; padding:6px 10px; border-radius:6px; border:1px solid #86efac; font-weight:600;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Company Name *</label>
+                        <input type="text" class="form-control" id="jobCompanyName" required placeholder="e.g. ABC Holdings Ltd">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Industry / Sector *</label>
+                        <select class="form-control" id="jobIndustry" required onchange="updateSkills(this.value)">
+                            <option value="">Select Industry</option>
+                            <option value="Construction">Construction</option>
+                            <option value="Hospitality">Hotel & Hospitality</option>
+                            <option value="Logistics">Factory & Logistics</option>
+                            <option value="Cleaning">Cleaning Services</option>
+                            <option value="IT">Information Technology</option>
+                            <option value="Electronics">Electronics & Electrical</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Skills Required *</label>
+                        <div class="chip-group" id="jobSkills">
+                            <span style="color:var(--gray); font-style:italic;">Select industry first...</span>
+                        </div>
+                    </div>
+
+                    <!-- DATE RANGE & CALENDAR SECTION -->
+                    <div class="form-group" style="grid-column: 1 / -1; background: #f8fafc; padding: 1.25rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <label style="font-weight: 700; color: #0f172a; font-size: 1.05rem; display: block; margin-bottom: 8px;">📅 Required Date Range (From - To)</label>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Select the start and end dates for this work contract. The monthly calendar will highlight the work duration.</p>
+                        
+                        <div class="grid-2">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.875rem;">From Date (Start) *</label>
+                                <input type="date" class="form-control" id="fromDate" required onchange="calculatePayAndCalendar()">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.875rem;">To Date (End) *</label>
+                                <input type="date" class="form-control" id="toDate" required onchange="calculatePayAndCalendar()">
+                            </div>
+                        </div>
+
+                        <!-- Calendar Widget Preview -->
+                        <div style="margin-top: 15px; background: white; border-radius: 10px; padding: 15px; border: 1px solid #cbd5e1;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <button type="button" class="btn btn-dark" style="padding: 4px 12px; font-size: 0.8rem;" onclick="changeCalendarMonth(-1)">&larr; Prev Month</button>
+                                <span id="calendarMonthTitle" style="font-weight: 700; color: #0f172a;">Month Year</span>
+                                <button type="button" class="btn btn-dark" style="padding: 4px 12px; font-size: 0.8rem;" onclick="changeCalendarMonth(1)">Next Month &rarr;</button>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 6px;">
+                                <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+                            </div>
+                            <div id="calendarDaysGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center;"></div>
+                            <div style="margin-top: 8px; font-size: 0.75rem; color: #64748b; display: flex; items-center: center; gap: 15px;">
+                                <span><span style="display:inline-block; width:12px; height:12px; background:#F59E0B; border-radius:3px; vertical-align:middle; margin-right:4px;"></span> Work Period</span>
+                                <span><span style="display:inline-block; width:12px; height:12px; background:#e2e8f0; border-radius:3px; vertical-align:middle; margin-right:4px;"></span> Regular Day</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PAY CALCULATOR SECTION -->
+                    <div class="form-group" style="grid-column: 1 / -1; background: #fffbebf5; padding: 1.25rem; border-radius: 12px; border: 1px solid #fcd34d;">
+                        <label style="font-weight: 700; color: #78350f; font-size: 1.05rem; display: block; margin-bottom: 8px;">💰 Pay & Worker Budget Calculator</label>
+                        <p style="font-size: 0.85rem; color: #92400e; margin-bottom: 12px;">Specify the pay rate per worker to calculate the full financial budget for this job.</p>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label style="font-size:0.875rem;">Number of Workers Required *</label>
+                                <input type="number" class="form-control" id="numWorkers" min="1" value="1" required oninput="calculatePayAndCalendar()">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size:0.875rem;">Daily Pay Rate Per Worker (LKR) *</label>
+                                <input type="number" class="form-control" id="payRate" min="500" step="100" value="1500" required oninput="calculatePayAndCalendar()" placeholder="e.g. 2500">
+                            </div>
+                        </div>
+
+                        <!-- Live Calculation Card -->
+                        <div style="background: white; border-radius: 10px; padding: 15px; border: 1px solid #fde68a; margin-top: 10px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.9rem; color: #475569;">
+                                <span>Total Contract Duration:</span>
+                                <strong id="calcTotalDays" style="color: #0f172a;">1 Day(s)</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.9rem; color: #475569;">
+                                <span>Pay Amount Per 1 Worker:</span>
+                                <strong id="calcPayPerWorker" style="color: #059669;">LKR 1,500</strong>
+                            </div>
+                            <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 8px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; font-weight: 700; color: #0f172a;">
+                                <span>Total Job Requirement Budget:</span>
+                                <span id="calcTotalBudget" style="background: #F59E0B; color: #0f172a; padding: 4px 12px; border-radius: 20px; font-size: 1.2rem;">LKR 1,500</span>
+                            </div>
+                        </div>
+
+                        <!-- Meal Provisions Checkboxes -->
+                        <div style="background: white; border-radius: 10px; padding: 15px; border: 1px solid #fde68a; margin-top: 12px;">
+                            <label style="font-weight: 700; color: #0f172a; font-size: 0.95rem; display: block; margin-bottom: 8px;">🍱 Meals Provided (කෑම පහසුකම් සපයනු ලැබේ)</label>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px; color: #0f172a; font-weight: 600; font-size: 0.9rem;">
+                                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #0f172a !important;">
+                                    <input type="checkbox" id="mealBreakfast" value="Breakfast" style="width: 18px; height: 18px; accent-color: #F59E0B; cursor: pointer;">
+                                    🍳 Breakfast (උදෑසන කෑම)
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #0f172a !important;">
+                                    <input type="checkbox" id="mealLunch" value="Lunch" style="width: 18px; height: 18px; accent-color: #F59E0B; cursor: pointer;" checked>
+                                    🍛 Lunch (දවල් කෑම)
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #0f172a !important;">
+                                    <input type="checkbox" id="mealDinner" value="Dinner" style="width: 18px; height: 18px; accent-color: #F59E0B; cursor: pointer;">
+                                    🍲 Dinner (රාත්‍රී කෑම)
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #0f172a !important;">
+                                    <input type="checkbox" id="mealTea" value="Tea/Snacks" style="width: 18px; height: 18px; accent-color: #F59E0B; cursor: pointer;">
+                                    ☕ Tea &amp; Snacks (තේ සහ කෙටි කෑම)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Job Location - District *</label>
+                        <select class="form-control" id="jobDistrict" required>
+                            <option value="">Select District</option>
+                            <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option><option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option><option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option><option>Kilinochchi</option><option>Kurunegala</option><option>Mannar</option><option>Matale</option><option>Matara</option><option>Moneragala</option><option>Mullaitivu</option><option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option><option>Ratnapura</option><option>Trincomalee</option><option>Vavuniya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Job Location - Town/Area</label>
+                        <input type="text" class="form-control" id="jobTown" placeholder="e.g. Fort, Nugegoda">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Shift Type *</label>
+                        <div class="chip-group" id="jobShifts">
+                            <div class="chip selected" onclick="this.classList.toggle('selected')">Day</div>
+                            <div class="chip" onclick="this.classList.toggle('selected')">Night</div>
+                            <div class="chip" onclick="this.classList.toggle('selected')">24hr</div>
+                            <div class="chip" onclick="this.classList.toggle('selected')">Flexible</div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Job Description</label>
+                        <textarea class="form-control" id="jobDesc" rows="3" placeholder="Additional details about tasks, equipment provided, meals, etc..."></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Urgency</label>
+                        <div class="radio-group" id="jobUrgency">
+                            <label><input type="radio" name="urgency" value="Normal" checked> Normal</label>
+                            <label><input type="radio" name="urgency" value="Urgent"> Urgent</label>
+                            <label><input type="radio" name="urgency" value="Very Urgent"> Very Urgent</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%; font-size: 1.1rem; padding: 14px;">🚀 Post Requirement to Job Board</button>
+            </form>
+
+            <div id="successJob" class="success-box">
+                <h3>Requirement Posted Successfully!</h3>
+                <p>Job Reference ID:</p>
+                <div class="ref-number" id="generatedJobRef">REQ-2094</div>
+                <p style="font-size: 1.1rem; color: var(--gray);">WorkBee matched workers can now view and apply for this job. WorkBee admin will contact you within 2 hours.</p>
+                <a href="workers.html" class="btn btn-dark" style="margin-top: 15px; display: inline-block; text-decoration: none;">View Available Jobs Board &rarr;</a>
+            </div>
+        </div>
+
+        <div class="info-banner">
+            <div class="info-features">
+                <span>🔒 Privacy Guaranteed</span>
+                <span>⚡ 2-Hour Response</span>
+                <span>✅ Pre-Verified Workers</span>
+                <span>📍 Island-Wide Coverage</span>
+            </div>
+            <p style="font-size: 0.875rem; color: #9ca3af; margin: 1rem 0 0;">All worker personal details handled exclusively by WorkBee Admin</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 WorkBee.lk - Connecting Sri Lanka's Workforce. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let currentCalDate = new Date();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default dates
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 7);
+            
+            document.getElementById('fromDate').value = today.toISOString().split('T')[0];
+            document.getElementById('toDate').value = tomorrow.toISOString().split('T')[0];
+            
+            calculatePayAndCalendar();
+        });
+
+        function switchTab(n) {
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                if(i === n) t.classList.add('active');
+                else t.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach((c, i) => {
+                if(i === n) c.classList.add('active');
+                else c.classList.remove('active');
+            });
+        }
+
+        const skillSets = {
+            'Construction': ['Mason', 'Carpenter', 'Painter', 'Helper', 'Welder'],
+            'Hospitality': ['Kitchen Helper', 'Waiter', 'Room Attendant', 'Steward'],
+            'Logistics': ['Packing', 'Machine Operator', 'Loader', 'Store Helper'],
+            'Cleaning': ['House Cleaning', 'Commercial Cleaning', 'Gardening'],
+            'IT': ['Web Design / UI Design', 'Graphic Design', 'Computer Hardware Technician', 'Software Programmer', 'Network Technician', 'Data Entry Operator', 'IT Support / Helpdesk'],
+            'Electronics': ['TV / Radio Technician', '2-Phase Electrical Wiring', '3-Phase Electrical Wiring', 'Electronic Technician', 'Air Conditioning Technician', 'CCTV / Security Systems', 'Solar Panel Installation', 'Refrigerator / AC Repair']
+        };
+
+        function updateSkills(ind) {
+            let container = document.getElementById('jobSkills');
+            if(!ind || !skillSets[ind]) {
+                container.innerHTML = '<span style="color:var(--gray); font-style:italic;">Select industry first...</span>';
+                return;
+            }
+            let html = '';
+            skillSets[ind].forEach(s => {
+                html += `<div class="chip" onclick="this.classList.toggle('selected')">${s}</div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function changeCalendarMonth(delta) {
+            currentCalDate.setMonth(currentCalDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function calculatePayAndCalendar() {
+            const fromStr = document.getElementById('fromDate').value;
+            const toStr = document.getElementById('toDate').value;
+            const numWorkers = parseInt(document.getElementById('numWorkers').value) || 1;
+            const payRate = parseFloat(document.getElementById('payRate').value) || 0;
+
+            let totalDays = 1;
+            if (fromStr && toStr) {
+                const d1 = new Date(fromStr);
+                const d2 = new Date(toStr);
+                const diffTime = d2 - d1;
+                if (diffTime >= 0) {
+                    totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                }
+            }
+
+            const payPerWorker = totalDays * payRate;
+            const totalBudget = payPerWorker * numWorkers;
+
+            document.getElementById('calcTotalDays').innerText = totalDays + ' Day(s)';
+            document.getElementById('calcPayPerWorker').innerText = 'LKR ' + payPerWorker.toLocaleString();
+            document.getElementById('calcTotalBudget').innerText = 'LKR ' + totalBudget.toLocaleString();
+
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const fromStr = document.getElementById('fromDate').value;
+            const toStr = document.getElementById('toDate').value;
+            const fromDate = fromStr ? new Date(fromStr) : null;
+            const toDate = toStr ? new Date(toStr) : null;
+
+            const year = currentCalDate.getFullYear();
+            const month = currentCalDate.getMonth();
+
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('calendarMonthTitle').innerText = monthNames[month] + " " + year;
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const grid = document.getElementById('calendarDaysGrid');
+            grid.innerHTML = '';
+
+            // Empty cells before start of month
+            for (let i = 0; i < firstDayIndex; i++) {
+                const empty = document.createElement('div');
+                grid.appendChild(empty);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.style.padding = '6px';
+                dayEl.style.fontSize = '0.8rem';
+                dayEl.style.borderRadius = '4px';
+                dayEl.innerText = day;
+
+                const thisDate = new Date(year, month, day);
+
+                // Check if date is in range
+                if (fromDate && toDate && thisDate >= new Date(fromDate.setHours(0,0,0,0)) && thisDate <= new Date(toDate.setHours(23,59,59,999))) {
+                    dayEl.style.background = '#F59E0B';
+                    dayEl.style.color = '#0F172A';
+                    dayEl.style.fontWeight = 'bold';
+                } else {
+                    dayEl.style.background = '#f1f5f9';
+                    dayEl.style.color = '#475569';
+                }
+                grid.appendChild(dayEl);
+            }
+        }
+
+        function submitRegister(e) {
+            e.preventDefault();
+
+            const compName = document.getElementById('companyName') ? document.getElementById('companyName').value.trim() : 'Company';
+            const brn = document.getElementById('brNumber') ? document.getElementById('brNumber').value.trim() : 'N/A';
+            const industry = document.getElementById('companyIndustry') ? document.getElementById('companyIndustry').value : 'General';
+            const contact = document.getElementById('contactPerson') ? document.getElementById('contactPerson').value.trim() : 'N/A';
+            const phone = document.getElementById('contactPhone') ? document.getElementById('contactPhone').value.trim() : 'N/A';
+            const email = document.getElementById('contactEmail') ? document.getElementById('contactEmail').value.trim() : 'N/A';
+            const city = document.getElementById('companyCity') ? document.getElementById('companyCity').value.trim() : 'Colombo';
+
+            const compId = 'C-' + Math.floor(1000 + Math.random() * 9000);
+
+            const newCompany = {
+                id: compId,
+                name: compName,
+                brn: brn,
+                industry: industry,
+                contact: contact,
+                phone: phone,
+                email: email,
+                city: city,
+                status: 'approved',
+                date: new Date().toISOString()
+            };
+
+            let existingCompanies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+            existingCompanies.unshift(newCompany);
+            localStorage.setItem('workbee_companies', JSON.stringify(existingCompanies));
+
+            const refEl = document.getElementById('generatedCompRef');
+            if(refEl) refEl.innerText = compId;
+
+            // Pre-fill "Post a Requirement" form with registered company info
+            if(document.getElementById('jobCompanyName')) document.getElementById('jobCompanyName').value = compName;
+            if(document.getElementById('jobContactPhone')) {
+                document.getElementById('jobContactPhone').value = phone;
+                lookupCompanyByPhone();
+            }
+
+            document.getElementById('formRegister').style.display = 'none';
+            document.getElementById('successRegister').style.display = 'block';
+        }
+
+        function lookupCompanyByPhone() {
+            const phoneInput = document.getElementById('jobContactPhone');
+            const statusDiv = document.getElementById('phoneAutoFillStatus');
+            if (!phoneInput) return;
+
+            const rawVal = phoneInput.value.trim();
+            const digits = rawVal.replace(/[^0-9]/g, '');
+
+            if (digits.length < 5) {
+                if (statusDiv) statusDiv.style.display = 'none';
+                return;
+            }
+
+            const companies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+            const matched = companies.find(c => {
+                if (!c.phone) return false;
+                const cDigits = c.phone.replace(/[^0-9]/g, '');
+                return cDigits.endsWith(digits) || digits.endsWith(cDigits) || cDigits.includes(digits) || digits.includes(cDigits);
+            });
+
+            if (matched) {
+                if (document.getElementById('jobCompanyName')) {
+                    document.getElementById('jobCompanyName').value = matched.name || '';
+                }
+                if (document.getElementById('jobIndustry') && matched.industry) {
+                    document.getElementById('jobIndustry').value = matched.industry;
+                    updateSkills(matched.industry);
+                }
+                if (document.getElementById('jobDistrict') && matched.city) {
+                    document.getElementById('jobDistrict').value = matched.city;
+                }
+
+                if (statusDiv) {
+                    statusDiv.innerHTML = `✅ Found Registered Company: <strong>${matched.name}</strong> (${matched.industry || 'General'}) — Details Auto-filled!`;
+                    statusDiv.style.display = 'block';
+                }
+            } else {
+                if (statusDiv) statusDiv.style.display = 'none';
+            }
+        }
+
+        function submitJob(e) {
+            e.preventDefault();
+
+            const companyName = document.getElementById('jobCompanyName').value;
+            const phone = document.getElementById('jobContactPhone').value;
+            const industry = document.getElementById('jobIndustry').value;
+            const district = document.getElementById('jobDistrict').value;
+            const town = document.getElementById('jobTown').value;
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const numWorkers = parseInt(document.getElementById('numWorkers').value) || 1;
+            const payRate = parseFloat(document.getElementById('payRate').value) || 0;
+
+            const selectedSkills = [];
+            document.querySelectorAll('#jobSkills .chip.selected').forEach(c => selectedSkills.push(c.innerText));
+
+            const selectedShifts = [];
+            document.querySelectorAll('#jobShifts .chip.selected').forEach(c => selectedShifts.push(c.innerText));
+
+            const selectedMeals = [];
+            if (document.getElementById('mealBreakfast')?.checked) selectedMeals.push('Breakfast (උදෑසන කෑම)');
+            if (document.getElementById('mealLunch')?.checked) selectedMeals.push('Lunch (දවල් කෑම)');
+            if (document.getElementById('mealDinner')?.checked) selectedMeals.push('Dinner (රාත්‍රී කෑම)');
+            if (document.getElementById('mealTea')?.checked) selectedMeals.push('Tea & Snacks (තේ)');
+
+            let totalDays = 1;
+            if (fromDate && toDate) {
+                const d1 = new Date(fromDate);
+                const d2 = new Date(toDate);
+                if (d2 >= d1) totalDays = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+            }
+            const totalPay = totalDays * payRate * numWorkers;
+
+            const reqId = 'JOB-' + Math.floor(1000 + Math.random() * 9000);
+
+            const companies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+            const matchedComp = companies.find(c => c.phone && c.phone.replace(/[^0-9]/g, '').includes(phone.replace(/[^0-9]/g, '')));
+
+            const companyDetails = {
+                name: companyName,
+                phone: phone,
+                contactPerson: matchedComp ? matchedComp.contact : 'Contact Person',
+                brn: matchedComp ? matchedComp.brn : 'N/A',
+                email: matchedComp ? matchedComp.email : 'N/A',
+                city: district || (matchedComp ? matchedComp.city : 'N/A')
+            };
+
+            const newReq = {
+                id: reqId,
+                company: companyName,
+                phone: phone,
+                companyDetails: companyDetails,
+                industry: industry,
+                skills: selectedSkills.length ? selectedSkills : [industry],
+                workersReq: numWorkers,
+                district: district,
+                town: town,
+                fromDate: fromDate,
+                toDate: toDate,
+                totalDays: totalDays,
+                payRate: payRate,
+                totalPay: totalPay,
+                shifts: selectedShifts.length ? selectedShifts : ['Day'],
+                meals: selectedMeals.length ? selectedMeals : ['No Meals Provided'],
+                desc: document.getElementById('jobDesc').value,
+                status: 'OPEN',
+                applicants: [], // Worker IDs who applied
+                postedDate: new Date().toISOString().split('T')[0]
+            };
+
+            let reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+            reqs.unshift(newReq);
+            localStorage.setItem('workbee_requirements', JSON.stringify(reqs));
+
+            document.getElementById('generatedJobRef').innerText = reqId;
+            document.getElementById('formJob').style.display = 'none';
+            document.getElementById('successJob').style.display = 'block';
+        }
+    </script>
+    <!-- PWA Install Banner (Android + iOS smart detection) -->
+    <div id="pwa-install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:white;padding:14px 16px;box-shadow:0 -4px 24px rgba(0,0,0,0.4);border-top:2px solid #F59E0B;">
+      <!-- Android install row -->
+      <div id="pwa-android-row" style="display:none;align-items:center;gap:12px;">
+        <img src="assets/icons/icon-72.png" style="width:44px;height:44px;border-radius:10px;flex-shrink:0;" alt="WorkBee">
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:0.9rem;">Install WorkBee App</div>
+          <div style="font-size:0.75rem;color:#94a3b8;">Add to Home Screen for quick access</div>
+        </div>
+        <button onclick="window._installPWA()" style="background:#F59E0B;color:#0f172a;border:none;border-radius:8px;padding:9px 16px;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;">Install</button>
+        <button onclick="window._dismissInstall()" style="background:none;border:none;color:#94a3b8;font-size:1.6rem;cursor:pointer;line-height:1;">&times;</button>
+      </div>
+      <!-- iOS instructions row -->
+      <div id="pwa-ios-row" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <img src="assets/icons/icon-72.png" style="width:40px;height:40px;border-radius:10px;flex-shrink:0;" alt="WorkBee">
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:0.9rem;">Install WorkBee on iPhone/iPad</div>
+            <div style="font-size:0.72rem;color:#94a3b8;">Open in Safari to install</div>
+          </div>
+          <button onclick="window._dismissInstall()" style="background:none;border:none;color:#94a3b8;font-size:1.6rem;cursor:pointer;line-height:1;">&times;</button>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;background:#1e293b;border-radius:10px;padding:10px 12px;">
+          <div style="font-size:0.78rem;color:#94a3b8;line-height:1.7;">
+            1&nbsp; Open <strong style="color:#F59E0B;">Safari</strong> browser on your iPhone<br>
+            2&nbsp; Tap the <strong style="color:#F59E0B;">Share</strong> button <span style="font-size:1.1em;">&#9633;&#8593;</span> at the bottom<br>
+            3&nbsp; Scroll down and tap <strong style="color:#F59E0B;">"Add to Home Screen"</strong><br>
+            4&nbsp; Tap <strong style="color:#F59E0B;">Add</strong> — done! WorkBee is installed &#10003;
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- PWA Service Worker + Smart Install Detection -->
+    <script>
+      // Register Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('sw.js')
+            .then(function(reg) {
+              console.log('[WorkBee] SW registered:', reg.scope);
+              setInterval(function() { reg.update(); }, 30 * 60 * 1000);
+            })
+            .catch(function(err) { console.log('[WorkBee] SW failed:', err); });
+        });
+      }
+
+      // Detect iOS
+      var _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      var _isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+      var deferredPrompt = null;
+
+      // Android: intercept install prompt
+      window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        setTimeout(function() {
+          if (!_isInStandaloneMode) { window._showInstallBanner('android'); }
+        }, 4000);
+      });
+
+      // iOS: show instructions if in Safari and not installed
+      window.addEventListener('load', function() {
+        if (_isIOS && !_isInStandaloneMode) {
+          var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+          if (isSafari) {
+            setTimeout(function() { window._showInstallBanner('ios'); }, 4000);
+          }
+        }
+      });
+
+      window._showInstallBanner = function(type) {
+        var banner = document.getElementById('pwa-install-banner');
+        var androidRow = document.getElementById('pwa-android-row');
+        var iosRow = document.getElementById('pwa-ios-row');
+        if (!banner) return;
+        if (type === 'ios' && iosRow) {
+          iosRow.style.display = 'block';
+          banner.style.display = 'block';
+        } else if (type === 'android' && androidRow) {
+          androidRow.style.display = 'flex';
+          banner.style.display = 'block';
+        }
+      };
+
+      window._installPWA = function() {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(function(result) {
+            console.log('[WorkBee] PWA install:', result.outcome);
+            deferredPrompt = null;
+            window._dismissInstall();
+          });
+        }
+      };
+
+      window._dismissInstall = function() {
+        var b = document.getElementById('pwa-install-banner');
+        if (b) b.style.display = 'none';
+        deferredPrompt = null;
+        // Remember dismissed for 24h
+        try { sessionStorage.setItem('pwa_dismissed', '1'); } catch(e) {}
+      };
+    </script>
+<script src="js/auth.js"></script>`n</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

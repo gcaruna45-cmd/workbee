@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard | WorkBee.lk</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#F59E0B">
+    <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background: #0f172a;
+            color: #f8fafc;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .dashboard-layout {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 24px 16px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 768px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        .profile-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 24px;
+            height: fit-content;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #F59E0B 0%, #d97706 100%);
+            color: #0f172a;
+            font-size: 2.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+        }
+        .status-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0f172a;
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-top: 16px;
+            border: 1px solid #334155;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .status-available { background: rgba(34,197,94,0.2); color: #4ade80; border: 1px solid #22c55e; }
+        .status-busy { background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid #ef4444; }
+
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .section-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .job-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        @media (max-width: 576px) {
+            .job-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        .job-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #F59E0B;
+            margin-bottom: 6px;
+        }
+        .job-meta {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .btn-apply {
+            background: #F59E0B;
+            color: #0f172a;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-apply:hover {
+            background: #d97706;
+        }
+        .btn-applied {
+            background: #334155;
+            color: #94a3b8;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: default;
+        }
+        .admin-managed-banner {
+            background: rgba(245,158,11,0.1);
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            color: #F59E0B;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header style="background:#1e293b;border-bottom:1px solid #334155;padding:14px 24px;">
+        <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
+            <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:white;">
+                <img src="assets/icons/icon-72.png" style="width:36px;height:36px;border-radius:8px;" alt="WorkBee">
+                <span style="font-weight:700;font-size:1.2rem;color:#F59E0B;">WorkBee.lk</span>
+            </a>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <span style="font-size:0.9rem;color:#cbd5e1;" id="header-user-name">Worker Portal</span>
+                <button onclick="Auth.logout()" style="background:#ef4444;color:white;border:none;padding:6px 14px;border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;">
+                    🚪 Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="dashboard-layout">
+        
+        <!-- Left: Profile Info -->
+        <div class="profile-card">
+            <div class="profile-avatar" id="worker-avatar">W</div>
+            <h2 style="text-align:center;font-size:1.2rem;font-weight:700;margin-bottom:4px;" id="worker-name">Loading...</h2>
+            <p style="text-align:center;font-size:0.85rem;color:#F59E0B;font-weight:600;margin-bottom:16px;" id="worker-skill">Skill</p>
+
+            <div style="border-top:1px solid #334155;padding-top:16px;font-size:0.85rem;display:flex;flex-direction:column;gap:10px;">
+                <div>📍 <strong>District:</strong> <span id="worker-district" style="color:#cbd5e1;">-</span></div>
+                <div>📞 <strong>Phone:</strong> <span id="worker-phone" style="color:#cbd5e1;">-</span></div>
+                <div>💵 <strong>Daily Rate:</strong> <span id="worker-rate" style="color:#4ade80;font-weight:700;">-</span></div>
+            </div>
+
+            <!-- Availability Toggle -->
+            <div class="status-toggle">
+                <span style="font-size:0.85rem;font-weight:600;">Work Status</span>
+                <button id="status-btn" onclick="toggleStatus()" class="status-badge status-available">AVAILABLE</button>
+            </div>
+        </div>
+
+        <!-- Right: Job Opportunities -->
+        <div class="content-area">
+
+            <!-- Admin Notice Banner -->
+            <div class="admin-managed-banner">
+                <span style="font-size:1.4rem;">🛡️</span>
+                <div>
+                    <strong>WorkBee Official Dispatch System:</strong> All job confirmations and contacts are coordinated strictly by WorkBee Admin to ensure your payment security and safety.
+                </div>
+            </div>
+            
+            <!-- Matching Jobs -->
+            <div class="section-box">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                    <h3 style="font-size:1.1rem;font-weight:700;color:#F59E0B;">👷 Job Opportunities Matching Your Skill</h3>
+                    <span style="font-size:0.8rem;background:#0f172a;padding:4px 10px;border-radius:12px;color:#94a3b8;" id="job-count">0 Jobs</span>
+                </div>
+                <div id="job-list">
+                    <p style="color:#94a3b8;font-size:0.9rem;">Loading available jobs...</p>
+                </div>
+            </div>
+
+            <!-- My Applications -->
+            <div class="section-box">
+                <h3 style="font-size:1.1rem;font-weight:700;color:#F59E0B;margin-bottom:16px;">📋 My Job Applications</h3>
+                <div id="my-applications-list">
+                    <p style="color:#94a3b8;font-size:0.9rem;">You haven't applied to any jobs yet.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            currentUser = Auth.requireAuth(['worker']);
+            if (!currentUser) return;
+
+            renderProfile();
+            renderJobs();
+            renderApplications();
+        });
+
+        function renderProfile() {
+            const p = currentUser.profileData || {};
+            document.getElementById('header-user-name').innerText = p.fullName || currentUser.username;
+            document.getElementById('worker-name').innerText = p.fullName || currentUser.username;
+            document.getElementById('worker-skill').innerText = p.primarySkill || 'Worker';
+            document.getElementById('worker-district').innerText = p.district || 'Not specified';
+            document.getElementById('worker-phone').innerText = p.phone || '-';
+            document.getElementById('worker-rate').innerText = p.dailyRate ? 'LKR ' + p.dailyRate + '/day' : 'Negotiable';
+
+            const initials = (p.fullName || currentUser.username).charAt(0).toUpperCase();
+            document.getElementById('worker-avatar').innerText = initials;
+
+            updateStatusUI(p.availability !== 'busy');
+        }
+
+        function toggleStatus() {
+            let p = currentUser.profileData || {};
+            const isCurrentlyAvailable = p.availability !== 'busy';
+            p.availability = isCurrentlyAvailable ? 'busy' : 'available';
+            
+            currentUser.profileData = p;
+            localStorage.setItem(AUTH_KEYS.SESSION, JSON.stringify(currentUser));
+
+            let users = JSON.parse(localStorage.getItem(AUTH_KEYS.USERS) || '[]');
+            let uIdx = users.findIndex(u => u.id === currentUser.id);
+            if (uIdx !== -1) {
+                users[uIdx].profileData = p;
+                localStorage.setItem(AUTH_KEYS.USERS, JSON.stringify(users));
+            }
+
+            updateStatusUI(!isCurrentlyAvailable);
+        }
+
+        function updateStatusUI(isAvailable) {
+            const btn = document.getElementById('status-btn');
+            if (isAvailable) {
+                btn.className = 'status-badge status-available';
+                btn.innerText = 'AVAILABLE';
+            } else {
+                btn.className = 'status-badge status-busy';
+                btn.innerText = 'BUSY';
+            }
+        }
+
+        function renderJobs() {
+            const container = document.getElementById('job-list');
+            const postings = JSON.parse(localStorage.getItem(AUTH_KEYS.JOB_POSTINGS) || '[]');
+            const mySkill = (currentUser.profileData && currentUser.profileData.primarySkill) || '';
+            const applications = JSON.parse(localStorage.getItem(AUTH_KEYS.APPLICATIONS) || '[]');
+
+            const matching = postings.filter(p => !mySkill || p.skillRequired.toLowerCase().includes(mySkill.toLowerCase()) || mySkill.toLowerCase().includes(p.skillRequired.toLowerCase()));
+
+            document.getElementById('job-count').innerText = matching.length + ' Jobs Found';
+
+            if (matching.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:24px;color:#94a3b8;">
+                        <p style="font-size:1.2rem;margin-bottom:6px;">🔍 No jobs matching your skill right now.</p>
+                        <p style="font-size:0.85rem;">Check back soon as new requirements are posted!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = matching.map(job => {
+                const hasApplied = applications.some(a => a.jobId === job.id && a.workerUserId === currentUser.id);
+                return `
+                    <div class="job-card">
+                        <div>
+                            <div class="job-title">${job.skillRequired} Required (${job.workersNeeded} Workers)</div>
+                            <div class="job-meta">
+                                <span>🏢 WorkBee Client Request</span>
+                                <span>📍 Location: ${job.location || 'Location'}</span>
+                                <span>📅 Date: ${job.requiredDate || 'ASAP'}</span>
+                                <span>💵 Pay: LKR ${job.dailyPay || 'Standard'}/day</span>
+                            </div>
+                        </div>
+                        <div>
+                            ${hasApplied ? 
+                                `<button class="btn-applied">✓ Applied (Pending Admin)</button>` : 
+                                `<button class="btn-apply" onclick="applyJob('${job.id}')">Apply via Admin</button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function applyJob(jobId) {
+            let applications = JSON.parse(localStorage.getItem(AUTH_KEYS.APPLICATIONS) || '[]');
+            const newApp = {
+                id: 'app_' + Date.now(),
+                jobId: jobId,
+                workerUserId: currentUser.id,
+                workerName: (currentUser.profileData && currentUser.profileData.fullName) || currentUser.username,
+                workerPhone: (currentUser.profileData && currentUser.profileData.phone) || '',
+                workerSkill: (currentUser.profileData && currentUser.profileData.primarySkill) || '',
+                appliedAt: new Date().toISOString(),
+                status: 'Applied (Pending Admin Match)'
+            };
+
+            applications.push(newApp);
+            localStorage.setItem(AUTH_KEYS.APPLICATIONS, JSON.stringify(applications));
+
+            alert('Application submitted! WorkBee Admin will review your application and contact you for assignment.');
+            renderJobs();
+            renderApplications();
+        }
+
+        function renderApplications() {
+            const container = document.getElementById('my-applications-list');
+            const applications = JSON.parse(localStorage.getItem(AUTH_KEYS.APPLICATIONS) || '[]');
+            const postings = JSON.parse(localStorage.getItem(AUTH_KEYS.JOB_POSTINGS) || '[]');
+
+            const myApps = applications.filter(a => a.workerUserId === currentUser.id);
+
+            if (myApps.length === 0) {
+                container.innerHTML = `<p style="color:#94a3b8;font-size:0.85rem;">You haven't applied to any jobs yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = myApps.map(app => {
+                const job = postings.find(p => p.id === app.jobId) || {};
+                return `
+                    <div style="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <div style="font-weight:700;color:#F59E0B;font-size:0.95rem;">${job.skillRequired || 'Job Request'}</div>
+                            <div style="font-size:0.8rem;color:#94a3b8;">Location: ${job.location || '-'} | Applied: ${new Date(app.appliedAt).toLocaleDateString()}</div>
+                        </div>
+                        <span style="background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid #F59E0B;padding:4px 10px;border-radius:12px;font-size:0.75rem;font-weight:700;">${app.status.toUpperCase()}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
