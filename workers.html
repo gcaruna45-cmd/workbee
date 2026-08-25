@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -14,46 +14,46 @@
         #navbar .container { height: auto !important; min-height: 0 !important; padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
     </style>
     <!-- ===== PWA - Progressive Web App ===== -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="WorkBee">
     <meta name="application-name" content="WorkBee">
     <meta name="msapplication-TileColor" content="#0f172a">
-    <meta name="msapplication-TileImage" content="/assets/icons/icon-144.png">
+    <meta name="msapplication-TileImage" content="assets/icons/icon-144.png">
     <meta name="theme-color" content="#F59E0B">
     <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="/assets/icons/icon-180.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/icon-152.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/icon-144.png">
-    <link rel="apple-touch-icon" sizes="128x128" href="/assets/icons/icon-128.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/icon-96.png">
+    <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/icon-152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/icons/icon-144.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="assets/icons/icon-128.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/icons/icon-96.png">
     <!-- ===== END PWA ===== -->
 </head>
 <body class="bg-slate-50 font-poppins text-slate-800">
     <!-- 1. Fixed Navbar -->
-    <nav class="navbar">
-        <div style="display: flex; align-items: center; gap: 14px; white-space: nowrap;">
-            <button onclick="window.history.back()" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap;">← Back</button>
-            <a href="index.html" class="logo-container" style="display: flex; align-items: center; gap: 14px; text-decoration: none;">
-                <img src="assets/logo.jpg" alt="WorkBee.lk Logo" style="height: 240px; width: 240px; border-radius: 50%; box-shadow: 0 4px 15px rgba(245,158,11,0.4); border: 4px solid #F59E0B; background: white; object-fit: contain; padding: 6px; flex-shrink: 0;">
-                <span class="logo-text" style="font-size: 2.8rem; font-weight: 800; color: white; white-space: nowrap;">WorkBee<span class="logo-ext" style="color: #F59E0B;">.lk</span></span>
+    <nav class="navbar" id="navbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button onclick="window.history.back()" class="btn-back" style="display: inline-flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; white-space: nowrap;">← Back</button>
+            <a href="index.html" class="logo-container">
+                <img src="assets/logo.jpg" alt="WorkBee.lk Logo" class="brand-logo-img" onerror="this.onerror=null; this.src='logo.jpg';">
+                <span class="logo-text">WorkBee<span class="logo-ext">.lk</span></span>
             </a>
         </div>
 
-        <div class="nav-links" style="display: flex; align-items: center; gap: 1.8rem; white-space: nowrap;">
-            <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(245,158,11,0.15); color: #F59E0B; padding: 6px 14px; border-radius: 8px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); white-space: nowrap;">🏠 Home</a>
-            <a href="workers.html" class="active" style="color: #F59E0B; font-weight: 700; white-space: nowrap;">Find Workers</a>
-            <a href="register-company.html" style="white-space: nowrap;">Post a Job</a>
-            <a href="index.html#sectors" style="white-space: nowrap;">About</a>
+        <div class="nav-links">
+            <a href="index.html">🏠 Home</a>
+            <a href="workers.html" class="active" style="color: #F59E0B; font-weight: 700;">Find Workers</a>
+            <a href="register-company.html">Post a Job</a>
+            <a href="register-worker.html">Join as Worker</a>
+            <a href="index.html#sectors">About</a>
         </div>
 
-        <div class="nav-actions" style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <a href="register-company.html" class="btn-primary" style="white-space: nowrap;">Request Workers</a>
-                <a href="register-worker.html" class="btn-dark" style="white-space: nowrap;">Join as Worker</a>
+        <div class="nav-actions">
+            <div id="nav-auth-container" style="display: flex; align-items: center; gap: 8px;">
+                <a href="login.html" style="background:#F59E0B;color:#0f172a;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.9rem;white-space: nowrap;">🔑 Login</a>
             </div>
             <div class="lang-switcher">
                 <button class="lang-btn active">EN</button>
@@ -62,11 +62,11 @@
             </div>
         </div>
 
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">☰</button>
     </nav>
 
     <!-- 2. Page Header -->
-    <header class="bg-slate-900 text-white pb-16 relative overflow-hidden" style="padding-top: 290px;">
+    <header class="bg-slate-900 text-white pb-12 relative overflow-hidden" style="padding-top: 96px;">
         <!-- Animated hex background -->
         <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#F59E0B 1px, transparent 1px); background-size: 20px 20px;"></div>
         
@@ -428,9 +428,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
                 <!-- Brand -->
                 <div>
-                    <a href="index.html" class="flex items-center gap-3 text-2xl font-bold text-white mb-4">
-                        <img src="assets/logo.jpg" alt="WorkBee.lk Logo" style="height: 240px; width: 240px; border-radius: 50%; border: 4px solid #F59E0B; background: white; object-fit: contain; padding: 6px; flex-shrink: 0;">
-                        <span class="text-white font-extrabold" style="font-size: 2.8rem;">WorkBee<span class="text-primary">.lk</span></span>
+                    <a href="index.html" class="logo-container" style="display: inline-flex; align-items: center; gap: 10px; text-decoration: none; margin-bottom: 12px;">
+                        <img src="assets/logo.jpg" alt="WorkBee.lk Logo" class="footer-logo-img" onerror="this.onerror=null; this.src='logo.jpg';">
+                        <span class="logo-text" style="font-size: 1.5rem;">WorkBee<span class="logo-ext">.lk</span></span>
                     </a>
                     <p class="text-slate-400 text-sm mb-6 leading-relaxed">Connecting reliable daily wage and contract workers with employers across Sri Lanka. Fast, verified, and secure.</p>
                 </div>
@@ -529,6 +529,20 @@
     </div>
     <!-- PWA Service Worker + Smart Install Detection -->
     <script>
+      function toggleMobileMenu() {
+        var nav = document.getElementById('navbar') || document.querySelector('.navbar');
+        if (nav) nav.classList.toggle('mobile-active');
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.navbar .nav-links a, .navbar .nav-actions a').forEach(function(link) {
+          link.addEventListener('click', function() {
+            var nav = document.getElementById('navbar') || document.querySelector('.navbar');
+            if (nav) nav.classList.remove('mobile-active');
+          });
+        });
+      });
+
       // Register Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {

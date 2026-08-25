@@ -1,32 +1,34 @@
-﻿// WorkBee.lk Service Worker - PWA Offline Support
+// WorkBee.lk Service Worker - PWA Offline Support
 // Version: 1.0.0
 
 const CACHE_NAME = 'workbee-v1';
-const OFFLINE_PAGE = '/index.html';
+const OFFLINE_PAGE = 'offline.html';
 
-// Files to cache for offline use
+// Files to cache for offline use (relative paths for GitHub Pages compatibility)
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/workers.html',
-  '/register-worker.html',
-  '/register-company.html',
-  '/login.html',
-  '/worker-dashboard.html',
-  '/company-dashboard.html',
-  '/js/auth.js',
-  '/admin.html',
-  '/css/main.css',
-  '/css/components.css',
-  '/js/admin.js',
-  '/js/forms.js',
-  '/js/main.js',
-  '/js/workers.js',
-  '/assets/logo.jpg',
-  '/assets/icons/icon-192.png',
-  '/assets/icons/icon-512.png',
-  '/manifest.json',
-  '/offline.html'
+  './',
+  'index.html',
+  'workers.html',
+  'register-worker.html',
+  'register-company.html',
+  'login.html',
+  'worker-dashboard.html',
+  'company-dashboard.html',
+  'admin.html',
+  'offline.html',
+  'manifest.json',
+  'css/main.css',
+  'css/components.css',
+  'css/forms.css',
+  'js/auth.js',
+  'js/admin.js',
+  'js/forms.js',
+  'js/main.js',
+  'js/workers.js',
+  'assets/logo.jpg',
+  'assets/logo.png',
+  'assets/icons/icon-192.png',
+  'assets/icons/icon-512.png'
 ];
 
 // ---- INSTALL: Cache static assets ----
@@ -125,8 +127,8 @@ self.addEventListener('push', function(event) {
   }
   var options = {
     body: data.body || 'New update from WorkBee.lk',
-    icon: '/assets/icons/icon-192.png',
-    badge: '/assets/icons/icon-72.png',
+    icon: 'assets/icons/icon-192.png',
+    badge: 'assets/icons/icon-72.png',
     vibrate: [200, 100, 200],
     data: { url: data.url || '/' },
     actions: [

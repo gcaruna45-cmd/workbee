@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -54,10 +54,38 @@
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 10px;
             text-decoration: none;
         }
         
+        .brand-logo-img {
+            height: 46px;
+            width: 46px;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(245,158,11,0.4);
+            border: 2px solid #F59E0B;
+            background: white;
+            object-fit: contain;
+            padding: 2px;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        .logo-container:hover .brand-logo-img {
+            transform: scale(1.05);
+        }
+        
+        .footer-logo-img {
+            height: 48px;
+            width: 48px;
+            border-radius: 50%;
+            border: 2px solid #F59E0B;
+            background: white;
+            object-fit: contain;
+            padding: 3px;
+            flex-shrink: 0;
+        }
+
         .logo-text {
             color: white;
             font-weight: 700;
@@ -148,7 +176,11 @@
             text-decoration: none;
             font-weight: 600;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.2s;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .btn-dark:hover {
@@ -171,7 +203,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 290px 5% 60px;
+            padding: 120px 5% 60px;
             overflow: hidden;
         }
 
@@ -960,44 +992,44 @@
         }
     </style>
     <!-- ===== PWA - Progressive Web App ===== -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="WorkBee">
     <meta name="application-name" content="WorkBee">
     <meta name="msapplication-TileColor" content="#0f172a">
-    <meta name="msapplication-TileImage" content="/assets/icons/icon-144.png">
+    <meta name="msapplication-TileImage" content="assets/icons/icon-144.png">
     <meta name="theme-color" content="#F59E0B">
     <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="/assets/icons/icon-180.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/icon-152.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/icon-144.png">
-    <link rel="apple-touch-icon" sizes="128x128" href="/assets/icons/icon-128.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/icon-96.png">
+    <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/icon-152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/icons/icon-144.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="assets/icons/icon-128.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/icons/icon-96.png">
     <!-- ===== END PWA ===== -->
 </head>
 <body>
 
     <!-- 1. Fixed Navbar -->
-    <nav class="navbar">
-        <a href="index.html" class="logo-container" style="display: flex; align-items: center; gap: 14px; text-decoration: none;">
-            <img src="assets/logo.jpg" alt="WorkBee.lk Logo" style="height: 240px; width: 240px; border-radius: 50%; box-shadow: 0 4px 15px rgba(245,158,11,0.4); border: 4px solid #F59E0B; background: white; object-fit: contain; padding: 6px; flex-shrink: 0;">
-            <span class="logo-text" style="font-size: 2.8rem; font-weight: 800; color: white; white-space: nowrap;">WorkBee<span class="logo-ext" style="color: #F59E0B;">.lk</span></span>
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="logo-container">
+            <img src="assets/logo.jpg" alt="WorkBee.lk Logo" class="brand-logo-img" onerror="this.onerror=null; this.src='logo.jpg';">
+            <span class="logo-text">WorkBee<span class="logo-ext">.lk</span></span>
         </a>
 
         <div class="nav-links">
-            <a href="index.html" class="active" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(245,158,11,0.15); color: #F59E0B; padding: 6px 14px; border-radius: 8px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); white-space: nowrap;">🏠 Home</a>
+            <a href="index.html" class="active" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(245,158,11,0.15); color: #F59E0B; padding: 6px 14px; border-radius: 8px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4);">🏠 Home</a>
             <a href="workers.html" data-i18n="nav.find_workers">Find Workers</a>
             <a href="register-company.html" data-i18n="nav.post_job">Post a Job</a>
+            <a href="register-worker.html" data-i18n="nav.join">Join as Worker</a>
             <a href="#sectors" data-i18n="nav.about">About</a>
         </div>
 
         <div class="nav-actions">
-            <div id="nav-auth-container" style="display: flex; align-items: center; gap: 10px;"><a href="register-company.html" class="btn-primary" data-i18n="btn.req_workers" style="white-space: nowrap;">Request Workers</a><a href="register-worker.html" class="btn-dark" data-i18n="btn.join_worker" style="white-space: nowrap;">Join as Worker</a><a href="login.html" style="background:#F59E0B;color:#0f172a;padding:8px 16px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.9rem;">🔑 Login</a></div>
-                <a href="register-company.html" class="btn-primary" data-i18n="btn.req_workers" style="white-space: nowrap;">Request Workers</a>
-                <a href="register-worker.html" class="btn-dark" data-i18n="btn.join_worker" style="white-space: nowrap;">Join as Worker</a>
+            <div id="nav-auth-container" style="display: flex; align-items: center; gap: 8px;">
+                <a href="login.html" style="background:#F59E0B;color:#0f172a;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.9rem;white-space: nowrap;">🔑 Login</a>
             </div>
             <div class="lang-switcher">
                 <button class="lang-btn active" data-lang="en">EN</button>
@@ -1006,7 +1038,7 @@
             </div>
         </div>
 
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">☰</button>
     </nav>
 
     <!-- 2. Hero Section -->
@@ -1292,9 +1324,9 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-col">
-                <a href="index.html" class="logo-container footer-logo" style="display: flex; align-items: center; gap: 14px; text-decoration: none; margin-bottom: 15px;">
-                    <img src="assets/logo.jpg" alt="WorkBee.lk Logo" style="height: 240px; width: 240px; border-radius: 50%; border: 4px solid #F59E0B; background: white; object-fit: contain; padding: 6px; flex-shrink: 0;">
-                    <span class="logo-text" style="font-size: 2.8rem; font-weight: 800; color: white;">WorkBee<span class="logo-ext" style="color: #F59E0B;">.lk</span></span>
+                <a href="index.html" class="logo-container footer-logo" style="display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 15px;">
+                    <img src="assets/logo.jpg" alt="WorkBee.lk Logo" class="footer-logo-img" onerror="this.onerror=null; this.src='logo.jpg';">
+                    <span class="logo-text" style="font-size: 1.6rem;">WorkBee<span class="logo-ext">.lk</span></span>
                 </a>
                 <p class="footer-desc" data-i18n="footer.desc">Sri Lanka's premier manpower matching platform, connecting businesses with verified skilled and general labor across all districts seamlessly and securely.</p>
                 <div class="social-links">
@@ -1351,11 +1383,23 @@
         </div>
     </footer>
 
-    <!-- Inline script for immediate interactions and init -->
     <script>
         function toggleMobileMenu() {
-            document.getElementById('navbar').classList.toggle('mobile-active');
+            const nav = document.getElementById('navbar') || document.querySelector('.navbar');
+            if (nav) {
+                nav.classList.toggle('mobile-active');
+            }
         }
+
+        // Close mobile menu when clicking nav links
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.navbar .nav-links a, .navbar .nav-actions a').forEach(link => {
+                link.addEventListener('click', () => {
+                    const nav = document.getElementById('navbar') || document.querySelector('.navbar');
+                    if (nav) nav.classList.remove('mobile-active');
+                });
+            });
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             // Stats Counter Animation

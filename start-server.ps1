@@ -3,7 +3,7 @@
 # Serves files from the WorkBee.lk folder on http://localhost:8080
 
 $port = 8080
-$root = "d:\po it GC ARUANA\ADD ONS\WorkBee.lk"
+$root = $PSScriptRoot
 
 $mimeTypes = @{
     ".html" = "text/html; charset=utf-8"
