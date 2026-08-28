@@ -864,6 +864,9 @@
                 <a class="nav-item" data-target="tab-broadcast">
                     <span>📡</span> Broadcast
                 </a>
+                <a class="nav-item" data-target="tab-backup">
+                    <span>💾</span> Backup & Restore
+                </a>
                 
                 <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
                     <div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; padding: 0 1rem; margin-bottom: 0.5rem; font-weight: 700; letter-spacing: 0.5px;">🌐 Visit Live Pages</div>
@@ -949,7 +952,11 @@
                             <span>🔍</span>
                             <input type="text" id="search-workers" placeholder="Search by name, ID, skill...">
                         </div>
-                        <button class="filter-btn" style="background: var(--green); color: white; border: none;">Export CSV</button>
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <button id="export-workers-btn" class="filter-btn" style="background: #10B981; color: white; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">📥 Export Excel</button>
+                            <button id="import-workers-btn" class="filter-btn" style="background: #3B82F6; color: white; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">📤 Import Excel</button>
+                            <input type="file" id="worker-file-input" accept=".xlsx, .xls, .csv" style="display: none;">
+                        </div>
                     </div>
                     
                     <div class="table-responsive">
@@ -978,8 +985,17 @@
 
                 <!-- 6. Companies Tab -->
                 <div class="tab-content" id="tab-companies">
-                    <div class="tab-header">
+                    <div class="tab-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                         <h2>Registered Partner Companies</h2>
+                        <div class="search-box">
+                            <span>🔍</span>
+                            <input type="text" id="search-companies" placeholder="Search by name, BRN, contact...">
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <button id="export-companies-btn" class="filter-btn" style="background: #10B981; color: white; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">📥 Export Excel</button>
+                            <button id="import-companies-btn" class="filter-btn" style="background: #3B82F6; color: white; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">📤 Import Excel</button>
+                            <input type="file" id="company-file-input" accept=".xlsx, .xls, .csv" style="display: none;">
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table id="companies-table">
@@ -1123,6 +1139,100 @@
                     </div>
                 </div>
 
+                <!-- 9. Backup & Restore Tab -->
+                <div class="tab-content" id="tab-backup">
+                    <div class="tab-header">
+                        <div>
+                            <h2 style="font-size: 1.4rem; color: #0F172A; margin-bottom: 4px;">💾 System Backup & Data Management</h2>
+                            <p style="color: #64748B; font-size: 0.875rem;">Export complete system backups, download multi-sheet Excel reports, or restore database safely.</p>
+                        </div>
+                    </div>
+
+                    <!-- Backup / Restore Cards Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                        
+                        <!-- Card 1: Full System Backup (JSON) -->
+                        <div class="panel-card" style="border: 2px solid #E2E8F0; border-radius: 12px; padding: 1.5rem; background: #FFFFFF; box-shadow: 0 2px 4px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                    <div style="width: 44px; height: 44px; background: #EFF6FF; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #3B82F6;">📦</div>
+                                    <div>
+                                        <h3 style="font-size: 1.1rem; color: #0F172A; margin: 0;">Full System Backup</h3>
+                                        <span style="font-size: 0.75rem; color: #64748B;">Complete JSON Snapshot</span>
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.85rem; color: #475569; margin-bottom: 16px; line-height: 1.5;">Downloads 100% of all data (Workers, Companies, Jobs, User Accounts, Postings, and Applications) in a single secure JSON file for total preservation.</p>
+                            </div>
+                            <button id="btn-export-full-json" class="btn-primary" style="background: #3B82F6; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
+                                <span>📥</span> Download Full Backup (.json)
+                            </button>
+                        </div>
+
+                        <!-- Card 2: Multi-Sheet Master Excel Report -->
+                        <div class="panel-card" style="border: 2px solid #E2E8F0; border-radius: 12px; padding: 1.5rem; background: #FFFFFF; box-shadow: 0 2px 4px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                    <div style="width: 44px; height: 44px; background: #ECFDF5; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #10B981;">📊</div>
+                                    <div>
+                                        <h3 style="font-size: 1.1rem; color: #0F172A; margin: 0;">Master Excel Database</h3>
+                                        <span style="font-size: 0.75rem; color: #64748B;">All-in-One Multi-Sheet (.xlsx)</span>
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.85rem; color: #475569; margin-bottom: 16px; line-height: 1.5;">Exports a single Excel spreadsheet containing separate dedicated sheets for <strong>Workers</strong>, <strong>Companies</strong>, <strong>Job Requirements</strong>, and <strong>Users</strong>.</p>
+                            </div>
+                            <button id="btn-export-master-excel" class="btn-primary" style="background: #10B981; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
+                                <span>📥</span> Export Master Excel (.xlsx)
+                            </button>
+                        </div>
+
+                        <!-- Card 3: Restore System Backup -->
+                        <div class="panel-card" style="border: 2px solid #FED7AA; border-radius: 12px; padding: 1.5rem; background: #FFFBEB; box-shadow: 0 2px 4px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                    <div style="width: 44px; height: 44px; background: #FEF3C7; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #D97706;">🔄</div>
+                                    <div>
+                                        <h3 style="font-size: 1.1rem; color: #0F172A; margin: 0;">Restore Backup</h3>
+                                        <span style="font-size: 0.75rem; color: #D97706; font-weight: 600;">Import & Restore Database</span>
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.85rem; color: #78350F; margin-bottom: 16px; line-height: 1.5;">Restore system data from a previously downloaded WorkBee JSON backup file or Master Excel Database with instant preview and confirmation.</p>
+                            </div>
+                            <button id="btn-restore-backup" class="btn-primary" style="background: #D97706; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
+                                <span>📤</span> Select Backup File to Restore
+                            </button>
+                            <input type="file" id="backup-file-input" accept=".json, .xlsx, .xls" style="display: none;">
+                        </div>
+
+                    </div>
+
+                    <!-- Bulk Excel Operations Panel -->
+                    <div class="panel-card" style="margin-top: 1.5rem; border-radius: 12px; border: 1px solid #E2E8F0; padding: 1.5rem; background: #F8FAFC;">
+                        <h4 style="font-size: 1rem; color: #0F172A; margin-bottom: 6px;">📑 Excel Quick Import & Export Tools</h4>
+                        <p style="font-size: 0.85rem; color: #64748B; margin-bottom: 16px;">Direct shortcuts to export records, import data, or download pre-formatted blank template files for preparing your spreadsheets.</p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+                            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 1rem;">
+                                <div style="font-weight: 700; color: #0F172A; margin-bottom: 8px; font-size: 0.9rem;">👷 Workers Data</div>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <button onclick="window.exportWorkersToExcel()" class="filter-btn" style="background: #10B981; color: white; border: none; font-size: 0.8rem; cursor: pointer;">📥 Export</button>
+                                    <button onclick="document.getElementById('worker-file-input').click()" class="filter-btn" style="background: #3B82F6; color: white; border: none; font-size: 0.8rem; cursor: pointer;">📤 Import</button>
+                                    <button id="btn-dl-worker-template" class="filter-btn" style="background: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; font-size: 0.8rem; cursor: pointer;">📄 Template</button>
+                                </div>
+                            </div>
+
+                            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 1rem;">
+                                <div style="font-weight: 700; color: #0F172A; margin-bottom: 8px; font-size: 0.9rem;">🏢 Companies Data</div>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <button onclick="window.exportCompaniesToExcel()" class="filter-btn" style="background: #10B981; color: white; border: none; font-size: 0.8rem; cursor: pointer;">📥 Export</button>
+                                    <button onclick="document.getElementById('company-file-input').click()" class="filter-btn" style="background: #3B82F6; color: white; border: none; font-size: 0.8rem; cursor: pointer;">📤 Import</button>
+                                    <button id="btn-dl-company-template" class="filter-btn" style="background: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; font-size: 0.8rem; cursor: pointer;">📄 Template</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </main>
     </div>
@@ -1131,7 +1241,8 @@
     <div id="toast-container"></div>
 
     <!-- Scripts -->
-    <script src="js/admin.js?v=61"></script>
+    <script src="js/xlsx.full.min.js"></script>
+    <script src="js/admin.js?v=63"></script>
     <!-- PWA Install Banner (Android + iOS smart detection) -->
     <div id="pwa-install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:white;padding:14px 16px;box-shadow:0 -4px 24px rgba(0,0,0,0.4);border-top:2px solid #F59E0B;">
       <!-- Android install row -->
