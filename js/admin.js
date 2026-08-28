@@ -1,4 +1,4 @@
-﻿// admin.js v60 - Full Clean Rewrite
+// admin.js v60 - Full Clean Rewrite
 
 document.addEventListener('DOMContentLoaded', function () {
     checkAuth();
@@ -109,6 +109,19 @@ function initAdmin() {
                 var target = item.getAttribute('data-target');
                 var targetEl = target ? document.getElementById(target) : null;
                 if (targetEl) targetEl.classList.add('active');
+
+                var titleEl = document.getElementById('current-section-title');
+                if (titleEl) {
+                    var titles = {
+                        'tab-workers': 'Workers',
+                        'tab-companies': 'Companies',
+                        'tab-requirements': 'Requirements',
+                        'tab-broadcast': 'Broadcast',
+                        'tab-backup': 'Backup & Restore'
+                    };
+                    if (titles[target]) titleEl.textContent = titles[target];
+                }
+
                 if (target === 'tab-workers') renderWorkers();
                 if (target === 'tab-companies') renderCompanies();
                 if (target === 'tab-requirements') renderRequirements();
@@ -118,6 +131,8 @@ function initAdmin() {
     }
     var si = document.getElementById('search-workers');
     if (si) si.addEventListener('input', function () { renderWorkers(this.value.trim().toLowerCase()); });
+    var sc = document.getElementById('search-companies');
+    if (sc) sc.addEventListener('input', function () { renderCompanies(this.value.trim().toLowerCase()); });
     var wf = document.getElementById('worker-filters');
     if (wf) {
         wf.addEventListener('click', function (e) {
@@ -131,8 +146,10 @@ function initAdmin() {
     }
     var bcp = document.getElementById('bc-preview-btn');
     if (bcp) bcp.onclick = function () { updateBroadcastPreview(); var r = document.getElementById('bc-preview-result'); if (r) r.style.display = 'block'; };
+    setupDataBackupHandlers();
     updateStats();
     renderWorkers();
+    renderCompanies();
     renderRequirements();
 }
 
@@ -265,25 +282,43 @@ window._DW = function (id) {
 window._approveWorker = window._AW;
 window._deleteWorker = window._DW;
 
-function renderCompanies() {
+function renderCompanies(q) {
     var tbody = document.getElementById('companies-tbody');
     if (!tbody) return;
     var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    if (q) {
+        var ql = q.toLowerCase();
+        cs = cs.filter(function (c) {
+            var n = (c.name || c.companyName || '').toLowerCase();
+            var b = (c.brn || c.regNumber || '').toLowerCase();
+            var ct = (c.contact || c.contactPerson || '').toLowerCase();
+            var p = (c.phone || '').toLowerCase();
+            var e = (c.email || '').toLowerCase();
+            var ci = (c.city || c.district || '').toLowerCase();
+            var ind = (c.industry || '').toLowerCase();
+            var cid = String(c.id || '').toLowerCase();
+            return n.indexOf(ql) !== -1 || b.indexOf(ql) !== -1 || ct.indexOf(ql) !== -1 || p.indexOf(ql) !== -1 || e.indexOf(ql) !== -1 || ci.indexOf(ql) !== -1 || ind.indexOf(ql) !== -1 || cid.indexOf(ql) !== -1;
+        });
+    }
     tbody.innerHTML = '';
-    if (!cs.length) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:#64748b;">No companies yet.</td></tr>'; return; }
+    if (!cs.length) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:#64748b;">No companies found.</td></tr>'; return; }
     for (var i = 0; i < cs.length; i++) {
         var c = cs[i]; var tr = document.createElement('tr');
-        var fd = c.date ? c.date.split('T')[0] : 'Today';
-        tr.innerHTML = '<td><strong>' + (c.name || 'Company') + '</strong></td><td>' + (c.brn || 'N/A') + '</td><td>' + (c.industry || 'General') + '</td><td>' + (c.contact || 'N/A') + '</td><td>' + (c.phone || 'N/A') + '</td><td>' + (c.email || 'N/A') + '</td><td>' + (c.city || 'N/A') + '</td><td><small>' + fd + '</small></td><td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;">' + (c.status || 'approved') + '</span></td><td><button style="background:#ef4444;color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;" onclick="window._DC(' + i + ')">Delete</button></td>';
+        var fd = c.date ? (c.date.indexOf('T') !== -1 ? c.date.split('T')[0] : c.date) : 'Today';
+        var compKey = String(c.id || c.name || i);
+        tr.innerHTML = '<td><strong>' + (c.name || c.companyName || 'Company') + '</strong></td><td>' + (c.brn || 'N/A') + '</td><td>' + (c.industry || 'General') + '</td><td>' + (c.contact || c.contactPerson || 'N/A') + '</td><td>' + (c.phone || 'N/A') + '</td><td>' + (c.email || 'N/A') + '</td><td>' + (c.city || 'N/A') + '</td><td><small>' + fd + '</small></td><td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-weight:600;">' + (c.status || 'approved') + '</span></td><td><button style="background:#ef4444;color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;" onclick="window._DC(\'' + compKey.replace(/'/g, "\\'") + '\')">Delete</button></td>';
         tbody.appendChild(tr);
     }
 }
-window._DC = function (idx) {
-    if (!confirm('Delete company?')) return;
+window._DC = function (id) {
+    if (!confirm('Delete this company record?')) return;
     var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
-    cs.splice(idx, 1);
+    cs = cs.filter(function (c) { return String(c.id || c.name) !== String(id); });
     localStorage.setItem('workbee_companies', JSON.stringify(cs));
-    renderCompanies(); updateStats(); showToast('Company deleted.', 'info');
+    var sc = document.getElementById('search-companies');
+    renderCompanies(sc ? sc.value.trim().toLowerCase() : '');
+    updateStats();
+    showToast('Company deleted.', 'info');
 };
 window._deleteCompany = window._DC;
 
@@ -576,3 +611,963 @@ window.renderRequirements = renderRequirements;
 window.renderWorkers = renderWorkers;
 window.renderCompanies = renderCompanies;
 window.showToast = showToast;
+
+// ==========================================
+// DATA BACKUP & EXCEL IMPORT / EXPORT SYSTEM
+// ==========================================
+
+function setupDataBackupHandlers() {
+    // Workers Export / Import
+    var expWBtn = document.getElementById('export-workers-btn');
+    if (expWBtn) expWBtn.onclick = function () { exportWorkersToExcel(); };
+
+    var impWBtn = document.getElementById('import-workers-btn');
+    var wFileInput = document.getElementById('worker-file-input');
+    if (impWBtn && wFileInput) {
+        impWBtn.onclick = function () { wFileInput.value = ''; wFileInput.click(); };
+        wFileInput.onchange = function () {
+            if (this.files && this.files[0]) importWorkersFromExcel(this.files[0]);
+        };
+    }
+
+    // Companies Export / Import
+    var expCBtn = document.getElementById('export-companies-btn');
+    if (expCBtn) expCBtn.onclick = function () { exportCompaniesToExcel(); };
+
+    var impCBtn = document.getElementById('import-companies-btn');
+    var cFileInput = document.getElementById('company-file-input');
+    if (impCBtn && cFileInput) {
+        impCBtn.onclick = function () { cFileInput.value = ''; cFileInput.click(); };
+        cFileInput.onchange = function () {
+            if (this.files && this.files[0]) importCompaniesFromExcel(this.files[0]);
+        };
+    }
+
+    // Full System Backup Export (JSON)
+    var expJsonBtn = document.getElementById('btn-export-full-json');
+    if (expJsonBtn) expJsonBtn.onclick = function () { exportFullSystemBackup(); };
+
+    // Master Excel Export (.xlsx)
+    var expMasterBtn = document.getElementById('btn-export-master-excel');
+    if (expMasterBtn) expMasterBtn.onclick = function () { exportMasterExcel(); };
+
+    // Full System Restore (JSON)
+    var restoreBtn = document.getElementById('btn-restore-backup');
+    var backupFileInput = document.getElementById('backup-file-input');
+    if (restoreBtn && backupFileInput) {
+        restoreBtn.onclick = function () { backupFileInput.value = ''; backupFileInput.click(); };
+        backupFileInput.onchange = function () {
+            if (this.files && this.files[0]) importFullSystemBackup(this.files[0]);
+        };
+    }
+
+    // Template downloads
+    var dlWTpl = document.getElementById('btn-dl-worker-template');
+    if (dlWTpl) dlWTpl.onclick = function () { downloadWorkerTemplate(); };
+
+    var dlCTpl = document.getElementById('btn-dl-company-template');
+    if (dlCTpl) dlCTpl.onclick = function () { downloadCompanyTemplate(); };
+}
+
+// 1. WORKERS EXCEL EXPORT
+function exportWorkersToExcel() {
+    var workers = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+    if (!workers.length) {
+        showToast('No worker records available to export!', 'error');
+        return;
+    }
+
+    var exportData = workers.map(function (w, idx) {
+        var fn = ((w.firstName || '') + ' ' + (w.lastName || w.name || w.fullName || '')).trim();
+        var skillsStr = Array.isArray(w.skills) ? w.skills.join(', ') : (w.skills || w.category || '');
+        var locsStr = Array.isArray(w.locations) ? w.locations.join(', ') : (w.locations || w.district || '');
+        var shiftsStr = Array.isArray(w.shifts) ? w.shifts.join(', ') : (w.shifts || 'Day');
+        var regDate = w.date ? (w.date.indexOf('T') !== -1 ? w.date.split('T')[0] : w.date) : new Date().toISOString().split('T')[0];
+
+        return {
+            'Worker ID': String(w.id || ('WB-' + (9000 + idx))),
+            'First Name': w.firstName || '',
+            'Last Name': w.lastName || '',
+            'Full Name': fn,
+            'NIC Number': w.nic || '',
+            'Primary Phone': w.phone || '',
+            'WhatsApp Number': w.whatsapp || w.phone || '',
+            'Age': w.age || '',
+            'Category': w.category || '',
+            'Experience (Years)': w.experience || 0,
+            'Skills': skillsStr,
+            'Districts / Locations': locsStr,
+            'Shifts': shiftsStr,
+            'Police Station': w.policeStation || '',
+            'Current Address': w.currentAddress || '',
+            'Permanent Address': w.permanentAddress || '',
+            'Next of Kin Name': w.nextOfKinName || '',
+            'Next of Kin Phone': w.nextOfKinPhone || '',
+            'Next of Kin Relationship': w.nextOfKinRelationship || '',
+            'Next of Kin Address': w.nextOfKinAddress || '',
+            'Notice Period': w.noticeperiod || 'Immediate',
+            'Status': w.status || 'approved',
+            'Registered Date': regDate
+        };
+    });
+
+    var dateStr = new Date().toISOString().split('T')[0];
+    if (window.XLSX) {
+        var ws = XLSX.utils.json_to_sheet(exportData);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Workers');
+        XLSX.writeFile(wb, 'WorkBee_Workers_' + dateStr + '.xlsx');
+        showToast('Workers exported to Excel successfully!', 'success');
+    } else {
+        downloadCSV(exportData, 'WorkBee_Workers_' + dateStr + '.csv');
+        showToast('Workers exported to CSV successfully!', 'success');
+    }
+}
+
+// 2. WORKERS EXCEL IMPORT
+function importWorkersFromExcel(file) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            var data = new Uint8Array(e.target.result);
+            var workbook = XLSX.read(data, { type: 'array' });
+            var firstSheetName = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[firstSheetName];
+            var json = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+            if (!json || !json.length) {
+                showToast('Selected file contains no data rows!', 'error');
+                return;
+            }
+
+            var existingWorkers = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+            var importedCount = 0;
+            var updatedCount = 0;
+
+            for (var i = 0; i < json.length; i++) {
+                var row = json[i];
+
+                var wid = getRowVal(row, ['Worker ID', 'WorkerID', 'ID', 'id', 'worker_id', 'Ref']);
+                var firstName = getRowVal(row, ['First Name', 'FirstName', 'firstName', 'fname', 'first_name']);
+                var lastName = getRowVal(row, ['Last Name', 'LastName', 'lastName', 'lname', 'last_name']);
+                var fullName = getRowVal(row, ['Full Name', 'FullName', 'fullName', 'Name', 'name']);
+                if (!firstName && fullName) {
+                    var parts = fullName.trim().split(' ');
+                    firstName = parts[0] || '';
+                    lastName = parts.slice(1).join(' ') || '';
+                }
+                var nic = getRowVal(row, ['NIC Number', 'NIC', 'nic', 'Nic', 'ID Number']);
+                var phone = String(getRowVal(row, ['Primary Phone', 'Phone', 'phone', 'Mobile', 'mobile', 'Contact'])).trim();
+                var whatsapp = String(getRowVal(row, ['WhatsApp Number', 'WhatsApp', 'whatsapp', 'wa_phone'])).trim() || phone;
+                var age = parseInt(getRowVal(row, ['Age', 'age'])) || 25;
+                var category = getRowVal(row, ['Category', 'category', 'Industry', 'industry']) || 'General';
+                var experience = parseInt(getRowVal(row, ['Experience (Years)', 'Experience', 'experience', 'exp'])) || 0;
+                
+                var rawSkills = getRowVal(row, ['Skills', 'skills', 'Skill', 'skill']);
+                var skills = Array.isArray(rawSkills) ? rawSkills : (rawSkills ? String(rawSkills).split(/[,;]/).map(function (s) { return s.trim(); }).filter(Boolean) : [category]);
+                
+                var rawLocs = getRowVal(row, ['Districts / Locations', 'Districts', 'Locations', 'district', 'districts', 'locations', 'location']);
+                var locations = Array.isArray(rawLocs) ? rawLocs : (rawLocs ? String(rawLocs).split(/[,;]/).map(function (s) { return s.trim(); }).filter(Boolean) : ['Colombo']);
+                
+                var rawShifts = getRowVal(row, ['Shifts', 'Shift', 'shifts', 'shift']);
+                var shifts = Array.isArray(rawShifts) ? rawShifts : (rawShifts ? String(rawShifts).split(/[,;/]/).map(function (s) { return s.trim(); }).filter(Boolean) : ['Day']);
+
+                var policeStation = getRowVal(row, ['Police Station', 'policeStation', 'police_station', 'Police']);
+                var currentAddress = getRowVal(row, ['Current Address', 'currentAddress', 'Address', 'address']);
+                var permanentAddress = getRowVal(row, ['Permanent Address', 'permanentAddress']) || currentAddress;
+                var nextOfKinName = getRowVal(row, ['Next of Kin Name', 'nextOfKinName', 'Kin Name', 'kinName']);
+                var nextOfKinPhone = getRowVal(row, ['Next of Kin Phone', 'nextOfKinPhone', 'Kin Phone', 'kinPhone']);
+                var nextOfKinRelationship = getRowVal(row, ['Next of Kin Relationship', 'nextOfKinRelationship', 'Kin Relationship', 'Relationship']);
+                var nextOfKinAddress = getRowVal(row, ['Next of Kin Address', 'nextOfKinAddress', 'Kin Address']);
+                var noticeperiod = getRowVal(row, ['Notice Period', 'noticeperiod', 'Notice']) || 'Immediate';
+                var status = String(getRowVal(row, ['Status', 'status']) || 'approved').toLowerCase();
+                var regDate = getRowVal(row, ['Registered Date', 'Date', 'date', 'registeredDate']) || new Date().toISOString();
+
+                if (!firstName && !lastName && !fullName && !phone && !nic) continue; // Skip blank rows
+
+                if (!wid) {
+                    wid = 'WB-' + (9000 + existingWorkers.length + i + 1);
+                }
+
+                // Match duplicate worker by ID or NIC or Phone
+                var matchIdx = -1;
+                for (var k = 0; k < existingWorkers.length; k++) {
+                    if (String(existingWorkers[k].id).toLowerCase() === String(wid).toLowerCase()) { matchIdx = k; break; }
+                    if (nic && existingWorkers[k].nic && String(existingWorkers[k].nic).toLowerCase() === String(nic).toLowerCase()) { matchIdx = k; break; }
+                    if (phone && existingWorkers[k].phone && String(existingWorkers[k].phone) === phone) { matchIdx = k; break; }
+                }
+
+                var workerObj = {
+                    id: wid,
+                    firstName: firstName || 'Worker',
+                    lastName: lastName || '',
+                    nic: nic || '',
+                    phone: phone || '',
+                    whatsapp: whatsapp || phone || '',
+                    age: age,
+                    category: category,
+                    experience: experience,
+                    skills: skills,
+                    locations: locations,
+                    shifts: shifts,
+                    policeStation: policeStation || '',
+                    currentAddress: currentAddress || '',
+                    permanentAddress: permanentAddress || '',
+                    nextOfKinName: nextOfKinName || '',
+                    nextOfKinPhone: nextOfKinPhone || '',
+                    nextOfKinRelationship: nextOfKinRelationship || '',
+                    nextOfKinAddress: nextOfKinAddress || '',
+                    noticeperiod: noticeperiod,
+                    status: status,
+                    date: regDate
+                };
+
+                if (matchIdx !== -1) {
+                    existingWorkers[matchIdx] = Object.assign({}, existingWorkers[matchIdx], workerObj);
+                    updatedCount++;
+                } else {
+                    existingWorkers.push(workerObj);
+                    importedCount++;
+                }
+            }
+
+            localStorage.setItem('workbee_worker_registrations', JSON.stringify(existingWorkers));
+            renderWorkers();
+            updateStats();
+            showToast('Workers Import: ' + importedCount + ' added, ' + updatedCount + ' updated.', 'success');
+        } catch (err) {
+            console.error('Worker import error:', err);
+            showToast('Failed to import Excel file: ' + err.message, 'error');
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+// 3. COMPANIES EXCEL EXPORT
+function exportCompaniesToExcel() {
+    var companies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    if (!companies.length) {
+        showToast('No company records available to export!', 'error');
+        return;
+    }
+
+    var exportData = companies.map(function (c, idx) {
+        var regDate = c.date ? (c.date.indexOf('T') !== -1 ? c.date.split('T')[0] : c.date) : new Date().toISOString().split('T')[0];
+        return {
+            'Company ID': String(c.id || ('C-' + (8000 + idx))),
+            'Company Name': c.name || c.companyName || '',
+            'BR Number': c.brn || c.regNumber || '',
+            'Industry': c.industry || 'General',
+            'Contact Person': c.contact || c.contactPerson || '',
+            'Phone Number': c.phone || '',
+            'Email Address': c.email || '',
+            'City / District': c.city || c.district || '',
+            'Status': c.status || 'approved',
+            'Registered Date': regDate
+        };
+    });
+
+    var dateStr = new Date().toISOString().split('T')[0];
+    if (window.XLSX) {
+        var ws = XLSX.utils.json_to_sheet(exportData);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Companies');
+        XLSX.writeFile(wb, 'WorkBee_Companies_' + dateStr + '.xlsx');
+        showToast('Companies exported to Excel successfully!', 'success');
+    } else {
+        downloadCSV(exportData, 'WorkBee_Companies_' + dateStr + '.csv');
+        showToast('Companies exported to CSV successfully!', 'success');
+    }
+}
+
+// 4. COMPANIES EXCEL IMPORT
+function importCompaniesFromExcel(file) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            var data = new Uint8Array(e.target.result);
+            var workbook = XLSX.read(data, { type: 'array' });
+            var firstSheetName = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[firstSheetName];
+            var json = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+            if (!json || !json.length) {
+                showToast('Selected file contains no data rows!', 'error');
+                return;
+            }
+
+            var existingCompanies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+            var importedCount = 0;
+            var updatedCount = 0;
+
+            for (var i = 0; i < json.length; i++) {
+                var row = json[i];
+                var cid = getRowVal(row, ['Company ID', 'CompanyID', 'ID', 'id', 'cid']);
+                var name = getRowVal(row, ['Company Name', 'CompanyName', 'name', 'Name', 'Company', 'company']);
+                var brn = getRowVal(row, ['BR Number', 'BRN', 'brn', 'regNumber', 'BR No', 'Registration Number']);
+                var industry = getRowVal(row, ['Industry', 'industry', 'Category', 'category']) || 'General';
+                var contact = getRowVal(row, ['Contact Person', 'contactPerson', 'contact', 'Contact', 'Person']);
+                var phone = String(getRowVal(row, ['Phone Number', 'Phone', 'phone', 'Mobile', 'mobile', 'Contact Phone'])).trim();
+                var email = getRowVal(row, ['Email Address', 'Email', 'email', 'E-mail']);
+                var city = getRowVal(row, ['City / District', 'City', 'city', 'District', 'district', 'Location']);
+                var status = String(getRowVal(row, ['Status', 'status']) || 'approved').toLowerCase();
+                var regDate = getRowVal(row, ['Registered Date', 'Date', 'date', 'registeredDate']) || new Date().toISOString();
+
+                if (!name) continue; // Skip empty rows
+
+                if (!cid) {
+                    cid = 'C-' + (8000 + existingCompanies.length + i + 1);
+                }
+
+                var matchIdx = -1;
+                for (var k = 0; k < existingCompanies.length; k++) {
+                    if (String(existingCompanies[k].id).toLowerCase() === String(cid).toLowerCase()) { matchIdx = k; break; }
+                    if (brn && existingCompanies[k].brn && String(existingCompanies[k].brn).toLowerCase() === String(brn).toLowerCase()) { matchIdx = k; break; }
+                    if (existingCompanies[k].name && String(existingCompanies[k].name).toLowerCase() === String(name).toLowerCase()) { matchIdx = k; break; }
+                }
+
+                var compObj = {
+                    id: cid,
+                    name: name,
+                    brn: brn || '',
+                    industry: industry,
+                    contact: contact || '',
+                    phone: phone || '',
+                    email: email || '',
+                    city: city || 'Colombo',
+                    status: status,
+                    date: regDate
+                };
+
+                if (matchIdx !== -1) {
+                    existingCompanies[matchIdx] = Object.assign({}, existingCompanies[matchIdx], compObj);
+                    updatedCount++;
+                } else {
+                    existingCompanies.push(compObj);
+                    importedCount++;
+                }
+            }
+
+            localStorage.setItem('workbee_companies', JSON.stringify(existingCompanies));
+            renderCompanies();
+            updateStats();
+            showToast('Companies Import: ' + importedCount + ' added, ' + updatedCount + ' updated.', 'success');
+        } catch (err) {
+            console.error('Company import error:', err);
+            showToast('Failed to import Excel file: ' + err.message, 'error');
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+// 5. FULL SYSTEM BACKUP (JSON EXPORT)
+function exportFullSystemBackup() {
+    var workers = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+    var companies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    var compRegs = JSON.parse(localStorage.getItem('workbee_company_registrations') || '[]');
+    var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+    var users = JSON.parse(localStorage.getItem('workbee_users') || '[]');
+    var postings = JSON.parse(localStorage.getItem('workbee_job_postings') || '[]');
+    var apps = JSON.parse(localStorage.getItem('workbee_job_applications') || '[]');
+
+    var backupPayload = {
+        system: 'WorkBee.lk',
+        version: '2.0',
+        exportedAt: new Date().toISOString(),
+        metadata: {
+            workersCount: workers.length,
+            companiesCount: companies.length,
+            requirementsCount: reqs.length,
+            usersCount: users.length,
+            jobPostingsCount: postings.length,
+            applicationsCount: apps.length
+        },
+        storage: {
+            workbee_worker_registrations: workers,
+            workbee_companies: companies,
+            workbee_company_registrations: compRegs,
+            workbee_requirements: reqs,
+            workbee_users: users,
+            workbee_job_postings: postings,
+            workbee_job_applications: apps
+        }
+    };
+
+    var blob = new Blob([JSON.stringify(backupPayload, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var dateStr = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    a.href = url;
+    a.download = 'WorkBee_Full_System_Backup_' + dateStr + '.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 500);
+    showToast('Full system backup downloaded successfully!', 'success');
+}
+
+// 6. MASTER MULTI-SHEET EXCEL EXPORT
+function exportMasterExcel() {
+    if (!window.XLSX) {
+        showToast('SheetJS library is not ready, please try again.', 'info');
+        return;
+    }
+    var wb = XLSX.utils.book_new();
+
+    // 1. Workers Sheet
+    var workers = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+    var workerRows = workers.map(function (w, idx) {
+        return {
+            'Worker ID': String(w.id || ('WB-' + (9000 + idx))),
+            'Full Name': ((w.firstName || '') + ' ' + (w.lastName || w.name || '')).trim(),
+            'NIC': w.nic || '',
+            'Phone': w.phone || '',
+            'WhatsApp': w.whatsapp || w.phone || '',
+            'Age': w.age || 25,
+            'Category': w.category || '',
+            'Experience (Yrs)': w.experience || 0,
+            'Skills': Array.isArray(w.skills) ? w.skills.join(', ') : (w.skills || ''),
+            'Districts': Array.isArray(w.locations) ? w.locations.join(', ') : (w.locations || ''),
+            'Shifts': Array.isArray(w.shifts) ? w.shifts.join(', ') : (w.shifts || ''),
+            'Police Station': w.policeStation || '',
+            'Current Address': w.currentAddress || '',
+            'Permanent Address': w.permanentAddress || '',
+            'Kin Name': w.nextOfKinName || '',
+            'Kin Phone': w.nextOfKinPhone || '',
+            'Kin Relationship': w.nextOfKinRelationship || '',
+            'Status': w.status || 'approved',
+            'Date': w.date || ''
+        };
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(workerRows), 'Workers');
+
+    // 2. Companies Sheet
+    var companies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    var companyRows = companies.map(function (c, idx) {
+        return {
+            'Company ID': String(c.id || ('C-' + (8000 + idx))),
+            'Company Name': c.name || c.companyName || '',
+            'BR Number': c.brn || '',
+            'Industry': c.industry || 'General',
+            'Contact Person': c.contact || '',
+            'Phone': c.phone || '',
+            'Email': c.email || '',
+            'City': c.city || '',
+            'Status': c.status || 'approved',
+            'Date': c.date || ''
+        };
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(companyRows), 'Companies');
+
+    // 3. Job Requirements Sheet
+    var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+    var reqRows = reqs.map(function (r) {
+        return {
+            'Job Ref#': String(r.id || ''),
+            'Company Name': r.company || '',
+            'Phone': r.phone || '',
+            'Industry': r.industry || '',
+            'Skills Needed': Array.isArray(r.skills) ? r.skills.join(', ') : (r.skills || ''),
+            'Workers Required': r.workersReq || 1,
+            'District': r.district || '',
+            'Town': r.town || '',
+            'From Date': r.fromDate || '',
+            'To Date': r.toDate || '',
+            'Daily Pay': r.payRate || 0,
+            'Total Pay': r.totalPay || 0,
+            'Shifts': Array.isArray(r.shifts) ? r.shifts.join('/') : (r.shifts || ''),
+            'Status': r.status || 'OPEN',
+            'Dispatched': r.dispatched ? 'YES' : 'NO'
+        };
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(reqRows), 'Job Requirements');
+
+    // 4. Users Sheet
+    var users = JSON.parse(localStorage.getItem('workbee_users') || '[]');
+    var userRows = users.map(function (u) {
+        return {
+            'User ID': u.id || '',
+            'Username': u.username || '',
+            'Role': u.role || '',
+            'Created Date': u.createdAt || ''
+        };
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(userRows), 'Users');
+
+    var dateStr = new Date().toISOString().split('T')[0];
+    XLSX.writeFile(wb, 'WorkBee_Master_Database_' + dateStr + '.xlsx');
+    showToast('Master Excel Database exported successfully!', 'success');
+}
+
+// 7. FULL SYSTEM RESTORE (JSON OR MASTER EXCEL IMPORT)
+function importFullSystemBackup(file) {
+    if (!file) return;
+    var fileName = file.name.toLowerCase();
+
+    if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                var data = new Uint8Array(e.target.result);
+                var workbook = XLSX.read(data, { type: 'array' });
+                var storage = {};
+                var wCount = 0, cCount = 0, rCount = 0, uCount = 0;
+
+                // 1. Workers Sheet
+                var workerSheetName = workbook.SheetNames.find(function (n) { return /worker/i.test(n); });
+                if (workerSheetName) {
+                    var wJson = XLSX.utils.sheet_to_json(workbook.Sheets[workerSheetName], { defval: '' });
+                    var workersList = [];
+                    for (var i = 0; i < wJson.length; i++) {
+                        var row = wJson[i];
+                        var wid = getRowVal(row, ['Worker ID', 'WorkerID', 'ID', 'id', 'Ref']);
+                        var firstName = getRowVal(row, ['First Name', 'FirstName', 'firstName', 'fname']);
+                        var lastName = getRowVal(row, ['Last Name', 'LastName', 'lastName', 'lname']);
+                        var fullName = getRowVal(row, ['Full Name', 'FullName', 'fullName', 'Name', 'name']);
+                        if (!firstName && fullName) {
+                            var parts = fullName.trim().split(' ');
+                            firstName = parts[0] || '';
+                            lastName = parts.slice(1).join(' ') || '';
+                        }
+                        var nic = getRowVal(row, ['NIC Number', 'NIC', 'nic', 'Nic']);
+                        var phone = String(getRowVal(row, ['Primary Phone', 'Phone', 'phone', 'Mobile', 'mobile'])).trim();
+                        var whatsapp = String(getRowVal(row, ['WhatsApp Number', 'WhatsApp', 'whatsapp', 'wa_phone'])).trim() || phone;
+                        var age = parseInt(getRowVal(row, ['Age', 'age'])) || 25;
+                        var category = getRowVal(row, ['Category', 'category', 'Industry', 'industry']) || 'General';
+                        var experience = parseInt(getRowVal(row, ['Experience (Years)', 'Experience (Yrs)', 'Experience', 'experience'])) || 0;
+                        var rawSkills = getRowVal(row, ['Skills', 'skills', 'Skill', 'skill']);
+                        var skills = Array.isArray(rawSkills) ? rawSkills : (rawSkills ? String(rawSkills).split(/[,;]/).map(function (s) { return s.trim(); }).filter(Boolean) : [category]);
+                        var rawLocs = getRowVal(row, ['Districts / Locations', 'Districts', 'Locations', 'district', 'districts']);
+                        var locations = Array.isArray(rawLocs) ? rawLocs : (rawLocs ? String(rawLocs).split(/[,;]/).map(function (s) { return s.trim(); }).filter(Boolean) : ['Colombo']);
+                        var rawShifts = getRowVal(row, ['Shifts', 'Shift', 'shifts', 'shift']);
+                        var shifts = Array.isArray(rawShifts) ? rawShifts : (rawShifts ? String(rawShifts).split(/[,;/]/).map(function (s) { return s.trim(); }).filter(Boolean) : ['Day']);
+                        var policeStation = getRowVal(row, ['Police Station', 'policeStation', 'police_station', 'Police']);
+                        var currentAddress = getRowVal(row, ['Current Address', 'currentAddress', 'Address', 'address']);
+                        var permanentAddress = getRowVal(row, ['Permanent Address', 'permanentAddress']) || currentAddress;
+                        var nextOfKinName = getRowVal(row, ['Next of Kin Name', 'nextOfKinName', 'Kin Name', 'kinName']);
+                        var nextOfKinPhone = getRowVal(row, ['Next of Kin Phone', 'nextOfKinPhone', 'Kin Phone', 'kinPhone']);
+                        var nextOfKinRelationship = getRowVal(row, ['Next of Kin Relationship', 'nextOfKinRelationship', 'Kin Relationship', 'Relationship']);
+                        var nextOfKinAddress = getRowVal(row, ['Next of Kin Address', 'nextOfKinAddress', 'Kin Address']);
+                        var noticeperiod = getRowVal(row, ['Notice Period', 'noticeperiod', 'Notice']) || 'Immediate';
+                        var status = String(getRowVal(row, ['Status', 'status']) || 'approved').toLowerCase();
+                        var regDate = getRowVal(row, ['Registered Date', 'Date', 'date', 'registeredDate']) || new Date().toISOString();
+
+                        if (!firstName && !lastName && !fullName && !phone && !nic) continue;
+                        if (!wid) wid = 'WB-' + (9000 + i + 1);
+
+                        workersList.push({
+                            id: wid,
+                            firstName: firstName || 'Worker',
+                            lastName: lastName || '',
+                            nic: nic || '',
+                            phone: phone || '',
+                            whatsapp: whatsapp || phone || '',
+                            age: age,
+                            category: category,
+                            experience: experience,
+                            skills: skills,
+                            locations: locations,
+                            shifts: shifts,
+                            policeStation: policeStation || '',
+                            currentAddress: currentAddress || '',
+                            permanentAddress: permanentAddress || '',
+                            nextOfKinName: nextOfKinName || '',
+                            nextOfKinPhone: nextOfKinPhone || '',
+                            nextOfKinRelationship: nextOfKinRelationship || '',
+                            nextOfKinAddress: nextOfKinAddress || '',
+                            noticeperiod: noticeperiod,
+                            status: status,
+                            date: regDate
+                        });
+                    }
+                    if (workersList.length) {
+                        storage.workbee_worker_registrations = workersList;
+                        wCount = workersList.length;
+                    }
+                }
+
+                // 2. Companies Sheet
+                var compSheetName = workbook.SheetNames.find(function (n) { return /compan/i.test(n); });
+                if (compSheetName) {
+                    var cJson = XLSX.utils.sheet_to_json(workbook.Sheets[compSheetName], { defval: '' });
+                    var companiesList = [];
+                    for (var i = 0; i < cJson.length; i++) {
+                        var row = cJson[i];
+                        var cid = getRowVal(row, ['Company ID', 'CompanyID', 'ID', 'id', 'cid']);
+                        var name = getRowVal(row, ['Company Name', 'CompanyName', 'name', 'Name', 'Company', 'company']);
+                        var brn = getRowVal(row, ['BR Number', 'BRN', 'brn', 'regNumber', 'BR No', 'Registration Number']);
+                        var industry = getRowVal(row, ['Industry', 'industry', 'Category', 'category']) || 'General';
+                        var contact = getRowVal(row, ['Contact Person', 'contactPerson', 'contact', 'Contact', 'Person']);
+                        var phone = String(getRowVal(row, ['Phone Number', 'Phone', 'phone', 'Mobile', 'mobile', 'Contact Phone'])).trim();
+                        var email = getRowVal(row, ['Email Address', 'Email', 'email', 'E-mail']);
+                        var city = getRowVal(row, ['City / District', 'City', 'city', 'District', 'district', 'Location']);
+                        var status = String(getRowVal(row, ['Status', 'status']) || 'approved').toLowerCase();
+                        var regDate = getRowVal(row, ['Registered Date', 'Date', 'date', 'registeredDate']) || new Date().toISOString();
+
+                        if (!name) continue;
+                        if (!cid) cid = 'C-' + (8000 + i + 1);
+
+                        companiesList.push({
+                            id: cid,
+                            name: name,
+                            brn: brn || '',
+                            industry: industry,
+                            contact: contact || '',
+                            phone: phone || '',
+                            email: email || '',
+                            city: city || 'Colombo',
+                            status: status,
+                            date: regDate
+                        });
+                    }
+                    if (companiesList.length) {
+                        storage.workbee_companies = companiesList;
+                        cCount = companiesList.length;
+                    }
+                }
+
+                // 3. Job Requirements Sheet
+                var reqSheetName = workbook.SheetNames.find(function (n) { return /req|job/i.test(n); });
+                if (reqSheetName) {
+                    var rJson = XLSX.utils.sheet_to_json(workbook.Sheets[reqSheetName], { defval: '' });
+                    var reqsList = [];
+                    for (var i = 0; i < rJson.length; i++) {
+                        var row = rJson[i];
+                        var rid = getRowVal(row, ['Job Ref#', 'Job Ref', 'Ref#', 'ID', 'id', 'Ref', 'Job ID']);
+                        var compName = getRowVal(row, ['Company Name', 'Company', 'company']);
+                        var phone = getRowVal(row, ['Phone', 'phone']);
+                        var industry = getRowVal(row, ['Industry', 'industry']);
+                        var rawSkills = getRowVal(row, ['Skills Needed', 'Skills', 'skills']);
+                        var skills = Array.isArray(rawSkills) ? rawSkills : (rawSkills ? String(rawSkills).split(/[,;]/).map(function (s) { return s.trim(); }).filter(Boolean) : [industry || 'General']);
+                        var workersReq = parseInt(getRowVal(row, ['Workers Required', 'Workers Req', 'WorkersReq', 'workersReq'])) || 1;
+                        var district = getRowVal(row, ['District', 'district', 'Location', 'location']);
+                        var town = getRowVal(row, ['Town', 'town']) || district;
+                        var fromDate = getRowVal(row, ['From Date', 'fromDate', 'Start Date']);
+                        var toDate = getRowVal(row, ['To Date', 'toDate', 'End Date']);
+                        var payRate = parseFloat(getRowVal(row, ['Daily Pay', 'DailyPay', 'payRate', 'Pay Rate'])) || 0;
+                        var totalPay = parseFloat(getRowVal(row, ['Total Pay', 'TotalPay', 'totalPay'])) || (payRate * 1);
+                        var rawShifts = getRowVal(row, ['Shifts', 'Shift', 'shifts', 'shift']);
+                        var shifts = Array.isArray(rawShifts) ? rawShifts : (rawShifts ? String(rawShifts).split(/[,;/]/).map(function (s) { return s.trim(); }).filter(Boolean) : ['Day']);
+                        var status = String(getRowVal(row, ['Status', 'status']) || 'OPEN').toUpperCase();
+                        var dispatched = String(getRowVal(row, ['Dispatched', 'dispatched'])).toUpperCase() === 'YES' || String(getRowVal(row, ['Dispatched', 'dispatched'])).toLowerCase() === 'true';
+
+                        if (!compName && !rid) continue;
+                        if (!rid) rid = 'JOB-' + (4000 + i + 1);
+
+                        reqsList.push({
+                            id: rid,
+                            company: compName || 'Client',
+                            phone: phone || '',
+                            industry: industry || 'General',
+                            skills: skills,
+                            workersReq: workersReq,
+                            district: district || 'Colombo',
+                            town: town || 'Colombo',
+                            fromDate: fromDate || '',
+                            toDate: toDate || '',
+                            payRate: payRate,
+                            totalPay: totalPay,
+                            shifts: shifts,
+                            status: status,
+                            dispatched: dispatched
+                        });
+                    }
+                    if (reqsList.length) {
+                        storage.workbee_requirements = reqsList;
+                        rCount = reqsList.length;
+                    }
+                }
+
+                // 4. Users Sheet
+                var userSheetName = workbook.SheetNames.find(function (n) { return /user/i.test(n); });
+                if (userSheetName) {
+                    var uJson = XLSX.utils.sheet_to_json(workbook.Sheets[userSheetName], { defval: '' });
+                    var usersList = [];
+                    for (var i = 0; i < uJson.length; i++) {
+                        var row = uJson[i];
+                        var uid = getRowVal(row, ['User ID', 'UserID', 'ID', 'id']);
+                        var username = getRowVal(row, ['Username', 'username', 'User', 'Name', 'name']);
+                        var role = getRowVal(row, ['Role', 'role']) || 'user';
+                        var createdAt = getRowVal(row, ['Created Date', 'Date', 'createdAt']) || new Date().toISOString();
+                        if (!username) continue;
+                        usersList.push({
+                            id: uid || ('U-' + (1000 + i + 1)),
+                            username: username,
+                            role: role,
+                            createdAt: createdAt
+                        });
+                    }
+                    if (usersList.length) {
+                        storage.workbee_users = usersList;
+                        uCount = usersList.length;
+                    }
+                }
+
+                if (!wCount && !cCount && !rCount && !uCount) {
+                    showToast('The selected Excel file contains no recognized WorkBee sheets or data!', 'error');
+                    return;
+                }
+
+                window._showBackupRestoreModal(storage, {
+                    date: 'Excel Master Database (' + file.name + ')',
+                    workers: wCount,
+                    companies: cCount,
+                    requirements: rCount,
+                    users: uCount
+                });
+            } catch (err) {
+                console.error('Excel backup restore error:', err);
+                showToast('Failed to parse Excel backup file: ' + err.message, 'error');
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    } else {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                var content = JSON.parse(e.target.result);
+                var storage = content.storage || content.data || content;
+
+                if (!storage.workbee_worker_registrations && !storage.workbee_companies && !storage.workbee_requirements) {
+                    showToast('Invalid backup file format! Missing WorkBee database collections.', 'error');
+                    return;
+                }
+
+                var wCount = (storage.workbee_worker_registrations || []).length;
+                var cCount = (storage.workbee_companies || []).length;
+                var rCount = (storage.workbee_requirements || []).length;
+                var uCount = (storage.workbee_users || []).length;
+                var bDate = content.exportedAt ? new Date(content.exportedAt).toLocaleString() : 'Unknown Date';
+
+                window._showBackupRestoreModal(storage, {
+                    date: bDate,
+                    workers: wCount,
+                    companies: cCount,
+                    requirements: rCount,
+                    users: uCount
+                });
+            } catch (err) {
+                console.error('Backup restore error:', err);
+                showToast('Failed to parse backup JSON file: ' + err.message, 'error');
+            }
+        };
+        reader.readAsText(file);
+    }
+}
+
+// Modal for backup restore confirmation
+window._showBackupRestoreModal = function (storage, meta) {
+    var old = document.getElementById('wb-restore-modal');
+    if (old) old.parentNode.removeChild(old);
+
+    var ov = document.createElement('div');
+    ov.id = 'wb-restore-modal';
+    ov.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.88);z-index:999999;overflow-y:auto;padding:30px 20px;';
+    var bx = document.createElement('div');
+    bx.style.cssText = 'background:#fff;border-radius:16px;max-width:540px;width:100%;margin:40px auto 0;padding:28px;box-shadow:0 25px 50px rgba(0,0,0,0.4);position:relative;border:2px solid #F59E0B;';
+
+    bx.innerHTML = '<button onclick="window._closeRestoreModal()" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.8rem;cursor:pointer;color:#64748b;">&times;</button>' +
+        '<div style="text-align:center;margin-bottom:16px;">' +
+        '<div style="width:60px;height:60px;background:#FEF3C7;color:#D97706;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 12px;">🔄</div>' +
+        '<h2 style="color:#0f172a;margin:0 0 6px;">Restore System Backup</h2>' +
+        '<p style="color:#64748b;font-size:0.85rem;margin:0;">Backup Exported: <strong>' + meta.date + '</strong></p>' +
+        '</div>' +
+        '<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:14px;margin-bottom:16px;font-size:0.85rem;color:#334155;">' +
+        '<div style="font-weight:700;margin-bottom:8px;color:#0F172A;">📦 Backup Contents:</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">' +
+        '<div>👷 Workers: <strong>' + meta.workers + '</strong></div>' +
+        '<div>🏢 Companies: <strong>' + meta.companies + '</strong></div>' +
+        '<div>📋 Job Reqs: <strong>' + meta.requirements + '</strong></div>' +
+        '<div>👤 Users: <strong>' + meta.users + '</strong></div>' +
+        '</div></div>' +
+        '<p style="font-size:0.85rem;color:#B45309;background:#FFFBEB;border:1px solid #FDE68A;padding:10px;border-radius:8px;margin-bottom:18px;">⚠️ <strong>Caution:</strong> Choosing "Replace All" will overwrite existing records with this backup.</p>' +
+        '<div style="display:flex;flex-direction:column;gap:10px;">' +
+        '<button id="btn-confirm-replace-restore" style="padding:12px;background:#D97706;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;font-size:0.95rem;">Replace Current Database (Full Overwrite)</button>' +
+        '<button id="btn-confirm-merge-restore" style="padding:12px;background:#10B981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;font-size:0.95rem;">Merge with Existing Data</button>' +
+        '<button onclick="window._closeRestoreModal()" style="padding:10px;background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;border-radius:8px;font-weight:600;cursor:pointer;">Cancel</button>' +
+        '</div>';
+
+    ov.appendChild(bx);
+    document.body.appendChild(ov);
+
+    document.getElementById('btn-confirm-replace-restore').onclick = function () {
+        window._executeRestore(storage, false);
+    };
+    document.getElementById('btn-confirm-merge-restore').onclick = function () {
+        window._executeRestore(storage, true);
+    };
+};
+
+window._closeRestoreModal = function () {
+    var m = document.getElementById('wb-restore-modal');
+    if (m) m.parentNode.removeChild(m);
+};
+
+window._executeRestore = function (storage, isMerge) {
+    try {
+        var keys = Object.keys(storage);
+        for (var i = 0; i < keys.length; i++) {
+            var k = keys[i];
+            var val = storage[k];
+            if (!val) continue;
+
+            if (isMerge && Array.isArray(val)) {
+                var current = JSON.parse(localStorage.getItem(k) || '[]');
+                var merged = current.slice();
+                for (var j = 0; j < val.length; j++) {
+                    var item = val[j];
+                    var exists = false;
+                    for (var x = 0; x < current.length; x++) {
+                        if ((item.id && current[x].id && String(item.id) === String(current[x].id)) ||
+                            (item.username && current[x].username && item.username === current[x].username) ||
+                            (item.nic && current[x].nic && item.nic === current[x].nic)) {
+                            exists = true;
+                            merged[x] = Object.assign({}, current[x], item);
+                            break;
+                        }
+                    }
+                    if (!exists) merged.push(item);
+                }
+                localStorage.setItem(k, JSON.stringify(merged));
+            } else {
+                localStorage.setItem(k, JSON.stringify(val));
+            }
+        }
+
+        window._closeRestoreModal();
+        renderWorkers();
+        renderCompanies();
+        renderRequirements();
+        updateStats();
+        updateBroadcastPreview();
+        showToast(isMerge ? 'Data successfully merged from backup!' : 'Database completely restored from backup!', 'success');
+    } catch (err) {
+        console.error('Execution error during restore:', err);
+        showToast('Restore failed: ' + err.message, 'error');
+    }
+};
+
+// 8. TEMPLATE DOWNLOADS
+function downloadWorkerTemplate() {
+    var sampleRows = [
+        {
+            'Worker ID': 'WB-9001',
+            'First Name': 'Kamal',
+            'Last Name': 'Perera',
+            'Full Name': 'Kamal Perera',
+            'NIC Number': '912345678V',
+            'Primary Phone': '0771234567',
+            'WhatsApp Number': '0771234567',
+            'Age': 32,
+            'Category': 'Construction',
+            'Experience (Years)': 5,
+            'Skills': 'Masonry, Construction Helper',
+            'Districts / Locations': 'Colombo, Gampaha',
+            'Shifts': 'Day',
+            'Police Station': 'Maharagama',
+            'Current Address': 'No. 12, High Level Rd, Maharagama',
+            'Permanent Address': 'No. 12, High Level Rd, Maharagama',
+            'Next of Kin Name': 'Sunethra Perera',
+            'Next of Kin Phone': '0779988776',
+            'Next of Kin Relationship': 'Spouse',
+            'Next of Kin Address': 'No. 12, High Level Rd, Maharagama',
+            'Notice Period': 'Immediate',
+            'Status': 'approved',
+            'Registered Date': '2026-08-28'
+        }
+    ];
+
+    if (window.XLSX) {
+        var ws = XLSX.utils.json_to_sheet(sampleRows);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Workers Template');
+        XLSX.writeFile(wb, 'WorkBee_Workers_Import_Template.xlsx');
+    } else {
+        downloadCSV(sampleRows, 'WorkBee_Workers_Import_Template.csv');
+    }
+    showToast('Workers Excel template downloaded!', 'success');
+}
+
+function downloadCompanyTemplate() {
+    var sampleRows = [
+        {
+            'Company ID': 'C-8001',
+            'Company Name': 'ABC Construction Ltd',
+            'BR Number': 'PV12345',
+            'Industry': 'Construction',
+            'Contact Person': 'Saman Perera',
+            'Phone Number': '0112345678',
+            'Email Address': 'info@abc.com',
+            'City / District': 'Colombo',
+            'Status': 'approved',
+            'Registered Date': '2026-08-28'
+        }
+    ];
+
+    if (window.XLSX) {
+        var ws = XLSX.utils.json_to_sheet(sampleRows);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Companies Template');
+        XLSX.writeFile(wb, 'WorkBee_Companies_Import_Template.xlsx');
+    } else {
+        downloadCSV(sampleRows, 'WorkBee_Companies_Import_Template.csv');
+    }
+    showToast('Companies Excel template downloaded!', 'success');
+}
+
+// 9. HELPER FUNCTIONS
+function getRowVal(row, possibleKeys) {
+    if (!row || !possibleKeys) return '';
+    var rowKeys = Object.keys(row);
+    for (var i = 0; i < possibleKeys.length; i++) {
+        var pk = possibleKeys[i].toLowerCase().replace(/[^a-z0-9]/g, '');
+        for (var j = 0; j < rowKeys.length; j++) {
+            var rk = rowKeys[j].toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (rk === pk) {
+                var val = row[rowKeys[j]];
+                return val !== undefined && val !== null ? val : '';
+            }
+        }
+    }
+    return '';
+}
+
+function downloadCSV(dataArray, filename) {
+    if (!dataArray || !dataArray.length) return;
+    var headers = Object.keys(dataArray[0]);
+    var csvContent = headers.join(',') + '\n';
+    for (var i = 0; i < dataArray.length; i++) {
+        var row = dataArray[i];
+        var rowStr = headers.map(function (h) {
+            var val = String(row[h] || '').replace(/"/g, '""');
+            return '"' + val + '"';
+        }).join(',');
+        csvContent += rowStr + '\n';
+    }
+    var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 500);
+}
+
+// Global window exposure
+window.exportWorkersToExcel = exportWorkersToExcel;
+window.importWorkersFromExcel = importWorkersFromExcel;
+window.exportCompaniesToExcel = exportCompaniesToExcel;
+window.importCompaniesFromExcel = importCompaniesFromExcel;
+window.exportFullSystemBackup = exportFullSystemBackup;
+window.exportMasterExcel = exportMasterExcel;
+window.importFullSystemBackup = importFullSystemBackup;
+window.downloadWorkerTemplate = downloadWorkerTemplate;
+window.downloadCompanyTemplate = downloadCompanyTemplate;
