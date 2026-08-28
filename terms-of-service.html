@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | WorkBee.lk</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/icons/icon-192.png">
+    
+    <style>
+        :root {
+            --primary: #F59E0B;
+            --primary-dark: #D97706;
+            --dark: #0F172A;
+            --slate: #1E293B;
+            --surface: #F8FAFC;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #0B1120;
+            color: var(--text-main);
+            line-height: 1.7;
+            padding-bottom: 60px;
+        }
+
+        /* Top Bar */
+        .doc-topbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .doc-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .doc-brand img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+        }
+
+        .doc-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lang-switch-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-switch-btn.active {
+            background: var(--primary);
+            color: #0F172A;
+            border-color: var(--primary);
+        }
+
+        .btn-print {
+            background: #10B981;
+            color: #FFFFFF;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .btn-print:hover {
+            background: #059669;
+        }
+
+        .btn-back {
+            background: transparent;
+            color: #94A3B8;
+            border: 1px solid #334155;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            color: #FFFFFF;
+            border-color: #64748B;
+        }
+
+        /* Document Container */
+        .doc-wrapper {
+            max-width: 860px;
+            margin: 40px auto 0;
+            padding: 0 20px;
+        }
+
+        .doc-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 50px 60px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid #E2E8F0;
+        }
+
+        .doc-header {
+            border-bottom: 2px solid #F1F5F9;
+            padding-bottom: 24px;
+            margin-bottom: 30px;
+        }
+
+        .doc-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0F172A;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .doc-date {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .doc-lead {
+            font-size: 1rem;
+            color: #334155;
+            margin-bottom: 20px;
+        }
+
+        .doc-section {
+            margin-bottom: 32px;
+        }
+
+        .doc-section h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0F172A;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .doc-section p {
+            color: #334155;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+
+        .doc-section ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 14px;
+        }
+
+        .doc-section ul li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 8px;
+            color: #334155;
+            font-size: 0.95rem;
+        }
+
+        .doc-section ul li::before {
+            content: "•";
+            color: var(--primary);
+            font-size: 1.4rem;
+            position: absolute;
+            left: 6px;
+            top: -2px;
+        }
+
+        .contact-box {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 14px;
+        }
+
+        .contact-box a {
+            color: #2563EB;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Language visibility */
+        .lang-en, .lang-si {
+            display: none;
+        }
+
+        .lang-en.active, .lang-si.active {
+            display: block;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: #FFFFFF;
+                color: #000000;
+                padding: 0;
+            }
+
+            .doc-topbar {
+                display: none !important;
+            }
+
+            .doc-wrapper {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .doc-card {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+
+            .lang-en, .lang-si {
+                display: block !important;
+                page-break-after: always;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .doc-card {
+                padding: 30px 20px;
+            }
+
+            .doc-header h1 {
+                font-size: 1.6rem;
+            }
+
+            .doc-topbar {
+                padding: 10px 14px;
+            }
+
+            .doc-brand span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation Header -->
+    <header class="doc-topbar">
+        <a href="index.html" class="doc-brand">
+            <img src="assets/logo.jpg" alt="WorkBee Logo" onerror="this.onerror=null; this.src='logo.jpg';">
+            <span>WorkBee.lk</span>
+        </a>
+        <div class="doc-actions">
+            <button class="lang-switch-btn active" id="btn-en" onclick="setDocLang('en')">English</button>
+            <button class="lang-switch-btn" id="btn-si" onclick="setDocLang('si')">සිංහල</button>
+            <button class="btn-print" onclick="window.print()">📥 Print / PDF</button>
+            <a href="index.html" class="btn-back">← Home</a>
+        </div>
+    </header>
+
+    <main class="doc-wrapper">
+        <article class="doc-card">
+
+            <!-- ================= ENGLISH VERSION ================= -->
+            <div class="lang-en active" id="content-en">
+                <div class="doc-header">
+                    <h1>TERMS OF SERVICE</h1>
+                    <div class="doc-date">Last Updated: 28 August 2026</div>
+                </div>
+
+                <p class="doc-lead">Welcome to <strong>WorkBee.lk</strong>. These Terms of Service ("Terms") govern your access to and use of the WorkBee website, platform, services, and related features.</p>
+
+                <p class="doc-lead">By accessing, browsing, registering on, or using WorkBee.lk, you agree to be bound by these Terms. If you do not agree with any part of these Terms, please do not use our services.</p>
+
+                <section class="doc-section">
+                    <h2>1. About WorkBee</h2>
+                    <p>WorkBee is an online platform designed to connect employers, companies, and individuals seeking employment or workers.</p>
+                    <p>WorkBee may provide services including:</p>
+                    <ul>
+                        <li>Job vacancy listings;</li>
+                        <li>Worker profile registration;</li>
+                        <li>Employer/company registration;</li>
+                        <li>Job searching and applications;</li>
+                        <li>Worker and employer profile management;</li>
+                        <li>Communication between registered users;</li>
+                        <li>Recruitment and manpower-related services; and</li>
+                        <li>Other employment-related services introduced by WorkBee from time to time.</li>
+                    </ul>
+                    <p>WorkBee acts as a platform that facilitates connections between users. Unless specifically stated otherwise, WorkBee does not guarantee employment, recruitment, hiring, salary, working conditions, or the suitability of any particular worker or employer.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>2. Eligibility</h2>
+                    <p>By using WorkBee, you confirm that:</p>
+                    <ul>
+                        <li>The information you provide is accurate and complete;</li>
+                        <li>You have the legal capacity to use the services;</li>
+                        <li>You will comply with all applicable laws and regulations;</li>
+                        <li>You will use the platform only for lawful purposes; and</li>
+                        <li>You will not create an account using another person's identity or information.</li>
+                    </ul>
+                    <p>Where a particular service requires a specific legal age or qualification, the applicable legal requirements must be satisfied.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>3. User Registration</h2>
+                    <p>Users may be required to create an account to access certain features.</p>
+                    <p>When registering, you agree to provide accurate, current, and complete information, including where applicable:</p>
+                    <ul>
+                        <li>Full name;</li>
+                        <li>Contact information;</li>
+                        <li>Residential area;</li>
+                        <li>Employment information;</li>
+                        <li>Skills and qualifications;</li>
+                        <li>Work experience;</li>
+                        <li>Preferred work locations; and</li>
+                        <li>Other information reasonably required by WorkBee.</li>
+                    </ul>
+                    <p>You are responsible for keeping your account information up to date.</p>
+                    <p>You must not:</p>
+                    <ul>
+                        <li>Create false or misleading profiles;</li>
+                        <li>Impersonate another person;</li>
+                        <li>Use another person's account;</li>
+                        <li>Provide fraudulent qualifications or employment information; or</li>
+                        <li>Create multiple accounts for deceptive purposes.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>4. Employer and Company Accounts</h2>
+                    <p>Employers and companies using WorkBee agree to provide genuine and accurate information about their organization, vacancies, job requirements, salary information where applicable, and employment conditions.</p>
+                    <p>Employers must not publish vacancies that are:</p>
+                    <ul>
+                        <li>False or misleading;</li>
+                        <li>Illegal;</li>
+                        <li>Discriminatory;</li>
+                        <li>Fraudulent;</li>
+                        <li>Designed to collect personal information for improper purposes; or</li>
+                        <li>Unrelated to genuine employment or business opportunities.</li>
+                    </ul>
+                    <p>WorkBee reserves the right to review, restrict, suspend, or remove any employer account or job vacancy that violates these Terms.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>5. Worker Accounts</h2>
+                    <p>Workers are responsible for ensuring that all information in their profiles is accurate.</p>
+                    <p>Workers must not submit:</p>
+                    <ul>
+                        <li>False qualifications;</li>
+                        <li>False work experience;</li>
+                        <li>Fraudulent documents;</li>
+                        <li>Misleading personal information; or</li>
+                        <li>Information belonging to another person without authorization.</li>
+                    </ul>
+                    <p>WorkBee does not guarantee that registration or application for a vacancy will result in employment.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>6. Job Listings and Employment Opportunities</h2>
+                    <p>WorkBee may display job vacancies submitted by employers, companies, or other authorized users.</p>
+                    <p>WorkBee does not guarantee that:</p>
+                    <ul>
+                        <li>A vacancy will remain available;</li>
+                        <li>The information provided by an employer is completely accurate;</li>
+                        <li>A worker will be selected for a position;</li>
+                        <li>An employer will hire a particular worker; or</li>
+                        <li>Employment terms will remain unchanged.</li>
+                    </ul>
+                    <p>Users should independently verify important employment details before accepting a job or entering into an employment agreement.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>7. User Communications</h2>
+                    <p>WorkBee may provide communication features that allow employers and workers to contact each other.</p>
+                    <p>Users must use these communication facilities responsibly and lawfully.</p>
+                    <p>Users must not use WorkBee to send:</p>
+                    <ul>
+                        <li>Spam;</li>
+                        <li>Harassing or abusive messages;</li>
+                        <li>Fraudulent offers;</li>
+                        <li>Misleading information;</li>
+                        <li>Unlawful content; or</li>
+                        <li>Unsolicited commercial communications.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>8. Personal Information and Privacy</h2>
+                    <p>WorkBee may collect and process personal information necessary to provide its services.</p>
+                    <p>Personal information may include information such as name, contact details, employment information, qualifications, skills, work experience, preferred work locations, and other information submitted by users.</p>
+                    <p>WorkBee will handle personal information in accordance with its applicable <strong>Privacy Policy</strong> and applicable laws.</p>
+                    <p>By using WorkBee, you acknowledge that certain information in your profile may be visible to relevant employers, workers, or other authorized users depending on the platform's features and your settings.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>9. User Responsibilities</h2>
+                    <p>You agree to use WorkBee responsibly and not to:</p>
+                    <ul>
+                        <li>Violate any applicable law;</li>
+                        <li>Attempt to gain unauthorized access to the platform;</li>
+                        <li>Interfere with the operation or security of the website;</li>
+                        <li>Upload malicious software or harmful code;</li>
+                        <li>Copy, reproduce, or misuse WorkBee content without permission;</li>
+                        <li>Collect information about other users for unauthorized purposes;</li>
+                        <li>Use the platform for fraud or scams;</li>
+                        <li>Post misleading job advertisements; or</li>
+                        <li>Misuse another user's personal information.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>10. Payments and Fees</h2>
+                    <p>Certain WorkBee services may be subject to fees.</p>
+                    <p>Where applicable, the relevant fee, payment method, and applicable conditions will be communicated to the user before payment.</p>
+                    <p>WorkBee reserves the right to introduce, modify, or discontinue fees for particular services, subject to applicable law and reasonable notice where required.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>11. Verification</h2>
+                    <p>WorkBee may introduce identity, qualification, employer, or other verification procedures.</p>
+                    <p>Verification does not constitute an absolute guarantee of the accuracy, suitability, reliability, or conduct of a user.</p>
+                    <p>Users remain responsible for conducting appropriate checks before entering into an employment or business relationship.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>12. Intellectual Property</h2>
+                    <p>All website content, including but not limited to:</p>
+                    <ul>
+                        <li>WorkBee branding;</li>
+                        <li>Logos;</li>
+                        <li>Text;</li>
+                        <li>Graphics;</li>
+                        <li>Website design;</li>
+                        <li>Software;</li>
+                        <li>Images;</li>
+                        <li>Layouts; and</li>
+                        <li>Other original materials</li>
+                    </ul>
+                    <p>may be owned by or licensed to WorkBee and may be protected by applicable intellectual property laws.</p>
+                    <p>You may not reproduce, modify, distribute, sell, or commercially exploit WorkBee content without prior written permission.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>13. Third-Party Services and Links</h2>
+                    <p>WorkBee may contain links to third-party websites, services, or applications.</p>
+                    <p>WorkBee is not responsible for the content, availability, security, privacy practices, or services of third-party websites.</p>
+                    <p>Users access third-party services at their own discretion and risk.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>14. Suspension and Termination</h2>
+                    <p>WorkBee may suspend, restrict, or terminate an account if we reasonably believe that the user:</p>
+                    <ul>
+                        <li>Has violated these Terms;</li>
+                        <li>Has provided false information;</li>
+                        <li>Has engaged in fraudulent or unlawful activity;</li>
+                        <li>Has misused the platform; or</li>
+                        <li>Has created a risk to other users or WorkBee.</li>
+                    </ul>
+                    <p>Users may request closure of their account subject to any outstanding obligations.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>15. Disclaimer</h2>
+                    <p>WorkBee provides an online platform intended to facilitate connections between workers and employers.</p>
+                    <p>To the extent permitted by applicable law, WorkBee does not guarantee the accuracy, completeness, reliability, availability, or suitability of information provided by users.</p>
+                    <p>WorkBee is not responsible for employment decisions, workplace conduct, salary disputes, working conditions, contractual disputes, or other disputes arising directly between users, except where liability cannot legally be excluded.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>16. Limitation of Liability</h2>
+                    <p>To the maximum extent permitted by applicable law, WorkBee and its owners, employees, representatives, and service providers shall not be liable for indirect, incidental, consequential, or other losses arising from the use of the platform or from interactions between users.</p>
+                    <p>Nothing in these Terms excludes or limits any liability that cannot legally be excluded or limited.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>17. Changes to These Terms</h2>
+                    <p>WorkBee may update these Terms from time to time.</p>
+                    <p>Updated Terms will be published on the website with a revised "Last Updated" date.</p>
+                    <p>Continued use of WorkBee after changes are published constitutes acceptance of the updated Terms, to the extent permitted by applicable law.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>18. Governing Law</h2>
+                    <p>These Terms shall be governed by and interpreted in accordance with the laws of the <strong>Democratic Socialist Republic of Sri Lanka</strong>.</p>
+                    <p>Any disputes arising in connection with these Terms shall be subject to the applicable courts and legal procedures of Sri Lanka.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>19. Contact Us</h2>
+                    <p>If you have questions, complaints, or requests regarding these Terms, please contact WorkBee through the contact details provided on WorkBee.lk.</p>
+                    <div class="contact-box">
+                        <strong>WorkBee.lk</strong><br>
+                        Sri Lanka<br><br>
+                        <strong>Email:</strong> <a href="mailto:workbee.lk@gmail.com">workbee.lk@gmail.com</a><br>
+                        <strong>Telephone:</strong> <a href="tel:+94787823328">+94 78 782 3328</a>
+                    </div>
+                </section>
+
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 20px;">By using WorkBee.lk, you acknowledge that you have read, understood, and agreed to these Terms of Service.</p>
+            </div>
+
+            <!-- ================= SINHALA VERSION ================= -->
+            <div class="lang-si" id="content-si">
+                <div class="doc-header">
+                    <h1>සේවා කොන්දේසි (TERMS OF SERVICE)</h1>
+                    <div class="doc-date">අවසන් වරට යාවත්කාලීන කළ දිනය: 2026 අගෝස්තු 28</div>
+                </div>
+
+                <p class="doc-lead">WorkBee.lk වෙත සාදරයෙන් පිළිගනිමු. මෙම සේවා කොන්දේසි මඟින් WorkBee.lk වෙබ් අඩවිය, වේදිකාව සහ එහි සේවාවන් භාවිතා කිරීම සම්බන්ධයෙන් අදාළ වන නීති හා කොන්දේසි විස්තර කරනු ලබයි.</p>
+
+                <p class="doc-lead">WorkBee.lk වෙත පිවිසීම, ලියාපදිංචි වීම හෝ එහි සේවාවන් භාවිතා කිරීම මඟින් ඔබ මෙම සේවා කොන්දේසි කියවා, අවබෝධ කරගෙන සහ ඒවාට එකඟ වන බව පිළිගනී. මෙම කොන්දේසිවලට ඔබ එකඟ නොවන්නේ නම් WorkBee.lk සේවාව භාවිතා නොකරන්න.</p>
+
+                <section class="doc-section">
+                    <h2>1. WorkBee පිළිබඳව</h2>
+                    <p>WorkBee යනු රැකියා සොයන පුද්ගලයන්, සේවකයන්, ආයතන සහ සේවා යෝජකයන් එකිනෙකා සම්බන්ධ කිරීමට පහසුකම් සපයන මාර්ගගත වේදිකාවකි.</p>
+                    <p>WorkBee මඟින් පහත සඳහන් සේවාවන් ඇතුළුව රැකියා සම්බන්ධ සේවාවන් ලබා දිය හැකිය:</p>
+                    <ul>
+                        <li>රැකියා පුරප්පාඩු පළ කිරීම;</li>
+                        <li>සේවක/රැකියා සොයන්නන්ගේ පැතිකඩ ලියාපදිංචි කිරීම;</li>
+                        <li>සමාගම් සහ සේවා යෝජකයන් ලියාපදිංචි කිරීම;</li>
+                        <li>රැකියා සෙවීම සහ අයදුම් කිරීම;</li>
+                        <li>සේවක සහ සේවා යෝජක පැතිකඩ කළමනාකරණය;</li>
+                        <li>ලියාපදිංචි පරිශීලකයන් අතර සන්නිවේදනය;</li>
+                        <li>බඳවා ගැනීම් සහ manpower සම්බන්ධ සේවාවන්; සහ</li>
+                        <li>WorkBee විසින් ඉදිරියේදී හඳුන්වා දෙන අනෙකුත් සේවාවන්.</li>
+                    </ul>
+                    <p>WorkBee යනු සේවකයන් සහ සේවා යෝජකයන් සම්බන්ධ කිරීමට පහසුකම් සපයන වේදිකාවක් පමණි. WorkBee විසින් රැකියාවක්, බඳවා ගැනීමක්, වැටුපක්, සේවා කොන්දේසි හෝ කිසියම් සේවකයෙකු/සේවා යෝජකයෙකු පිළිබඳ සුදුසුකමක් සහතික නොකරයි.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>2. සේවාව භාවිතා කිරීමේ සුදුසුකම්</h2>
+                    <p>WorkBee භාවිතා කිරීමෙන් ඔබ පහත කරුණු පිළිගනී:</p>
+                    <ul>
+                        <li>ඔබ ලබා දෙන තොරතුරු නිවැරදි හා සම්පූර්ණ බව;</li>
+                        <li>ඔබට සේවාව භාවිතා කිරීමට අවශ්‍ය නීත්‍යානුකූල හැකියාව ඇති බව;</li>
+                        <li>අදාළ සියලු නීති හා රෙගුලාසි පිළිපදින බව;</li>
+                        <li>ඔබ වේදිකාව නීත්‍යානුකූල අරමුණු සඳහා පමණක් භාවිතා කරන බව; සහ</li>
+                        <li>වෙනත් පුද්ගලයෙකුගේ අනන්‍යතාවය හෝ තොරතුරු භාවිතා කර ගිණුමක් නිර්මාණය නොකරන බව.</li>
+                    </ul>
+                    <p>කිසියම් සේවාවක් සඳහා විශේෂ වයස් සීමාවක් හෝ නීත්‍යානුකූල සුදුසුකමක් අවශ්‍ය නම්, එම අවශ්‍යතා සපුරාලිය යුතුය.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>3. පරිශීලක ලියාපදිංචිය</h2>
+                    <p>WorkBee හි ඇතැම් සේවාවන් භාවිතා කිරීම සඳහා ගිණුමක් නිර්මාණය කිරීම අවශ්‍ය විය හැකිය.</p>
+                    <p>ලියාපදිංචි වීමේදී, අවශ්‍ය පරිදි පහත තොරතුරු නිවැරදිව ලබා දීමට ඔබ එකඟ වේ:</p>
+                    <ul>
+                        <li>සම්පූර්ණ නම;</li>
+                        <li>සම්බන්ධතා තොරතුරු;</li>
+                        <li>පදිංචි ප්‍රදේශය;</li>
+                        <li>රැකියා තොරතුරු;</li>
+                        <li>කුසලතා සහ සුදුසුකම්;</li>
+                        <li>සේවා පළපුරුද්ද;</li>
+                        <li>කැමති රැකියා ප්‍රදේශ; සහ</li>
+                        <li>WorkBee විසින් සාධාරණ ලෙස අවශ්‍ය කරන අනෙකුත් තොරතුරු.</li>
+                    </ul>
+                    <p>ඔබගේ ගිණුම් තොරතුරු යාවත්කාලීනව හා නිවැරදිව තබා ගැනීම ඔබගේ වගකීමකි.</p>
+                    <p>ඔබ සිදු නොකළ යුතු දෑ:</p>
+                    <ul>
+                        <li>ව්‍යාජ හෝ නොමඟ යවන පැතිකඩ නිර්මාණය කිරීම;</li>
+                        <li>වෙනත් පුද්ගලයෙකු ලෙස පෙනී සිටීම;</li>
+                        <li>වෙනත් පුද්ගලයෙකුගේ ගිණුම භාවිතා කිරීම;</li>
+                        <li>ව්‍යාජ සුදුසුකම් හෝ සේවා පළපුරුද්ද ලබා දීම; හෝ</li>
+                        <li>වංචනික අරමුණු සඳහා ගිණුම් කිහිපයක් නිර්මාණය කිරීම.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>4. සේවා යෝජක සහ සමාගම් ගිණුම්</h2>
+                    <p>WorkBee භාවිතා කරන සේවා යෝජකයන් සහ සමාගම් තම ආයතනය, රැකියා පුරප්පාඩු, රැකියා අවශ්‍යතා, වැටුප් තොරතුරු සහ සේවා කොන්දේසි පිළිබඳ සත්‍ය හා නිවැරදි තොරතුරු ලබා දිය යුතුය.</p>
+                    <p>පහත ආකාරයේ රැකියා දැන්වීම් පළ කිරීම තහනම් වේ:</p>
+                    <ul>
+                        <li>ව්‍යාජ හෝ නොමඟ යවන දැන්වීම්;</li>
+                        <li>නීති විරෝධී රැකියා;</li>
+                        <li>වෙනස්කම් කිරීමේ අරමුණින් පළ කරන දැන්වීම්;</li>
+                        <li>වංචනික දැන්වීම්;</li>
+                        <li>අනවශ්‍ය ලෙස පුද්ගලික තොරතුරු ලබා ගැනීමේ අරමුණින් පළ කරන දැන්වීම්; හෝ</li>
+                        <li>සැබෑ රැකියා හෝ ව්‍යාපාරික අවස්ථාවකට සම්බන්ධ නොවන දැන්වීම්.</li>
+                    </ul>
+                    <p>මෙම කොන්දේසි උල්ලංඝනය කරන ගිණුම් හෝ රැකියා දැන්වීම් සමාලෝචනය කිරීමට, සීමා කිරීමට, අත්හිටුවීමට හෝ ඉවත් කිරීමට WorkBee හට අයිතිය ඇත.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>5. සේවක / රැකියා සොයන්නන්ගේ ගිණුම්</h2>
+                    <p>WorkBee හි තම පැතිකඩෙහි ඇතුළත් සියලු තොරතුරු නිවැරදි බව තහවුරු කිරීම පරිශීලකයාගේ වගකීමකි.</p>
+                    <p>පරිශීලකයන් ඉදිරිපත් නොකළ යුතු දෑ:</p>
+                    <ul>
+                        <li>ව්‍යාජ සුදුසුකම්;</li>
+                        <li>ව්‍යාජ සේවා පළපුරුද්ද;</li>
+                        <li>ව්‍යාජ ලේඛන;</li>
+                        <li>නොමඟ යවන පුද්ගලික තොරතුරු හෝ අවසරයකින් තොරව වෙනත් පුද්ගලයෙකුගේ තොරතුරු;</li>
+                    </ul>
+                    <p>WorkBee හි ලියාපදිංචි වීම හෝ රැකියාවකට අයදුම් කිරීම මඟින් රැකියාවක් ලැබෙන බවට සහතිකයක් ලබා නොදේ.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>6. රැකියා දැන්වීම් සහ රැකියා අවස්ථා</h2>
+                    <p>WorkBee මඟින් සේවා යෝජකයන්, සමාගම් හෝ බලයලත් පරිශීලකයන් විසින් පළ කරන ලද රැකියා පුරප්පාඩු ප්‍රදර්ශනය කළ හැකිය.</p>
+                    <p>WorkBee විසින් සහතික නොකරන දෑ:</p>
+                    <ul>
+                        <li>රැකියා පුරප්පාඩුවක් දිගටම පවතින බව;</li>
+                        <li>සේවා යෝජකයා ලබා දුන් තොරතුරු සම්පූර්ණයෙන්ම නිවැරදි බව;</li>
+                        <li>සේවකයෙකු තෝරා ගන්නා බව;</li>
+                        <li>සේවා යෝජකයෙකු කිසියම් සේවකයෙකු බඳවා ගන්නා බව;</li>
+                        <li>රැකියා කොන්දේසි වෙනස් නොවන බව.</li>
+                    </ul>
+                    <p>රැකියාවක් භාර ගැනීමට හෝ රැකියා ගිවිසුමකට ඇතුළත් වීමට පෙර වැදගත් රැකියා තොරතුරු ස්වාධීනව තහවුරු කර ගැනීම පරිශීලකයාගේ වගකීමකි.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>7. පරිශීලක සන්නිවේදනය</h2>
+                    <p>WorkBee මඟින් සේවකයන්ට සහ සේවා යෝජකයන්ට එකිනෙකා සමඟ සන්නිවේදනය කිරීමට පහසුකම් සැපයිය හැකිය.</p>
+                    <p>මෙම පහසුකම් වගකීමෙන් සහ නීත්‍යානුකූලව භාවිතා කළ යුතුය.</p>
+                    <p>පරිශීලකයන් විසින් නොයැවිය යුතු දෑ:</p>
+                    <ul>
+                        <li>Spam පණිවිඩ;</li>
+                        <li>හිරිහැර කිරීමේ හෝ අපහාසාත්මක පණිවිඩ;</li>
+                        <li>වංචනික රැකියා හෝ ව්‍යාපාරික යෝජනා;</li>
+                        <li>නොමඟ යවන තොරතුරු;</li>
+                        <li>නීති විරෝධී අන්තර්ගතය; හෝ</li>
+                        <li>අවසරයකින් තොර වාණිජ පණිවිඩ.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>8. පුද්ගලික තොරතුරු සහ පෞද්ගලිකත්වය</h2>
+                    <p>WorkBee සිය සේවාවන් ලබා දීම සඳහා අවශ්‍ය පුද්ගලික තොරතුරු රැස් කර සැකසිය හැකිය.</p>
+                    <p>එවැනි තොරතුරු අතර නම, සම්බන්ධතා තොරතුරු, රැකියා තොරතුරු, සුදුසුකම්, කුසලතා, සේවා පළපුරුද්ද, කැමති රැකියා ප්‍රදේශ සහ පරිශීලකයා විසින් ලබා දෙන අනෙකුත් තොරතුරු ඇතුළත් විය හැකිය.</p>
+                    <p>WorkBee පුද්ගලික තොරතුරු අදාළ <strong>Privacy Policy</strong> සහ ශ්‍රී ලංකාවේ අදාළ නීති අනුව කළමනාකරණය කරනු ඇත.</p>
+                    <p>WorkBee භාවිතා කිරීමෙන්, ඔබගේ profile settings සහ platform features අනුව ඔබගේ පැතිකඩෙහි ඇතැම් තොරතුරු අදාළ සේවා යෝජකයන්, සේවකයන් හෝ බලයලත් පරිශීලකයන්ට දර්ශනය විය හැකි බව ඔබ පිළිගනී.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>9. පරිශීලක වගකීම්</h2>
+                    <p>ඔබ WorkBee වගකීමෙන් සහ නීත්‍යානුකූලව භාවිතා කිරීමට එකඟ වේ.</p>
+                    <p>ඔබ සිදු නොකළ යුතුය:</p>
+                    <ul>
+                        <li>අදාළ නීති උල්ලංඝනය කිරීම;</li>
+                        <li>අනවසරයෙන් පද්ධතියට ඇතුළු වීමට උත්සාහ කිරීම;</li>
+                        <li>වෙබ් අඩවියේ ආරක්ෂාවට හෝ ක්‍රියාකාරීත්වයට බාධා කිරීම;</li>
+                        <li>හානිකර software හෝ code upload කිරීම;</li>
+                        <li>අවසරයකින් තොරව WorkBee අන්තර්ගතය පිටපත් කිරීම;</li>
+                        <li>වෙනත් පරිශීලකයන්ගේ තොරතුරු අනවසර අරමුණු සඳහා රැස් කිරීම;</li>
+                        <li>වංචා සිදු කිරීම;</li>
+                        <li>නොමඟ යවන රැකියා දැන්වීම් පළ කිරීම; හෝ</li>
+                        <li>වෙනත් පරිශීලකයෙකුගේ පුද්ගලික තොරතුරු අනිසි ලෙස භාවිතා කිරීම.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>10. ගාස්තු සහ ගෙවීම්</h2>
+                    <p>WorkBee හි ඇතැම් සේවාවන් සඳහා ගාස්තු අය කළ හැකිය.</p>
+                    <p>එවැනි ගාස්තුවක් අදාළ වන අවස්ථාවක, ගාස්තුව, ගෙවීම් ක්‍රමය සහ අදාළ කොන්දේසි ගෙවීමට පෙර පරිශීලකයාට දැනුම් දෙනු ඇත.</p>
+                    <p>අදාළ නීතිවලට යටත්ව, ඇතැම් සේවාවන් සඳහා අය කරන ගාස්තු හඳුන්වා දීමට, වෙනස් කිරීමට හෝ ඉවත් කිරීමට WorkBee හට අයිතිය ඇත.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>11. තොරතුරු සත්‍යාපනය</h2>
+                    <p>WorkBee විසින් අනන්‍යතාවය, සුදුසුකම්, සේවා යෝජකයා හෝ වෙනත් තොරතුරු සත්‍යාපනය කිරීමේ ක්‍රම හඳුන්වා දිය හැකිය.</p>
+                    <p>සත්‍යාපනයක් සිදු කිරීමෙන් පමණක් පරිශීලකයෙකුගේ තොරතුරු, සුදුසුකම්, විශ්වසනීයත්වය හෝ හැසිරීම සම්පූර්ණයෙන්ම සහතික කර ඇති බව අදහස් නොවේ.</p>
+                    <p>රැකියා හෝ ව්‍යාපාරික සම්බන්ධතාවයකට ඇතුළත් වීමට පෙර අවශ්‍ය පරීක්ෂා කිරීම් සිදු කිරීම පරිශීලකයාගේ වගකීමකි.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>12. බුද්ධිමය දේපළ</h2>
+                    <p>WorkBee හි Branding, Logo, Text, Graphics, Website design, Software, Images, Layouts සහ අනෙකුත් මුල් අන්තර්ගතයන් WorkBee සතු විය හැකි අතර අදාළ බුද්ධිමය දේපළ නීති මඟින් ආරක්ෂා විය හැකිය.</p>
+                    <p>WorkBee හි ලිඛිත අවසරයකින් තොරව එම අන්තර්ගතයන් පිටපත් කිරීම, වෙනස් කිරීම, බෙදා හැරීම, විකිණීම හෝ වාණිජමය වශයෙන් භාවිතා නොකළ යුතුය.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>13. තෙවන පාර්ශ්ව සේවා සහ Links</h2>
+                    <p>WorkBee තුළ තෙවන පාර්ශ්ව වෙබ් අඩවි, සේවා හෝ applications වෙත links අඩංගු විය හැකිය.</p>
+                    <p>එම තෙවන පාර්ශ්ව වෙබ් අඩවිවල අන්තර්ගතය, ලබාගත හැකි බව, ආරක්ෂාව, privacy practices හෝ සේවාවන් සම්බන්ධයෙන් WorkBee වගකීමක් නොදරයි.</p>
+                    <p>එවැනි තෙවන පාර්ශ්ව සේවාවන් භාවිතා කිරීම පරිශීලකයාගේම වගකීම සහ අවදානම යටතේ සිදු වේ.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>14. ගිණුම් අත්හිටුවීම සහ අවසන් කිරීම</h2>
+                    <p>පරිශීලකයෙකු මෙම කොන්දේසි උල්ලංඝනය කර ඇති බව, ව්‍යාජ තොරතුරු ලබා දී ඇති බව, වංචනික හෝ නීති විරෝධී ක්‍රියාවක නිරත වී ඇති බව, WorkBee අනිසි ලෙස භාවිතා කර ඇති බව හෝ අනෙකුත් පරිශීලකයන්ට අවදානමක් ඇති කරන බව සාධාරණ ලෙස විශ්වාස කරන අවස්ථාවක, WorkBee හට එම ගිණුම අත්හිටුවීමට, සීමා කිරීමට හෝ අවසන් කිරීමට අයිතිය ඇත.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>15. වගකීම් ප්‍රකාශය</h2>
+                    <p>WorkBee යනු සේවකයන් සහ සේවා යෝජකයන් අතර සම්බන්ධතා ඇති කිරීමට පහසුකම් සපයන online platform එකකි.</p>
+                    <p>අදාළ නීතිය මඟින් අවසර දී ඇති උපරිම සීමාව තුළ, පරිශීලකයන් විසින් ලබා දෙන තොරතුරු සම්පූර්ණයෙන්ම නිවැරදි, විශ්වාසදායක, ලබාගත හැකි හෝ සුදුසු බවට WorkBee සහතිකයක් ලබා නොදේ.</p>
+                    <p>පරිශීලකයන් අතර සෘජුව ඇතිවන රැකියා තීරණ, සේවා ස්ථාන හැසිරීම්, වැටුප් ආරවුල්, සේවා කොන්දේසි, ගිවිසුම් ආරවුල් හෝ වෙනත් ආරවුල් සම්බන්ධයෙන්, නීතියෙන් බැහැර කළ නොහැකි වගකීම් හැර, WorkBee වගකීමක් නොදරයි.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>16. වගකීම් සීමා කිරීම</h2>
+                    <p>අදාළ නීතිය මඟින් අවසර දී ඇති උපරිම සීමාව තුළ, WorkBee සහ එහි හිමිකරුවන්, සේවකයන්, නියෝජිතයන් සහ සේවා සපයන්නන් විසින් platform එක භාවිතා කිරීම හෝ පරිශීලකයන් අතර සිදුවන සම්බන්ධතා හේතුවෙන් ඇතිවන indirect, incidental, consequential හෝ වෙනත් අලාභ සඳහා වගකීමක් නොදරනු ඇත.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>17. මෙම කොන්දේසි වෙනස් කිරීම</h2>
+                    <p>WorkBee විසින් අවශ්‍ය අවස්ථාවලදී මෙම සේවා කොන්දේසි යාවත්කාලීන කළ හැකිය.</p>
+                    <p>යාවත්කාලීන කරන ලද කොන්දේසි වෙබ් අඩවියේ නව “Last Updated” දිනයක් සමඟ පළ කරනු ඇත.</p>
+                    <p>යාවත්කාලීන කරන ලද කොන්දේසි පළ කිරීමෙන් පසු WorkBee තවදුරටත් භාවිතා කිරීම මඟින්, අදාළ නීතියෙන් අවසර දී ඇති සීමාව තුළ, නව කොන්දේසි පිළිගත් බව සැලකේ.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>18. අදාළ නීතිය</h2>
+                    <p>මෙම සේවා කොන්දේසි <strong>ශ්‍රී ලංකා ප්‍රජාතාන්ත්‍රික සමාජවාදී ජනරජයේ නීති</strong> අනුව පාලනය සහ අර්ථකථනය කරනු ලැබේ.</p>
+                    <p>මෙම කොන්දේසි සම්බන්ධයෙන් ඇතිවන ආරවුල් ශ්‍රී ලංකාවේ අදාළ අධිකරණ සහ නීතිමය ක්‍රියාපටිපාටි යටතේ විසඳනු ලැබේ.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>19. අප හා සම්බන්ධ වන්න</h2>
+                    <p>මෙම සේවා කොන්දේසි සම්බන්ධයෙන් ඔබට ප්‍රශ්නයක්, පැමිණිල්ලක් හෝ ඉල්ලීමක් තිබේ නම් WorkBee.lk හි ලබා දී ඇති සම්බන්ධතා තොරතුරු හරහා WorkBee අමතන්න.</p>
+                    <div class="contact-box">
+                        <strong>WorkBee.lk</strong><br>
+                        ශ්‍රී ලංකාව<br><br>
+                        <strong>Email:</strong> <a href="mailto:workbee.lk@gmail.com">workbee.lk@gmail.com</a><br>
+                        <strong>Telephone:</strong> <a href="tel:+94787823328">+94 78 782 3328</a>
+                    </div>
+                </section>
+
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 20px;">WorkBee.lk භාවිතා කිරීමෙන්, ඔබ මෙම සේවා කොන්දේසි කියවා, අවබෝධ කරගෙන සහ ඒවාට එකඟ වන බව පිළිගනී.</p>
+            </div>
+
+        </article>
+    </main>
+
+    <script>
+        function setDocLang(lang) {
+            document.querySelectorAll('.lang-en, .lang-si').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.lang-switch-btn').forEach(btn => btn.classList.remove('active'));
+            
+            if (lang === 'si') {
+                document.getElementById('content-si').classList.add('active');
+                document.getElementById('btn-si').classList.add('active');
+            } else {
+                document.getElementById('content-en').classList.add('active');
+                document.getElementById('btn-en').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

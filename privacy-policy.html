@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | WorkBee.lk</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/icons/icon-192.png">
+    
+    <style>
+        :root {
+            --primary: #F59E0B;
+            --primary-dark: #D97706;
+            --dark: #0F172A;
+            --slate: #1E293B;
+            --surface: #F8FAFC;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #0B1120;
+            color: var(--text-main);
+            line-height: 1.7;
+            padding-bottom: 60px;
+        }
+
+        /* Top Bar */
+        .doc-topbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .doc-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .doc-brand img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+        }
+
+        .doc-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lang-switch-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-switch-btn.active {
+            background: var(--primary);
+            color: #0F172A;
+            border-color: var(--primary);
+        }
+
+        .btn-print {
+            background: #10B981;
+            color: #FFFFFF;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .btn-print:hover {
+            background: #059669;
+        }
+
+        .btn-back {
+            background: transparent;
+            color: #94A3B8;
+            border: 1px solid #334155;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            color: #FFFFFF;
+            border-color: #64748B;
+        }
+
+        /* Document Container */
+        .doc-wrapper {
+            max-width: 860px;
+            margin: 40px auto 0;
+            padding: 0 20px;
+        }
+
+        .doc-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 50px 60px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid #E2E8F0;
+        }
+
+        .doc-header {
+            border-bottom: 2px solid #F1F5F9;
+            padding-bottom: 24px;
+            margin-bottom: 30px;
+        }
+
+        .doc-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0F172A;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .doc-date {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .doc-lead {
+            font-size: 1rem;
+            color: #334155;
+            margin-bottom: 20px;
+        }
+
+        .doc-section {
+            margin-bottom: 32px;
+        }
+
+        .doc-section h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0F172A;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .doc-section h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1E293B;
+            margin: 16px 0 8px 0;
+        }
+
+        .doc-section p {
+            color: #334155;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+
+        .doc-section ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 14px;
+        }
+
+        .doc-section ul li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 8px;
+            color: #334155;
+            font-size: 0.95rem;
+        }
+
+        .doc-section ul li::before {
+            content: "•";
+            color: var(--primary);
+            font-size: 1.4rem;
+            position: absolute;
+            left: 6px;
+            top: -2px;
+        }
+
+        .contact-box {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 14px;
+        }
+
+        .contact-box a {
+            color: #2563EB;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Language visibility */
+        .lang-en, .lang-si {
+            display: none;
+        }
+
+        .lang-en.active, .lang-si.active {
+            display: block;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: #FFFFFF;
+                color: #000000;
+                padding: 0;
+            }
+
+            .doc-topbar {
+                display: none !important;
+            }
+
+            .doc-wrapper {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .doc-card {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+
+            .lang-en, .lang-si {
+                display: block !important;
+                page-break-after: always;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .doc-card {
+                padding: 30px 20px;
+            }
+
+            .doc-header h1 {
+                font-size: 1.6rem;
+            }
+
+            .doc-topbar {
+                padding: 10px 14px;
+            }
+
+            .doc-brand span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation Header -->
+    <header class="doc-topbar">
+        <a href="index.html" class="doc-brand">
+            <img src="assets/logo.jpg" alt="WorkBee Logo" onerror="this.onerror=null; this.src='logo.jpg';">
+            <span>WorkBee.lk</span>
+        </a>
+        <div class="doc-actions">
+            <button class="lang-switch-btn active" id="btn-en" onclick="setDocLang('en')">English</button>
+            <button class="lang-switch-btn" id="btn-si" onclick="setDocLang('si')">සිංහල</button>
+            <button class="btn-print" onclick="window.print()">📥 Print / PDF</button>
+            <a href="index.html" class="btn-back">← Home</a>
+        </div>
+    </header>
+
+    <main class="doc-wrapper">
+        <article class="doc-card">
+
+            <!-- ================= ENGLISH VERSION ================= -->
+            <div class="lang-en active" id="content-en">
+                <div class="doc-header">
+                    <h1>PRIVACY POLICY</h1>
+                    <div class="doc-date">Last Updated: 28 August 2026</div>
+                </div>
+
+                <p class="doc-lead"><strong>WorkBee.lk</strong> respects your privacy and is committed to protecting the personal information of users who access and use our website and services.</p>
+
+                <p class="doc-lead">This Privacy Policy explains what information we may collect, how we use it, how we may share it, and how we protect it when you use WorkBee.lk.</p>
+
+                <p class="doc-lead">By using WorkBee.lk, registering an account, creating a profile, posting a job vacancy, applying for a job, or otherwise using our services, you acknowledge that you have read and understood this Privacy Policy.</p>
+
+                <section class="doc-section">
+                    <h2>1. Information We Collect</h2>
+                    <p>Depending on how you use WorkBee, we may collect the following information:</p>
+
+                    <h3>1.1 Personal Information</h3>
+                    <p>This may include:</p>
+                    <ul>
+                        <li>Full name;</li>
+                        <li>Date of birth or age, where required;</li>
+                        <li>Gender, where voluntarily provided;</li>
+                        <li>Telephone number;</li>
+                        <li>Email address;</li>
+                        <li>Residential area;</li>
+                        <li>Preferred working area;</li>
+                        <li>Nationality, where required;</li>
+                        <li>Identification information where required for verification;</li>
+                        <li>Profile photograph, where provided;</li>
+                        <li>Other information voluntarily submitted by you.</li>
+                    </ul>
+
+                    <h3>1.2 Employment and Professional Information</h3>
+                    <p>For workers and job seekers, we may collect:</p>
+                    <ul>
+                        <li>Job skills;</li>
+                        <li>Qualifications;</li>
+                        <li>Certificates;</li>
+                        <li>Work experience;</li>
+                        <li>Current employment information;</li>
+                        <li>Previous employment information;</li>
+                        <li>Preferred job categories;</li>
+                        <li>Preferred working locations;</li>
+                        <li>Availability;</li>
+                        <li>Expected employment information; and</li>
+                        <li>Other employment-related information provided by you.</li>
+                    </ul>
+
+                    <h3>1.3 Employer and Company Information</h3>
+                    <p>For employers and companies, we may collect:</p>
+                    <ul>
+                        <li>Company or business name;</li>
+                        <li>Business contact information;</li>
+                        <li>Contact person's name;</li>
+                        <li>Telephone number;</li>
+                        <li>Email address;</li>
+                        <li>Business address or operating area;</li>
+                        <li>Job vacancy information;</li>
+                        <li>Job requirements;</li>
+                        <li>Company-related information; and</li>
+                        <li>Verification information where applicable.</li>
+                    </ul>
+
+                    <h3>1.4 Technical Information</h3>
+                    <p>When you use our website, certain technical information may automatically be collected, including:</p>
+                    <ul>
+                        <li>IP address;</li>
+                        <li>Browser type;</li>
+                        <li>Device type;</li>
+                        <li>Operating system;</li>
+                        <li>Website activity;</li>
+                        <li>Pages visited;</li>
+                        <li>Date and time of access; and</li>
+                        <li>Other technical information required for website security and operation.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>2. How We Collect Information</h2>
+                    <p>We may collect information when you:</p>
+                    <ul>
+                        <li>Register for a WorkBee account;</li>
+                        <li>Create or update a profile;</li>
+                        <li>Register as a worker or job seeker;</li>
+                        <li>Register as an employer or company;</li>
+                        <li>Post a job vacancy;</li>
+                        <li>Apply for a job;</li>
+                        <li>Contact another user through WorkBee;</li>
+                        <li>Contact WorkBee;</li>
+                        <li>Submit information through forms;</li>
+                        <li>Use our website or services; or</li>
+                        <li>Otherwise voluntarily provide information to us.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>3. How We Use Your Information</h2>
+                    <p>WorkBee may use personal information for purposes including:</p>
+                    <ul>
+                        <li>Creating and managing user accounts;</li>
+                        <li>Providing employment-related services;</li>
+                        <li>Connecting workers with employers;</li>
+                        <li>Connecting employers with suitable workers;</li>
+                        <li>Processing job applications;</li>
+                        <li>Displaying relevant worker or employer profiles;</li>
+                        <li>Communicating with users;</li>
+                        <li>Providing customer support;</li>
+                        <li>Verifying information where applicable;</li>
+                        <li>Preventing fraud, misuse, and unauthorized activity;</li>
+                        <li>Maintaining website security;</li>
+                        <li>Improving our website and services;</li>
+                        <li>Managing payments and applicable services;</li>
+                        <li>Sending important service-related notifications; and</li>
+                        <li>Complying with applicable laws and legal requirements.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>4. Profile Information and Visibility</h2>
+                    <p>WorkBee is designed to facilitate connections between workers and employers.</p>
+                    <p>Depending on the features you use and your account settings, certain information from your profile may be visible to other authorized users.</p>
+                    <p>For example, information such as name, skills, qualifications, work experience, preferred working areas, and employment-related information may be made available to relevant employers or users for employment-related purposes.</p>
+                    <p>We encourage users not to publish sensitive or unnecessary personal information in publicly visible areas of their profiles.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>5. Sharing of Information</h2>
+                    <p>WorkBee may share information where reasonably necessary to provide our services.</p>
+                    <p>Information may be shared with:</p>
+                    <ul>
+                        <li>Employers or companies when relevant to employment opportunities;</li>
+                        <li>Workers or job seekers when relevant to recruitment;</li>
+                        <li>Service providers supporting our website or business operations;</li>
+                        <li>Payment service providers where applicable;</li>
+                        <li>Verification or security service providers where applicable;</li>
+                        <li>Government authorities or law enforcement agencies where legally required; and</li>
+                        <li>Other parties where you have provided appropriate authorization.</li>
+                    </ul>
+                    <p>WorkBee does not intend to sell personal information to third parties for unrelated purposes.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>6. Job Applications</h2>
+                    <p>When you apply for a job through WorkBee, information from your profile or application may be provided to the relevant employer or company.</p>
+                    <p>The employer may use that information to evaluate your application and communicate with you regarding the employment opportunity.</p>
+                    <p>Once information has been provided to an employer, the employer's own privacy practices and policies may also apply.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>7. Employer Information</h2>
+                    <p>Employers and companies are responsible for using worker information only for legitimate employment and recruitment purposes.</p>
+                    <p>Employers must not:</p>
+                    <ul>
+                        <li>Misuse worker information;</li>
+                        <li>Sell or unlawfully distribute worker information;</li>
+                        <li>Use worker information for unrelated purposes;</li>
+                        <li>Attempt to obtain unnecessary sensitive information; or</li>
+                        <li>Use WorkBee information for fraudulent or unlawful activities.</li>
+                    </ul>
+                    <p>WorkBee may restrict or terminate accounts that misuse personal information.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>8. Cookies and Similar Technologies</h2>
+                    <p>WorkBee may use cookies and similar technologies to:</p>
+                    <ul>
+                        <li>Maintain user sessions;</li>
+                        <li>Remember preferences;</li>
+                        <li>Improve website functionality;</li>
+                        <li>Understand website usage;</li>
+                        <li>Improve user experience;</li>
+                        <li>Enhance website security; and</li>
+                        <li>Analyze website performance.</li>
+                    </ul>
+                    <p>You may be able to control cookies through your browser settings. Disabling certain cookies may affect some website features.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>9. Data Security</h2>
+                    <p>WorkBee takes reasonable technical and organizational measures to protect personal information from unauthorized access, alteration, disclosure, misuse, or loss.</p>
+                    <p>However, no online system can be guaranteed to be completely secure.</p>
+                    <p>Users are responsible for maintaining the confidentiality of their passwords and account credentials and should immediately notify WorkBee if they suspect unauthorized access to their account.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>10. Data Retention</h2>
+                    <p>WorkBee may retain personal information for as long as reasonably necessary to:</p>
+                    <ul>
+                        <li>Provide our services;</li>
+                        <li>Maintain user accounts;</li>
+                        <li>Meet legal or regulatory requirements;</li>
+                        <li>Resolve disputes;</li>
+                        <li>Prevent fraud and misuse;</li>
+                        <li>Maintain business records; or</li>
+                        <li>Protect our legal rights.</li>
+                    </ul>
+                    <p>When information is no longer reasonably required, WorkBee may delete, anonymize, or securely dispose of it in accordance with applicable requirements.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>11. Your Rights and Choices</h2>
+                    <p>Subject to applicable laws and limitations, you may have the right to:</p>
+                    <ul>
+                        <li>Access personal information held about you;</li>
+                        <li>Request correction of inaccurate information;</li>
+                        <li>Update your account information;</li>
+                        <li>Request deletion of certain information;</li>
+                        <li>Withdraw consent where processing is based on consent;</li>
+                        <li>Manage certain profile visibility settings; and</li>
+                        <li>Ask questions about how your information is handled.</li>
+                    </ul>
+                    <p>Some information may need to be retained where required by law or where necessary for legitimate business or security purposes.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>12. Children's Privacy</h2>
+                    <p>WorkBee is intended for individuals who are legally permitted to participate in employment or recruitment activities.</p>
+                    <p>We do not knowingly collect personal information from children where such collection is prohibited by applicable law.</p>
+                    <p>If we become aware that personal information has been collected from a child in circumstances where it should not have been collected, we may take appropriate steps to delete the information.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>13. Third-Party Websites and Services</h2>
+                    <p>WorkBee may contain links or integrations to third-party websites, applications, payment services, or other platforms.</p>
+                    <p>WorkBee is not responsible for the privacy practices, security, or content of third-party services.</p>
+                    <p>Users should review the privacy policies of third-party services before providing personal information to them.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>14. Changes to This Privacy Policy</h2>
+                    <p>WorkBee may update this Privacy Policy from time to time.</p>
+                    <p>When changes are made, the updated Privacy Policy will be published on WorkBee.lk together with a revised "Last Updated" date.</p>
+                    <p>Users are encouraged to review this Privacy Policy periodically.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>15. Contact Us</h2>
+                    <p>If you have questions, requests, complaints, or concerns regarding this Privacy Policy or the handling of your personal information, please contact us through the contact details provided on WorkBee.lk.</p>
+                    <div class="contact-box">
+                        <strong>WorkBee.lk</strong><br>
+                        Sri Lanka<br><br>
+                        <strong>Email:</strong> <a href="mailto:workbee.lk@gmail.com">workbee.lk@gmail.com</a><br>
+                        <strong>Telephone:</strong> <a href="tel:+94787823328">+94 78 782 3328</a>
+                    </div>
+                </section>
+
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 20px;">By using WorkBee.lk, you acknowledge that you have read and understood this Privacy Policy.</p>
+            </div>
+
+            <!-- ================= SINHALA VERSION ================= -->
+            <div class="lang-si" id="content-si">
+                <div class="doc-header">
+                    <h1>පෞද්ගලිකත්ව ප්‍රතිපත්තිය (PRIVACY POLICY)</h1>
+                    <div class="doc-date">අවසන් වරට යාවත්කාලීන කළ දිනය: 2026 අගෝස්තු 28</div>
+                </div>
+
+                <p class="doc-lead">WorkBee.lk කරන ඔබගේ පෞද්ගලිකත්වයට WorkBee ගරු කරන අතර, ඔබගේ පුද්ගලික තොරතුරු ආරක්ෂා කිරීමට කැපවී සිටී.</p>
+
+                <p class="doc-lead">ඔබ WorkBee.lk වෙබ් අඩවිය සහ සේවාවන් භාවිතා කරන විට අප විසින් කුමන තොරතුරු රැස් කරන්නේද, එම තොරතුරු භාවිතා කරන්නේ කෙසේද, කා සමඟ බෙදාගත හැකිද සහ ඒවා ආරක්ෂා කරන්නේ කෙසේද යන්න මෙම පෞද්ගලිකත්ව ප්‍රතිපත්තිය මඟින් පැහැදිලි කරයි.</p>
+
+                <p class="doc-lead">WorkBee.lk හි ලියාපදිංචි වීම, profile එකක් නිර්මාණය කිරීම, රැකියා දැන්වීමක් පළ කිරීම, රැකියාවකට අයදුම් කිරීම හෝ වෙනත් ආකාරයකින් WorkBee සේවාව භාවිතා කිරීම මඟින්, ඔබ මෙම පෞද්ගලිකත්ව ප්‍රතිපත්තිය කියවා සහ අවබෝධ කරගෙන ඇති බව පිළිගනී.</p>
+
+                <section class="doc-section">
+                    <h2>1. අප විසින් රැස් කරන තොරතුරු</h2>
+                    <p>ඔබ WorkBee භාවිතා කරන ආකාරය අනුව පහත සඳහන් තොරතුරු රැස් කළ හැකිය:</p>
+
+                    <h3>1.1 පුද්ගලික තොරතුරු</h3>
+                    <p>ඒවාට ඇතුළත් විය හැකි දෑ:</p>
+                    <ul>
+                        <li>සම්පූර්ණ නම;</li>
+                        <li>උපන් දිනය හෝ වයස, අවශ්‍ය අවස්ථාවලදී;</li>
+                        <li>ස්වේච්ඡාවෙන් ලබා දෙන ස්ත්‍රී/පුරුෂ තොරතුරු;</li>
+                        <li>දුරකථන අංකය;</li>
+                        <li>Email ලිපිනය;</li>
+                        <li>පදිංචි ප්‍රදේශය;</li>
+                        <li>වැඩ කිරීමට කැමති ප්‍රදේශ;</li>
+                        <li>අවශ්‍ය අවස්ථාවල ජාතිකත්වය;</li>
+                        <li>සත්‍යාපනය සඳහා අවශ්‍ය අනන්‍යතා තොරතුරු;</li>
+                        <li>ලබා දෙන profile photograph එක; සහ</li>
+                        <li>ඔබ ස්වේච්ඡාවෙන් ලබා දෙන අනෙකුත් තොරතුරු.</li>
+                    </ul>
+
+                    <h3>1.2 රැකියා සහ වෘත්තීය තොරතුරු</h3>
+                    <p>සේවකයන් සහ රැකියා සොයන්නන්ගෙන් පහත තොරතුරු රැස් කළ හැකිය:</p>
+                    <ul>
+                        <li>රැකියා කුසලතා;</li>
+                        <li>අධ්‍යාපනික සහ වෘත්තීය සුදුසුකම්;</li>
+                        <li>සහතිකපත්;</li>
+                        <li>සේවා පළපුරුද්ද;</li>
+                        <li>වර්තමාන රැකියා තොරතුරු;</li>
+                        <li>පෙර රැකියා තොරතුරු;</li>
+                        <li>කැමති රැකියා කාණ්ඩ;</li>
+                        <li>වැඩ කිරීමට කැමති ප්‍රදේශ;</li>
+                        <li>රැකියාවකට සම්බන්ධ විය හැකි කාලය;</li>
+                        <li>අපේක්ෂිත රැකියා තොරතුරු; සහ</li>
+                        <li>ඔබ විසින් ලබා දෙන අනෙකුත් රැකියා සම්බන්ධ තොරතුරු.</li>
+                    </ul>
+
+                    <h3>1.3 සේවා යෝජක සහ සමාගම් තොරතුරු</h3>
+                    <p>සේවා යෝජකයන් සහ සමාගම්වලින් පහත තොරතුරු රැස් කළ හැකිය:</p>
+                    <ul>
+                        <li>සමාගමේ හෝ ව්‍යාපාරයේ නම;</li>
+                        <li>ව්‍යාපාරික සම්බන්ධතා තොරතුරු;</li>
+                        <li>සම්බන්ධතා පුද්ගලයාගේ නම;</li>
+                        <li>දුරකථන අංකය;</li>
+                        <li>Email ලිපිනය;</li>
+                        <li>ව්‍යාපාරික ලිපිනය හෝ ක්‍රියාත්මක වන ප්‍රදේශය;</li>
+                        <li>රැකියා පුරප්පාඩු පිළිබඳ තොරතුරු;</li>
+                        <li>රැකියා අවශ්‍යතා;</li>
+                        <li>සමාගමට අදාළ තොරතුරු; සහ</li>
+                        <li>අවශ්‍ය අවස්ථාවල සත්‍යාපන තොරතුරු.</li>
+                    </ul>
+
+                    <h3>1.4 තාක්ෂණික තොරතුරු</h3>
+                    <p>ඔබ අපගේ වෙබ් අඩවිය භාවිතා කරන විට, පහත තාක්ෂණික තොරතුරු ස්වයංක්‍රීයව රැස් විය හැකිය:</p>
+                    <ul>
+                        <li>IP address;</li>
+                        <li>Browser වර්ගය;</li>
+                        <li>Device වර්ගය;</li>
+                        <li>Operating system;</li>
+                        <li>වෙබ් අඩවි භාවිත ක්‍රියාකාරකම්;</li>
+                        <li>පිවිසුණු pages;</li>
+                        <li>පිවිසුණු දිනය සහ වේලාව; සහ</li>
+                        <li>වෙබ් අඩවියේ ආරක්ෂාව සහ ක්‍රියාකාරීත්වය සඳහා අවශ්‍ය අනෙකුත් තාක්ෂණික තොරතුරු.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>2. තොරතුරු රැස් කරන ආකාරය</h2>
+                    <p>ඔබ තොරතුරු රැස් කළ හැකිය:</p>
+                    <ul>
+                        <li>WorkBee ගිණුමක් ලියාපදිංචි කරන විට;</li>
+                        <li>Profile එකක් නිර්මාණය හෝ යාවත්කාලීන කරන විට;</li>
+                        <li>සේවකයෙකු හෝ රැකියා සොයන්නෙකු ලෙස ලියාපදිංචි වන විට;</li>
+                        <li>සේවා යෝජකයෙකු හෝ සමාගමක් ලෙස ලියාපදිංචි වන විට;</li>
+                        <li>රැකියා පුරප්පාඩුවක් පළ කරන විට;</li>
+                        <li>රැකියාවකට අයදුම් කරන විට;</li>
+                        <li>WorkBee හරහා වෙනත් පරිශීලකයෙකු සමඟ සම්බන්ධ වන විට;</li>
+                        <li>WorkBee සමඟ සම්බන්ධ වන විට;</li>
+                        <li>Forms හරහා තොරතුරු ඉදිරිපත් කරන විට;</li>
+                        <li>අපගේ වෙබ් අඩවිය හෝ සේවාවන් භාවිතා කරන විට; හෝ</li>
+                        <li>වෙනත් ආකාරයකින් ස්වේච්ඡාවෙන් තොරතුරු ලබා දෙන විට.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>3. ඔබගේ තොරතුරු භාවිතා කරන ආකාරය</h2>
+                    <p>WorkBee විසින් පුද්ගලික තොරතුරු පහත අරමුණු සඳහා භාවිතා කළ හැකිය:</p>
+                    <ul>
+                        <li>පරිශීලක ගිණුම් නිර්මාණය සහ කළමනාකරණය;</li>
+                        <li>රැකියා සම්බන්ධ සේවාවන් ලබා දීම;</li>
+                        <li>සේවකයන් සහ සේවා යෝජකයන් සම්බන්ධ කිරීම;</li>
+                        <li>සුදුසු සේවකයන් සේවා යෝජකයන් සමඟ සම්බන්ධ කිරීම;</li>
+                        <li>රැකියා අයදුම්පත් සැකසීම;</li>
+                        <li>අදාළ සේවක හෝ සේවා යෝජක profiles පෙන්වීම;</li>
+                        <li>පරිශීලකයන් සමඟ සන්නිවේදනය කිරීම;</li>
+                        <li>පාරිභෝගික සහාය ලබා දීම;</li>
+                        <li>අවශ්‍ය අවස්ථාවල තොරතුරු සත්‍යාපනය කිරීම;</li>
+                        <li>වංචා, අනිසි භාවිතය සහ අනවසර ක්‍රියාකාරකම් වැළැක්වීම;</li>
+                        <li>වෙබ් අඩවියේ ආරක්ෂාව පවත්වා ගැනීම;</li>
+                        <li>වෙබ් අඩවිය සහ සේවාවන් වැඩිදියුණු කිරීම;</li>
+                        <li>අදාළ ගෙවීම් සහ සේවාවන් කළමනාකරණය;</li>
+                        <li>වැදගත් සේවා සම්බන්ධ notifications යැවීම; සහ</li>
+                        <li>අදාළ නීති සහ නීත්‍යානුකූල අවශ්‍යතා සපුරාලීම.</li>
+                    </ul>
+                </section>
+
+                <section class="doc-section">
+                    <h2>4. Profile තොරතුරු සහ දෘශ්‍යතාව</h2>
+                    <p>WorkBee නිර්මාණය කර ඇත්තේ සේවකයන් සහ සේවා යෝජකයන් අතර සම්බන්ධතා ඇති කිරීමට පහසුකම් සැපයීම සඳහාය.</p>
+                    <p>ඔබ භාවිතා කරන features සහ ඔබගේ account settings අනුව, ඔබගේ profile එකේ ඇතැම් තොරතුරු බලයලත් පරිශීලකයන්ට දර්ශනය විය හැකිය (උදා: නම, කුසලතා, සුදුසුකම්, සේවා පළපුරුද්ද, වැඩ කිරීමට කැමති ප්‍රදේශ සහ රැකියා සම්බන්ධ තොරතුරු).</p>
+                    <p>ඔබගේ profile එකේ publicly visible areas තුළ අනවශ්‍ය හෝ සංවේදී පුද්ගලික තොරතුරු පළ නොකරන ලෙස අපි නිර්දේශ කරමු.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>5. තොරතුරු බෙදා ගැනීම</h2>
+                    <p>අපගේ සේවාවන් ලබා දීම සඳහා සාධාරණව අවශ්‍ය වන අවස්ථාවල WorkBee විසින් තොරතුරු බෙදාගත හැකිය:</p>
+                    <ul>
+                        <li>අදාළ රැකියා අවස්ථාවකට සම්බන්ධ සේවා යෝජකයන් හෝ සමාගම්;</li>
+                        <li>බඳවා ගැනීම් සම්බන්ධයෙන් අවශ්‍ය සේවකයන් හෝ රැකියා සොයන්නන්;</li>
+                        <li>අපගේ වෙබ් අඩවිය හෝ ව්‍යාපාරික කටයුතු සඳහා සහාය වන සේවා සපයන්නන්;</li>
+                        <li>අවශ්‍ය අවස්ථාවල payment service providers;</li>
+                        <li>අවශ්‍ය අවස්ථාවල verification හෝ security service providers;</li>
+                        <li>නීතියෙන් අවශ්‍ය වන අවස්ථාවල රජයේ ආයතන හෝ නීතිය ක්‍රියාත්මක කරන ආයතන; සහ</li>
+                        <li>ඔබ විසින් සුදුසු අවසරයක් ලබා දී ඇති අනෙකුත් පාර්ශ්ව.</li>
+                    </ul>
+                    <p>අදාළ නොවන අරමුණු සඳහා ඔබගේ පුද්ගලික තොරතුරු තෙවන පාර්ශ්වයන්ට විකිණීම WorkBee හි අරමුණ නොවේ.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>6. රැකියා අයදුම්පත්</h2>
+                    <p>ඔබ WorkBee හරහා රැකියාවකට අයදුම් කරන විට, ඔබගේ profile එකේ හෝ application එකේ අඩංගු තොරතුරු අදාළ සේවා යෝජකයා හෝ සමාගම වෙත ලබා දිය හැකිය.</p>
+                    <p>සේවා යෝජකයා එම තොරතුරු ඔබගේ application එක ඇගයීම සහ රැකියා අවස්ථාව සම්බන්ධයෙන් ඔබ සමඟ සම්බන්ධ වීම සඳහා භාවිතා කළ හැකිය.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>7. සේවා යෝජකයන් විසින් තොරතුරු භාවිතා කිරීම</h2>
+                    <p>සේවා යෝජකයන් සහ සමාගම් සේවක තොරතුරු නීත්‍යානුකූල බඳවා ගැනීම් සහ රැකියා අරමුණු සඳහා පමණක් භාවිතා කළ යුතුය.</p>
+                    <p>සේවා යෝජකයන්:</p>
+                    <ul>
+                        <li>සේවක තොරතුරු අනිසි ලෙස භාවිතා කිරීම;</li>
+                        <li>සේවක තොරතුරු විකිණීම හෝ නීති විරෝධී ලෙස බෙදා හැරීම;</li>
+                        <li>සේවක තොරතුරු අදාළ නොවන අරමුණු සඳහා භාවිතා කිරීම; හෝ</li>
+                        <li>WorkBee හරහා ලබාගත් තොරතුරු වංචනික හෝ නීති විරෝධී ක්‍රියා සඳහා භාවිතා කිරීම</li>
+                    </ul>
+                    <p>සිදු නොකළ යුතුය. පුද්ගලික තොරතුරු අනිසි ලෙස භාවිතා කරන ගිණුම් සීමා කිරීමට හෝ අවසන් කිරීමට WorkBee හට අයිතිය ඇත.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>8. Cookies සහ සමාන තාක්ෂණයන්</h2>
+                    <p>WorkBee විසින් User sessions පවත්වා ගැනීම, User preferences මතක තබා ගැනීම, වෙබ් අඩවියේ ක්‍රියාකාරීත්වය වැඩිදියුණු කිරීම, ආරක්ෂාව වැඩිදියුණු කිරීම සහ performance විශ්ලේෂණය සඳහා Cookies භාවිතා කළ හැකිය.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>9. දත්ත ආරක්ෂාව</h2>
+                    <p>අනවසර ප්‍රවේශය, වෙනස් කිරීම, හෙළිදරව් කිරීම, අනිසි භාවිතය හෝ අලාභයෙන් පුද්ගලික තොරතුරු ආරක්ෂා කිරීම සඳහා WorkBee සාධාරණ තාක්ෂණික සහ සංවිධානාත්මක ආරක්ෂක ක්‍රියාමාර්ග භාවිතා කරයි.</p>
+                    <p>ඔබගේ password සහ account credentials ආරක්ෂිතව තබා ගැනීම ඔබගේ වගකීමකි.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>10. දත්ත රඳවා තබා ගැනීම</h2>
+                    <p>WorkBee විසින් පුද්ගලික තොරතුරු සාධාරණව අවශ්‍ය වන කාලය දක්වා තබා ගත හැකිය. තොරතුරු තවදුරටත් අවශ්‍ය නොවන විට, අදාළ නීති සහ අවශ්‍යතා අනුව WorkBee විසින් එම තොරතුරු මකා දැමීමට, anonymize කිරීමට හෝ ආරක්ෂිතව ඉවත් කිරීමට හැකිය.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>11. ඔබගේ අයිතිවාසිකම් සහ තේරීම්</h2>
+                    <p>අදාළ නීති සහ සීමාවන්ට යටත්ව, ඔබට WorkBee සතුව ඇති ඔබගේ පුද්ගලික තොරතුරු වෙත ප්‍රවේශ වීම, වැරදි තොරතුරු නිවැරදි කිරීමට ඉල්ලීම, යාවත්කාලීන කිරීම හෝ මකා දැමීමට ඉල්ලීමේ අයිතිවාසිකම් තිබිය හැකිය.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>12. ළමුන්ගේ පෞද්ගලිකත්වය</h2>
+                    <p>WorkBee යනු නීත්‍යානුකූලව රැකියා හෝ බඳවා ගැනීම් කටයුතු සඳහා සහභාගී වීමට අවසර ඇති පුද්ගලයන් සඳහා නිර්මාණය කරන ලද සේවාවකි. ළමයෙකුගේ පුද්ගලික තොරතුරු රැස් කර ඇති බව WorkBee වෙත දැනගතහොත්, එම තොරතුරු මකා දැමීමට සුදුසු ක්‍රියාමාර්ග ගත හැකිය.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>13. තෙවන පාර්ශ්ව වෙබ් අඩවි සහ සේවාවන්</h2>
+                    <p>WorkBee තුළ තෙවන පාර්ශ්ව websites, applications හෝ platforms වෙත links අඩංගු විය හැකිය. එම තෙවන පාර්ශ්ව සේවාවන්ගේ privacy practices හෝ content සම්බන්ධයෙන් WorkBee වගකීමක් නොදරයි.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>14. මෙම Privacy Policy එක වෙනස් කිරීම</h2>
+                    <p>WorkBee විසින් අවශ්‍ය අවස්ථාවලදී මෙම Privacy Policy එක යාවත්කාලීන කළ හැකිය. වෙනස්කම් සිදු කළ විට, යාවත්කාලීන කරන ලද Privacy Policy එක නව “Last Updated” දිනයක් සමඟ WorkBee.lk හි පළ කරනු ඇත.</p>
+                </section>
+
+                <section class="doc-section">
+                    <h2>15. අප හා සම්බන්ධ වන්න</h2>
+                    <p>මෙම Privacy Policy එක හෝ ඔබගේ පුද්ගලික තොරතුරු සම්බන්ධයෙන් ප්‍රශ්න, ඉල්ලීම්, පැමිණිලි හෝ ගැටලු තිබේ නම් WorkBee.lk හි ලබා දී ඇති සම්බන්ධතා තොරතුරු හරහා අප හා සම්බන්ධ වන්න.</p>
+                    <div class="contact-box">
+                        <strong>WorkBee.lk</strong><br>
+                        ශ්‍රී ලංකාව<br><br>
+                        <strong>Email:</strong> <a href="mailto:workbee.lk@gmail.com">workbee.lk@gmail.com</a><br>
+                        <strong>Telephone:</strong> <a href="tel:+94787823328">+94 78 782 3328</a>
+                    </div>
+                </section>
+
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 20px;">WorkBee.lk භාවිතා කිරීමෙන්, ඔබ මෙම Privacy Policy එක කියවා සහ අවබෝධ කරගෙන ඇති බව පිළිගනී.</p>
+            </div>
+
+        </article>
+    </main>
+
+    <script>
+        function setDocLang(lang) {
+            document.querySelectorAll('.lang-en, .lang-si').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.lang-switch-btn').forEach(btn => btn.classList.remove('active'));
+            
+            if (lang === 'si') {
+                document.getElementById('content-si').classList.add('active');
+                document.getElementById('btn-si').classList.add('active');
+            } else {
+                document.getElementById('content-en').classList.add('active');
+                document.getElementById('btn-en').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
