@@ -688,13 +688,25 @@
 
             // Pre-fill "Post a Requirement" form with registered company info
             if(document.getElementById('jobCompanyName')) document.getElementById('jobCompanyName').value = compName;
-            if(document.getElementById('jobContactPhone')) {
-                document.getElementById('jobContactPhone').value = phone;
-                lookupCompanyByPhone();
+            if(document.getElementById('jobContactPhone')) document.getElementById('jobContactPhone').value = phone;
+            if(document.getElementById('jobIndustry')) {
+                document.getElementById('jobIndustry').value = industry;
+                updateSkills(industry);
             }
+            if(document.getElementById('jobDistrict')) document.getElementById('jobDistrict').value = city;
+            lookupCompanyByPhone();
 
-            document.getElementById('formRegister').style.display = 'none';
-            document.getElementById('successRegister').style.display = 'block';
+            // Switch directly to the "Post a Requirement" form!
+            switchTab(1);
+
+            const banner = document.getElementById('companyLoggedInBadge');
+            if (banner) {
+                banner.innerHTML = `🎉 <strong>Registration Successful!</strong> Company Ref: <strong>${compId}</strong>. Welcome <strong>${compName}</strong>. Please fill out your job requirements below to request verified workers.`;
+                banner.style.display = 'block';
+                banner.style.background = '#ecfdf5';
+                banner.style.borderColor = '#10B981';
+            }
+            window.scrollTo({ top: 180, behavior: 'smooth' });
         }
 
         function lookupCompanyByPhone() {
@@ -718,19 +730,19 @@
             });
 
             if (matched) {
-                if (document.getElementById('jobCompanyName')) {
+                if (document.getElementById('jobCompanyName') && !document.getElementById('jobCompanyName').value) {
                     document.getElementById('jobCompanyName').value = matched.name || '';
                 }
-                if (document.getElementById('jobIndustry') && matched.industry) {
+                if (document.getElementById('jobIndustry') && matched.industry && !document.getElementById('jobIndustry').value) {
                     document.getElementById('jobIndustry').value = matched.industry;
                     updateSkills(matched.industry);
                 }
-                if (document.getElementById('jobDistrict') && matched.city) {
+                if (document.getElementById('jobDistrict') && matched.city && !document.getElementById('jobDistrict').value) {
                     document.getElementById('jobDistrict').value = matched.city;
                 }
 
                 if (statusDiv) {
-                    statusDiv.innerHTML = `✅ Found Registered Company: <strong>${matched.name}</strong> (${matched.industry || 'General'}) — Details Auto-filled!`;
+                    statusDiv.innerHTML = `✅ Registered Company: <strong>${matched.name}</strong> (${matched.industry || 'General'}) — Details Auto-filled!`;
                     statusDiv.style.display = 'block';
                 }
             } else {
@@ -762,6 +774,9 @@
             if (document.getElementById('mealLunch')?.checked) selectedMeals.push('Lunch (දවල් කෑම)');
             if (document.getElementById('mealDinner')?.checked) selectedMeals.push('Dinner (රාත්‍රී කෑම)');
             if (document.getElementById('mealTea')?.checked) selectedMeals.push('Tea & Snacks (තේ)');
+
+            const urgencyEl = document.querySelector('input[name="urgency"]:checked');
+            const urgency = urgencyEl ? urgencyEl.value : 'Normal';
 
             let totalDays = 1;
             if (fromDate && toDate) {
@@ -803,6 +818,7 @@
                 shifts: selectedShifts.length ? selectedShifts : ['Day'],
                 meals: selectedMeals.length ? selectedMeals : ['No Meals Provided'],
                 desc: document.getElementById('jobDesc').value,
+                urgency: urgency,
                 status: 'OPEN',
                 applicants: [], // Worker IDs who applied
                 postedDate: new Date().toISOString().split('T')[0]
@@ -821,6 +837,7 @@
             document.getElementById('generatedJobRef').innerText = reqId;
             document.getElementById('formJob').style.display = 'none';
             document.getElementById('successJob').style.display = 'block';
+            window.scrollTo({ top: 150, behavior: 'smooth' });
         }
     </script>
     <!-- PWA Install Banner (Android + iOS smart detection) -->

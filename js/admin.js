@@ -987,6 +987,7 @@ window._viewRequirement = function (rid) {
         '<div>🕒 <strong>Shift:</strong> ' + sh + '</div>' +
         '<div>📅 <strong>Dates:</strong> ' + (r.fromDate || 'N/A') + ' to ' + (r.toDate || 'N/A') + '</div>' +
         '<div>⏳ <strong>Duration:</strong> ' + (r.totalDays || 1) + ' days</div>' +
+        '<div>⚡ <strong>Urgency:</strong> <span style="font-weight:bold;color:' + (r.urgency === 'Very Urgent' ? '#dc2626' : (r.urgency === 'Urgent' ? '#d97706' : '#166534')) + ';">' + (r.urgency || 'Normal') + '</span></div>' +
         '<div>💵 <strong>Daily Rate:</strong> LKR ' + Number(r.payRate || 0).toLocaleString() + '</div>' +
         '<div>💰 <strong>Total Payout:</strong> LKR ' + Number(r.totalPay || 0).toLocaleString() + '</div>' +
         '<div style="grid-column:1/-1;">🍱 <strong>Meals Provided:</strong> ' + meals + '</div>' +
