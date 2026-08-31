@@ -140,6 +140,60 @@
             align-items: center;
             gap: 10px;
         }
+        /* Chip & Interactive Form styling */
+        .chip-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .chip {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .chip:hover {
+            border-color: #F59E0B;
+            color: #F59E0B;
+        }
+        .chip.selected {
+            background: #F59E0B;
+            border-color: #F59E0B;
+            color: #0f172a;
+            font-weight: 700;
+        }
+        .radio-group {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: #cbd5e1 !important;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -187,79 +241,188 @@
                 </div>
             </div>
             
-            <!-- Post New Requirement Form -->
+            <!-- Post New Requirement Form (from register-company.html) -->
             <div class="section-box">
-                <h3 style="font-size:1.1rem;font-weight:700;color:#F59E0B;margin-bottom:16px;">📢 Request Workers (Post Requirement)</h3>
-                <form id="postJobForm" onsubmit="handleJobPostSubmit(event)">
-                    <div class="form-grid">
+                <h3 style="font-size:1.15rem;font-weight:700;color:#F59E0B;margin-bottom:16px;">📢 Post a Requirement (Request Verified Workers)</h3>
+                
+                <form id="formJob" onsubmit="submitJob(event)">
+                    <div class="grid-2">
                         <div class="form-group">
-                            <label for="skillRequired">Worker Skill Required *</label>
-                            <select id="skillRequired" required>
-                                <option value="">-- Select Skill --</option>
-                                <option value="Mason">Mason / පෙදරේරු</option>
-                                <option value="Carpenter">Carpenter / වඩුවා</option>
-                                <option value="Painter">Painter / පින්තාරුකරු</option>
-                                <option value="Plumber">Plumber / නල කාර්මික</option>
-                                <option value="Electrician">Electrician / විදුලි කාර්මික</option>
-                                <option value="Welder">Welder / වෙල්ඩර්</option>
-                                <option value="Helper">Helper / Labourer / අත්වැඩකරු</option>
-                                <option value="Cleaner">Cleaner / පවිත්‍රතා සේවක</option>
-                                <option value="Driver">Driver / රියදුරු</option>
-                                <option value="Catering Staff">Catering / කේටරින් සේවක</option>
+                            <label>Company Name *</label>
+                            <input type="text" id="jobCompanyName" required placeholder="e.g. ABC Holdings Ltd">
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Phone *</label>
+                            <input type="tel" id="jobContactPhone" required placeholder="+94 7X XXX XXXX">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Industry / Sector *</label>
+                            <select id="jobIndustry" required onchange="updateSkills(this.value)">
+                                <option value="">Select Industry</option>
+                                <option value="Construction">Construction</option>
+                                <option value="Hospitality">Hotel & Hospitality</option>
+                                <option value="Logistics">Factory & Logistics</option>
+                                <option value="Cleaning">Cleaning Services</option>
+                                <option value="IT">Information Technology</option>
+                                <option value="Electronics">Electronics & Electrical</option>
                             </select>
                         </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Skills Required *</label>
+                            <div class="chip-group" id="jobSkills">
+                                <span style="color:#94a3b8; font-style:italic; font-size:0.85rem;">Select industry first...</span>
+                            </div>
+                        </div>
 
-                        <div class="form-group">
-                            <label for="workersNeeded">Number of Workers Needed *</label>
-                            <input type="number" id="workersNeeded" min="1" max="100" value="1" required>
+                        <!-- DATE RANGE & CALENDAR SECTION -->
+                        <div class="form-group" style="grid-column: 1 / -1; background: #0f172a; padding: 1.25rem; border-radius: 12px; border: 1px solid #334155;">
+                            <label style="font-weight: 700; color: #F59E0B; font-size: 1rem; display: block; margin-bottom: 6px;">📅 Required Date Range (From - To)</label>
+                            <p style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 12px;">Select the start and end dates for this work contract. The monthly calendar will highlight the work duration.</p>
+                            
+                            <div class="grid-2">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label style="font-size:0.85rem;">From Date (Start) *</label>
+                                    <input type="date" id="fromDate" required onchange="calculatePayAndCalendar()">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label style="font-size:0.85rem;">To Date (End) *</label>
+                                    <input type="date" id="toDate" required onchange="calculatePayAndCalendar()">
+                                </div>
+                            </div>
+
+                            <!-- Calendar Widget Preview -->
+                            <div style="margin-top: 15px; background: #1e293b; border-radius: 10px; padding: 15px; border: 1px solid #334155;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                    <button type="button" style="background:#0f172a;color:#cbd5e1;border:1px solid #334155;border-radius:6px;padding:4px 12px;font-size:0.8rem;cursor:pointer;" onclick="changeCalendarMonth(-1)">&larr; Prev Month</button>
+                                    <span id="calendarMonthTitle" style="font-weight: 700; color: #F59E0B; font-size:0.9rem;">Month Year</span>
+                                    <button type="button" style="background:#0f172a;color:#cbd5e1;border:1px solid #334155;border-radius:6px;padding:4px 12px;font-size:0.8rem;cursor:pointer;" onclick="changeCalendarMonth(1)">Next Month &rarr;</button>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 6px;">
+                                    <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+                                </div>
+                                <div id="calendarDaysGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center;"></div>
+                                <div style="margin-top: 8px; font-size: 0.75rem; color: #94a3b8; display: flex; align-items: center; gap: 15px;">
+                                    <span><span style="display:inline-block; width:12px; height:12px; background:#F59E0B; border-radius:3px; vertical-align:middle; margin-right:4px;"></span> Work Period</span>
+                                    <span><span style="display:inline-block; width:12px; height:12px; background:#0f172a; border:1px solid #334155; border-radius:3px; vertical-align:middle; margin-right:4px;"></span> Regular Day</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PAY CALCULATOR SECTION -->
+                        <div class="form-group" style="grid-column: 1 / -1; background: #0f172a; padding: 1.25rem; border-radius: 12px; border: 1px solid #F59E0B;">
+                            <label style="font-weight: 700; color: #F59E0B; font-size: 1rem; display: block; margin-bottom: 6px;">💰 Pay & Worker Budget Calculator</label>
+                            <p style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 12px;">Specify the pay rate per worker to calculate the full financial budget for this job.</p>
+                            
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label style="font-size:0.85rem;">Number of Workers Required *</label>
+                                    <input type="number" id="numWorkers" min="1" value="1" required oninput="calculatePayAndCalendar()">
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-size:0.85rem;">Daily Pay Rate Per Worker (LKR) *</label>
+                                    <input type="number" id="payRate" min="500" step="100" value="2500" required oninput="calculatePayAndCalendar()" placeholder="e.g. 2500">
+                                </div>
+                            </div>
+
+                            <!-- Live Calculation Card -->
+                            <div style="background: #1e293b; border-radius: 10px; padding: 14px; border: 1px solid #334155; margin-top: 10px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem; color: #94a3b8;">
+                                    <span>Total Contract Duration:</span>
+                                    <strong id="calcTotalDays" style="color: white;">1 Day(s)</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem; color: #94a3b8;">
+                                    <span>Pay Amount Per 1 Worker:</span>
+                                    <strong id="calcPayPerWorker" style="color: #10B981;">LKR 2,500</strong>
+                                </div>
+                                <hr style="border: 0; border-top: 1px solid #334155; margin: 8px 0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: 700; color: white;">
+                                    <span>Total Job Requirement Budget:</span>
+                                    <span id="calcTotalBudget" style="background: #F59E0B; color: #0f172a; padding: 4px 14px; border-radius: 20px; font-size: 1.05rem;">LKR 2,500</span>
+                                </div>
+                            </div>
+
+                            <!-- Meal Provisions Checkboxes -->
+                            <div style="background: #1e293b; border-radius: 10px; padding: 14px; border: 1px solid #334155; margin-top: 12px;">
+                                <label style="font-weight: 700; color: #F59E0B; font-size: 0.9rem; display: block; margin-bottom: 8px;">🍱 Meals Provided (කෑම පහසුකම් සපයනු ලැබේ)</label>
+                                <div style="display: flex; flex-wrap: wrap; gap: 15px; color: #cbd5e1; font-weight: 500; font-size: 0.85rem;">
+                                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mealBreakfast" value="Breakfast" style="width: 16px; height: 16px; accent-color: #F59E0B; cursor: pointer;">
+                                        🍳 Breakfast (උදෑසන කෑම)
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mealLunch" value="Lunch" style="width: 16px; height: 16px; accent-color: #F59E0B; cursor: pointer;" checked>
+                                        🍛 Lunch (දවල් කෑම)
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mealDinner" value="Dinner" style="width: 16px; height: 16px; accent-color: #F59E0B; cursor: pointer;">
+                                        🍲 Dinner (රාත්‍රී කෑම)
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mealTea" value="Tea/Snacks" style="width: 16px; height: 16px; accent-color: #F59E0B; cursor: pointer;">
+                                        ☕ Tea &amp; Snacks (තේ සහ කෙටි කෑම)
+                                    </label>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="requiredDate">Required Date *</label>
-                            <input type="date" id="requiredDate" required>
+                            <label>Job Location - District *</label>
+                            <select id="jobDistrict" required>
+                                <option value="">Select District</option>
+                                <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option><option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option><option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option><option>Kilinochchi</option><option>Kurunegala</option><option>Mannar</option><option>Matale</option><option>Matara</option><option>Moneragala</option><option>Mullaitivu</option><option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option><option>Ratnapura</option><option>Trincomalee</option><option>Vavuniya</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Job Location - Town/Area</label>
+                            <input type="text" id="jobTown" placeholder="e.g. Fort, Nugegoda, Kadawatha">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Shift Type *</label>
+                            <div class="chip-group" id="jobShifts">
+                                <div class="chip selected" onclick="this.classList.toggle('selected')">Day</div>
+                                <div class="chip" onclick="this.classList.toggle('selected')">Night</div>
+                                <div class="chip" onclick="this.classList.toggle('selected')">24hr</div>
+                                <div class="chip" onclick="this.classList.toggle('selected')">Flexible</div>
+                            </div>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Job Description</label>
+                            <textarea id="jobDesc" rows="3" placeholder="Additional details about tasks, equipment provided, meals, etc..."></textarea>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Urgency</label>
+                            <div class="radio-group" id="jobUrgency">
+                                <label><input type="radio" name="urgency" value="Normal" checked> Normal</label>
+                                <label><input type="radio" name="urgency" value="Urgent"> Urgent</label>
+                                <label><input type="radio" name="urgency" value="Very Urgent"> Very Urgent</label>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="location">Job Location (District / Town) *</label>
-                            <input type="text" id="location" placeholder="e.g. Colombo 03" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="dailyPay">Offered Daily Pay (LKR)</label>
-                            <input type="number" id="dailyPay" placeholder="e.g. 3500">
+                        <!-- Image Upload Field -->
+                        <div class="form-group" style="grid-column: 1 / -1; margin-top:4px;">
+                            <label>📷 Job Site Images (Optional)</label>
+                            <div id="imageUploadArea" onclick="document.getElementById('jobImages').click()" style="
+                                border: 2px dashed #334155;
+                                border-radius: 12px;
+                                padding: 20px 16px;
+                                text-align: center;
+                                cursor: pointer;
+                                background: #0f172a;
+                                transition: border-color 0.2s, background 0.2s;
+                                position: relative;
+                            "
+                            onmouseenter="this.style.borderColor='#F59E0B';this.style.background='rgba(245,158,11,0.05)'"
+                            onmouseleave="this.style.borderColor='#334155';this.style.background='#0f172a'">
+                                <div style="font-size:1.8rem;margin-bottom:6px;">🖼️</div>
+                                <div style="color:#94a3b8;font-size:0.85rem;">Click to upload images <span style="color:#F59E0B;font-weight:600;">(max 5)</span></div>
+                                <div style="color:#64748b;font-size:0.75rem;margin-top:4px;">JPG, PNG, WEBP • Max 2MB each</div>
+                                <input type="file" id="jobImages" accept="image/*" multiple style="display:none;" onchange="handleImageUpload(event)">
+                            </div>
+                            <!-- Image Previews -->
+                            <div id="imagePreviewGrid" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;"></div>
                         </div>
                     </div>
-
-                    <div class="form-group" style="margin-top:12px;">
-                        <label for="jobNotes">Additional Requirements / Notes</label>
-                        <textarea id="jobNotes" rows="2" placeholder="e.g. Work hours 8am - 5pm, meals provided"></textarea>
-                    </div>
-
-                    <!-- Image Upload Field -->
-                    <div class="form-group" style="margin-top:12px;">
-                        <label>📷 Job Site Images (Optional)</label>
-                        <div id="imageUploadArea" onclick="document.getElementById('jobImages').click()" style="
-                            border: 2px dashed #334155;
-                            border-radius: 12px;
-                            padding: 24px 16px;
-                            text-align: center;
-                            cursor: pointer;
-                            background: #0f172a;
-                            transition: border-color 0.2s, background 0.2s;
-                            position: relative;
-                        "
-                        onmouseenter="this.style.borderColor='#F59E0B';this.style.background='rgba(245,158,11,0.05)'"
-                        onmouseleave="this.style.borderColor='#334155';this.style.background='#0f172a'">
-                            <div style="font-size:2rem;margin-bottom:8px;">🖼️</div>
-                            <div style="color:#94a3b8;font-size:0.85rem;">Click to upload images <span style="color:#F59E0B;font-weight:600;">(max 5)</span></div>
-                            <div style="color:#64748b;font-size:0.75rem;margin-top:4px;">JPG, PNG, WEBP • Max 2MB each</div>
-                            <input type="file" id="jobImages" accept="image/*" multiple style="display:none;" onchange="handleImageUpload(event)">
-                        </div>
-                        <!-- Image Previews -->
-                        <div id="imagePreviewGrid" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;"></div>
-                    </div>
-
-                    <button type="submit" class="btn-post">🚀 Submit Requirement to Admin</button>
+                    <button type="submit" class="btn-post" style="width: 100%; font-size: 1.05rem; padding: 14px; margin-top: 16px;">🚀 Post Requirement to Job Board</button>
                 </form>
             </div>
 
@@ -301,32 +464,159 @@
     <script src="js/auth.js"></script>
     <script>
         let currentUser = null;
+        let currentCalDate = new Date();
+        let uploadedImages = []; // store base64 strings
+
+        const skillSets = {
+            'Construction': ['Mason', 'Carpenter', 'Painter', 'Helper', 'Welder'],
+            'Hospitality': ['Kitchen Helper', 'Waiter', 'Room Attendant', 'Steward'],
+            'Logistics': ['Packing', 'Machine Operator', 'Loader', 'Store Helper'],
+            'Cleaning': ['House Cleaning', 'Commercial Cleaning', 'Gardening'],
+            'IT': ['Web Design / UI Design', 'Graphic Design', 'Computer Hardware Technician', 'Software Programmer', 'Network Technician', 'Data Entry Operator', 'IT Support / Helpdesk'],
+            'Electronics': ['TV / Radio Technician', '2-Phase Electrical Wiring', '3-Phase Electrical Wiring', 'Electronic Technician', 'Air Conditioning Technician', 'CCTV / Security Systems', 'Solar Panel Installation', 'Refrigerator / AC Repair']
+        };
 
         document.addEventListener('DOMContentLoaded', function() {
             currentUser = Auth.requireAuth(['company']);
             if (!currentUser) return;
 
-            document.getElementById('requiredDate').valueAsDate = new Date();
+            // Set default dates (today to 7 days ahead)
+            const today = new Date();
+            const nextWeek = new Date(today);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+
+            if (document.getElementById('fromDate')) document.getElementById('fromDate').value = today.toISOString().split('T')[0];
+            if (document.getElementById('toDate')) document.getElementById('toDate').value = nextWeek.toISOString().split('T')[0];
 
             renderProfile();
+            prefillFormWithCompanyData();
+            calculatePayAndCalendar();
             renderMyPostings();
             renderAvailableWorkers();
         });
 
         function renderProfile() {
             const p = currentUser.profileData || {};
-            document.getElementById('header-company-name').innerText = p.companyName || currentUser.username;
-            document.getElementById('company-name').innerText = p.companyName || currentUser.username;
-            document.getElementById('contact-person').innerText = 'Contact: ' + (p.contactPerson || '-');
-            document.getElementById('company-district').innerText = p.district || 'Not specified';
+            const cName = p.companyName || p.name || currentUser.username;
+            document.getElementById('header-company-name').innerText = cName;
+            document.getElementById('company-name').innerText = cName;
+            document.getElementById('contact-person').innerText = 'Contact: ' + (p.contactPerson || p.contact || '-');
+            document.getElementById('company-district').innerText = p.district || p.city || 'Not specified';
             document.getElementById('company-phone').innerText = p.phone || '-';
-            document.getElementById('company-reg').innerText = p.regNumber || 'N/A';
+            document.getElementById('company-reg').innerText = p.regNumber || p.brn || 'N/A';
 
-            const initials = (p.companyName || currentUser.username).charAt(0).toUpperCase();
+            const initials = cName.charAt(0).toUpperCase();
             document.getElementById('company-avatar').innerText = initials;
         }
 
-        let uploadedImages = []; // store base64 strings
+        function prefillFormWithCompanyData() {
+            const p = currentUser.profileData || {};
+            const cName = p.companyName || p.name || currentUser.username;
+            const cPhone = p.phone || '';
+            const cDistrict = p.district || p.city || '';
+            const cIndustry = p.industry || '';
+
+            if (document.getElementById('jobCompanyName')) document.getElementById('jobCompanyName').value = cName;
+            if (document.getElementById('jobContactPhone')) document.getElementById('jobContactPhone').value = cPhone;
+            if (document.getElementById('jobDistrict') && cDistrict) document.getElementById('jobDistrict').value = cDistrict;
+            if (document.getElementById('jobIndustry') && cIndustry) {
+                document.getElementById('jobIndustry').value = cIndustry;
+                updateSkills(cIndustry);
+            }
+        }
+
+        function updateSkills(ind) {
+            let container = document.getElementById('jobSkills');
+            if (!container) return;
+            if (!ind || !skillSets[ind]) {
+                container.innerHTML = '<span style="color:#94a3b8; font-style:italic; font-size:0.85rem;">Select industry first...</span>';
+                return;
+            }
+            let html = '';
+            skillSets[ind].forEach(s => {
+                html += `<div class="chip" onclick="this.classList.toggle('selected')">${s}</div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function changeCalendarMonth(delta) {
+            currentCalDate.setMonth(currentCalDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function calculatePayAndCalendar() {
+            const fromStr = document.getElementById('fromDate')?.value;
+            const toStr = document.getElementById('toDate')?.value;
+            const numWorkers = parseInt(document.getElementById('numWorkers')?.value) || 1;
+            const payRate = parseFloat(document.getElementById('payRate')?.value) || 0;
+
+            let totalDays = 1;
+            if (fromStr && toStr) {
+                const d1 = new Date(fromStr);
+                const d2 = new Date(toStr);
+                const diffTime = d2 - d1;
+                if (diffTime >= 0) {
+                    totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                }
+            }
+
+            const payPerWorker = totalDays * payRate;
+            const totalBudget = payPerWorker * numWorkers;
+
+            if (document.getElementById('calcTotalDays')) document.getElementById('calcTotalDays').innerText = totalDays + ' Day(s)';
+            if (document.getElementById('calcPayPerWorker')) document.getElementById('calcPayPerWorker').innerText = 'LKR ' + payPerWorker.toLocaleString();
+            if (document.getElementById('calcTotalBudget')) document.getElementById('calcTotalBudget').innerText = 'LKR ' + totalBudget.toLocaleString();
+
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const fromStr = document.getElementById('fromDate')?.value;
+            const toStr = document.getElementById('toDate')?.value;
+            const fromDate = fromStr ? new Date(fromStr) : null;
+            const toDate = toStr ? new Date(toStr) : null;
+
+            const year = currentCalDate.getFullYear();
+            const month = currentCalDate.getMonth();
+
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const titleEl = document.getElementById('calendarMonthTitle');
+            if (titleEl) titleEl.innerText = monthNames[month] + " " + year;
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const grid = document.getElementById('calendarDaysGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            // Empty cells before start of month
+            for (let i = 0; i < firstDayIndex; i++) {
+                const empty = document.createElement('div');
+                grid.appendChild(empty);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.style.padding = '6px';
+                dayEl.style.fontSize = '0.75rem';
+                dayEl.style.borderRadius = '4px';
+                dayEl.innerText = day;
+
+                const thisDate = new Date(year, month, day);
+
+                if (fromDate && toDate && thisDate >= new Date(fromDate.setHours(0,0,0,0)) && thisDate <= new Date(toDate.setHours(23,59,59,999))) {
+                    dayEl.style.background = '#F59E0B';
+                    dayEl.style.color = '#0F172A';
+                    dayEl.style.fontWeight = 'bold';
+                } else {
+                    dayEl.style.background = '#0f172a';
+                    dayEl.style.color = '#94a3b8';
+                    dayEl.style.border = '1px solid #334155';
+                }
+                grid.appendChild(dayEl);
+            }
+        }
 
         function handleImageUpload(event) {
             const files = Array.from(event.target.files);
@@ -347,12 +637,12 @@
                 };
                 reader.readAsDataURL(file);
             });
-            // Reset input so same file can be re-selected
             event.target.value = '';
         }
 
         function renderImagePreviews() {
             const grid = document.getElementById('imagePreviewGrid');
+            if (!grid) return;
             grid.innerHTML = uploadedImages.map((src, i) => `
                 <div style="position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:2px solid #334155;">
                     <img src="${src}" style="width:100%;height:100%;object-fit:cover;" alt="Preview ${i+1}">
@@ -367,16 +657,17 @@
                 </div>
             `).join('');
 
-            // Update upload area hint
             const area = document.getElementById('imageUploadArea');
-            if (uploadedImages.length >= 5) {
-                area.style.opacity = '0.5';
-                area.style.cursor = 'not-allowed';
-                area.onclick = null;
-            } else {
-                area.style.opacity = '1';
-                area.style.cursor = 'pointer';
-                area.onclick = () => document.getElementById('jobImages').click();
+            if (area) {
+                if (uploadedImages.length >= 5) {
+                    area.style.opacity = '0.5';
+                    area.style.cursor = 'not-allowed';
+                    area.onclick = null;
+                } else {
+                    area.style.opacity = '1';
+                    area.style.cursor = 'pointer';
+                    area.onclick = () => document.getElementById('jobImages').click();
+                }
             }
         }
 
@@ -385,63 +676,116 @@
             renderImagePreviews();
         }
 
-
-        function handleJobPostSubmit(event) {
-            event.preventDefault();
+        function submitJob(e) {
+            e.preventDefault();
             const p = currentUser.profileData || {};
 
-            const newJob = {
-                id: 'job_' + Date.now(),
-                companyUserId: currentUser.id,
-                companyName: p.companyName || currentUser.username,
-                companyPhone: p.phone || '',
-                skillRequired: document.getElementById('skillRequired').value,
-                workersNeeded: parseInt(document.getElementById('workersNeeded').value),
-                requiredDate: document.getElementById('requiredDate').value,
-                location: document.getElementById('location').value,
-                dailyPay: document.getElementById('dailyPay').value,
-                notes: document.getElementById('jobNotes').value,
-                images: uploadedImages.slice(),
-                createdAt: new Date().toISOString(),
-                status: 'Awaiting Admin Dispatch'
+            const companyName = document.getElementById('jobCompanyName').value;
+            const phone = document.getElementById('jobContactPhone').value;
+            const industry = document.getElementById('jobIndustry').value;
+            const district = document.getElementById('jobDistrict').value;
+            const town = document.getElementById('jobTown')?.value || '';
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const numWorkers = parseInt(document.getElementById('numWorkers').value) || 1;
+            const payRate = parseFloat(document.getElementById('payRate').value) || 0;
+
+            const selectedSkills = [];
+            document.querySelectorAll('#jobSkills .chip.selected').forEach(c => selectedSkills.push(c.innerText));
+
+            const selectedShifts = [];
+            document.querySelectorAll('#jobShifts .chip.selected').forEach(c => selectedShifts.push(c.innerText));
+
+            const selectedMeals = [];
+            if (document.getElementById('mealBreakfast')?.checked) selectedMeals.push('Breakfast (උදෑසන කෑම)');
+            if (document.getElementById('mealLunch')?.checked) selectedMeals.push('Lunch (දවල් කෑම)');
+            if (document.getElementById('mealDinner')?.checked) selectedMeals.push('Dinner (රාත්‍රී කෑම)');
+            if (document.getElementById('mealTea')?.checked) selectedMeals.push('Tea & Snacks (තේ)');
+
+            const urgencyEl = document.querySelector('input[name="urgency"]:checked');
+            const urgency = urgencyEl ? urgencyEl.value : 'Normal';
+
+            let totalDays = 1;
+            if (fromDate && toDate) {
+                const d1 = new Date(fromDate);
+                const d2 = new Date(toDate);
+                if (d2 >= d1) totalDays = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+            }
+            const totalPay = totalDays * payRate * numWorkers;
+
+            const reqId = 'JOB-' + Math.floor(1000 + Math.random() * 9000);
+
+            const companyDetails = {
+                name: companyName,
+                phone: phone,
+                contactPerson: p.contactPerson || p.contact || 'Contact Person',
+                brn: p.regNumber || p.brn || 'N/A',
+                email: p.email || 'N/A',
+                city: district || p.city || 'N/A'
             };
 
-            let postings = JSON.parse(localStorage.getItem(AUTH_KEYS.JOB_POSTINGS) || '[]');
-            postings.unshift(newJob);
-            localStorage.setItem(AUTH_KEYS.JOB_POSTINGS, JSON.stringify(postings));
-
-            const newReqObj = {
-                id: newJob.id,
-                company: newJob.companyName,
-                phone: newJob.companyPhone,
-                skills: [newJob.skillRequired],
-                workersReq: parseInt(newJob.workersNeeded) || 1,
-                district: newJob.location,
-                fromDate: newJob.requiredDate,
-                toDate: newJob.requiredDate,
-                totalPay: (parseInt(newJob.workersNeeded) || 1) * (parseFloat(newJob.dailyPay) || 2500),
-                shifts: ['Day'],
-                meals: ['Provided by Employer'],
-                desc: newJob.notes || '',
+            const newReq = {
+                id: reqId,
+                companyUserId: currentUser.id,
+                company: companyName,
+                phone: phone,
+                companyDetails: companyDetails,
+                industry: industry,
+                skillRequired: selectedSkills.length ? selectedSkills.join(', ') : industry,
+                skills: selectedSkills.length ? selectedSkills : [industry],
+                workersReq: numWorkers,
+                workersNeeded: numWorkers,
+                district: district,
+                town: town,
+                location: town ? `${district} (${town})` : district,
+                fromDate: fromDate,
+                toDate: toDate,
+                requiredDate: fromDate,
+                totalDays: totalDays,
+                payRate: payRate,
+                dailyPay: payRate,
+                totalPay: totalPay,
+                shifts: selectedShifts.length ? selectedShifts : ['Day'],
+                meals: selectedMeals.length ? selectedMeals : ['No Meals Provided'],
+                desc: document.getElementById('jobDesc')?.value || '',
+                notes: document.getElementById('jobDesc')?.value || '',
+                urgency: urgency,
+                images: uploadedImages.slice(),
                 status: 'OPEN',
                 applicants: [],
-                postedDate: new Date().toISOString().split('T')[0]
+                postedDate: new Date().toISOString().split('T')[0],
+                createdAt: new Date().toISOString()
             };
-            reqs.unshift(newReqObj);
+
+            // 1. Save to workbee_requirements (Admin list)
+            let reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+            reqs.unshift(newReq);
             localStorage.setItem('workbee_requirements', JSON.stringify(reqs));
             localStorage.setItem('workbee_seeded_initial', 'true');
 
-            // Save to Firebase Cloud DB
+            // 2. Save to workbee_job_postings (Company postings list)
+            let postings = JSON.parse(localStorage.getItem(AUTH_KEYS.JOB_POSTINGS) || '[]');
+            postings.unshift(newReq);
+            localStorage.setItem(AUTH_KEYS.JOB_POSTINGS, JSON.stringify(postings));
+
+            // 3. Save to Firebase Cloud DB
             if (typeof WB_FIREBASE !== 'undefined') {
-                WB_FIREBASE.saveRequirement(newReqObj).catch(function () {});
+                WB_FIREBASE.saveRequirement(newReq).catch(function () {});
             }
 
-            alert('Requirement submitted! WorkBee Admin will review and dispatch verified workers to your location.');
-            document.getElementById('postJobForm').reset();
-            document.getElementById('requiredDate').valueAsDate = new Date();
+            alert('Requirement #' + reqId + ' posted successfully! WorkBee Admin is matching and dispatching verified workers.');
+
+            // Reset form fields
+            document.getElementById('formJob').reset();
+            prefillFormWithCompanyData();
+            const today = new Date();
+            const nextWeek = new Date(today);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            if (document.getElementById('fromDate')) document.getElementById('fromDate').value = today.toISOString().split('T')[0];
+            if (document.getElementById('toDate')) document.getElementById('toDate').value = nextWeek.toISOString().split('T')[0];
             uploadedImages = [];
-            document.getElementById('imagePreviewGrid').innerHTML = '';
             renderImagePreviews();
+            calculatePayAndCalendar();
             renderMyPostings();
         }
 
