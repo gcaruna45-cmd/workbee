@@ -69,7 +69,7 @@ const Auth = {
         let users = JSON.parse(localStorage.getItem(AUTH_KEYS.USERS) || '[]');
         
         // Special check for default Admin login
-        if (username === 'admin' && password === 'admin123') {
+        if (username === 'admin' && (password === 'admin123' || password === 'workbee2024')) {
             const adminSession = {
                 id: 'admin_root',
                 username: 'admin',
@@ -77,6 +77,7 @@ const Auth = {
                 name: 'Administrator'
             };
             localStorage.setItem(AUTH_KEYS.SESSION, JSON.stringify(adminSession));
+            localStorage.setItem('wb_admin_auth', 'true');
             return { success: true, user: adminSession, redirect: 'admin.html' };
         }
 

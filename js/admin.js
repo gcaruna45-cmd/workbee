@@ -6,6 +6,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function checkAuth() {
     var isAuth = localStorage.getItem('wb_admin_auth');
+    var sessStr = localStorage.getItem('workbee_session');
+    if (sessStr) {
+        try {
+            var sess = JSON.parse(sessStr);
+            if (sess && sess.role === 'admin') {
+                isAuth = 'true';
+                localStorage.setItem('wb_admin_auth', 'true');
+            }
+        } catch (e) {}
+    }
+
     var loginGate = document.getElementById('login-gate');
     var dashboard = document.getElementById('admin-dashboard');
     if (isAuth === 'true') {
@@ -37,11 +48,18 @@ function setupLoginForm() {
             e.preventDefault();
             var userEl = document.getElementById('admin-username') || document.getElementById('admin-user');
             var passEl = document.getElementById('admin-password') || document.getElementById('admin-pass');
-            var user = userEl ? userEl.value.trim() : '';
+            var user = userEl ? userEl.value.trim().toLowerCase() : '';
             var pass = passEl ? passEl.value : '';
             var errEl = document.getElementById('login-error');
-            if (user === 'admin' && pass === 'workbee2024') {
+            if (user === 'admin' && (pass === 'workbee2024' || pass === 'admin123')) {
                 localStorage.setItem('wb_admin_auth', 'true');
+                var adminSession = {
+                    id: 'admin_root',
+                    username: 'admin',
+                    role: 'admin',
+                    name: 'Administrator'
+                };
+                localStorage.setItem('workbee_session', JSON.stringify(adminSession));
                 var lg = document.getElementById('login-gate');
                 var db = document.getElementById('admin-dashboard');
                 if (lg) lg.style.display = 'none';
