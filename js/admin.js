@@ -193,10 +193,27 @@ function renderWorkers(q) {
         var fn = ((w.firstName || '') + ' ' + (w.lastName || w.name || '')).trim();
         var ia = w.status === 'approved';
         var wid = String(w.id || ('WB-' + i));
-        tr.innerHTML = '<td><strong style="color:#F59E0B;">#' + wid + '</strong></td><td>' + fn + '</td><td>' + (w.nic || 'N/A') + '</td><td>' + (w.phone || 'N/A') + '</td><td>' + (w.whatsapp || w.phone || 'N/A') + '</td><td>' + (w.age || 25) + '</td><td><small style="background:#f1f5f9;color:#334155;padding:2px 6px;border-radius:4px;">' + sk + '</small></td><td>' + lo + '</td><td>' + sh + '</td><td><span style="background:' + (ia ? '#dcfce7;color:#166534' : '#fef3c7;color:#92400e') + ';padding:2px 8px;border-radius:4px;font-weight:600;">' + (w.status || 'pending') + '</span></td><td><button style="background:#e0f2fe;color:#0369a1;border:1px solid #7dd3fc;padding:4px 8px;border-radius:4px;cursor:pointer;font-weight:bold;margin-right:4px;" onclick="window._VWD(\'' + wid + '\')">👁️ View</button><button style="background:' + (ia ? '#94a3b8' : '#10B981') + ';color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;margin-right:4px;" onclick="window._AW(\'' + wid + '\')">Approve</button> <button style="background:#ef4444;color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;" onclick="window._DW(\'' + wid + '\')">Delete</button></td>';
+        tr.innerHTML = '<td><strong style="color:#F59E0B;">#' + wid + '</strong></td>' +
+            '<td>' + fn + '</td>' +
+            '<td>' + (w.nic || 'N/A') + '</td>' +
+            '<td>' + (w.phone || 'N/A') + '</td>' +
+            '<td>' + (w.whatsapp || w.phone || 'N/A') + '</td>' +
+            '<td>' + (w.age || 25) + '</td>' +
+            '<td><small style="background:#f1f5f9;color:#334155;padding:2px 6px;border-radius:4px;">' + sk + '</small></td>' +
+            '<td>' + lo + '</td>' +
+            '<td>' + sh + '</td>' +
+            '<td><span style="background:' + (ia ? '#dcfce7;color:#166534' : (w.status === 'rejected' ? '#fee2e2;color:#dc2626' : '#fef3c7;color:#92400e')) + ';padding:2px 8px;border-radius:4px;font-weight:600;">' + (w.status || 'pending') + '</span></td>' +
+            '<td style="white-space:nowrap;">' +
+            '<button style="background:#0284c7;color:white;border:none;padding:5px 9px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;margin-right:4px;" onclick="window._viewWorker(\'' + wid + '\')">👁️ Details</button>' +
+            '<button style="background:#f59e0b;color:#0f172a;border:none;padding:5px 9px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;margin-right:4px;" onclick="window._editWorker(\'' + wid + '\')">✏️ Edit</button>' +
+            '<button style="background:#ef4444;color:white;border:none;padding:5px 9px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;margin-right:4px;" onclick="window._deleteWorker(\'' + wid + '\')">🗑️ Delete</button>' +
+            (!ia ? '<button style="background:#10B981;color:white;border:none;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;" onclick="window._approveWorker(\'' + wid + '\')">Approve</button>' : '') +
+            '</td>';
         tbody.appendChild(tr);
     }
 }
+
+// ----------------- WORKER MODALS -----------------
 
 window._VWD = function (id) {
     var old = document.getElementById('wb-wmodal');
@@ -212,6 +229,7 @@ window._VWD = function (id) {
     var fn = ((w.firstName || '') + ' ' + (w.lastName || w.name || 'Worker')).trim();
     var sk = Array.isArray(w.skills) ? w.skills.join(', ') : (w.skills || w.category || 'N/A');
     var lo = Array.isArray(w.locations) ? w.locations.join(', ') : (w.locations || 'N/A');
+    var sh = Array.isArray(w.shifts) ? w.shifts.join('/') : (w.shifts || 'Day');
 
     var ov = document.createElement('div');
     ov.id = 'wb-wmodal';
@@ -223,7 +241,7 @@ window._VWD = function (id) {
         '<div style="margin-bottom:16px;border-bottom:2px solid #f1f5f9;padding-bottom:12px;">' +
         '<span style="font-family:monospace;color:#F59E0B;font-weight:bold;">WORKER ID: #' + w.id + '</span>' +
         '<h2 style="color:#0f172a;margin:4px 0 2px;">👷 ' + fn + '</h2>' +
-        '<span style="background:' + (w.status === 'approved' ? '#dcfce7;color:#166534' : '#fef3c7;color:#92400e') + ';padding:2px 10px;border-radius:12px;font-size:0.8rem;font-weight:bold;">Status: ' + (w.status || 'pending') + '</span>' +
+        '<span style="background:' + (w.status === 'approved' ? '#dcfce7;color:#166534' : (w.status === 'rejected' ? '#fee2e2;color:#dc2626' : '#fef3c7;color:#92400e')) + ';padding:2px 10px;border-radius:12px;font-size:0.8rem;font-weight:bold;">Status: ' + (w.status || 'pending') + '</span>' +
         '</div>' +
         '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px;margin-bottom:14px;color:#1e3a8a;font-size:0.875rem;">' +
         '<div style="font-weight:bold;margin-bottom:8px;color:#1e40af;">🔒 Confidential Personal Information (Admin Only)</div>' +
@@ -250,20 +268,148 @@ window._VWD = function (id) {
         '<div>⌛ <strong>Experience:</strong> ' + (w.experience || 0) + ' years</div>' +
         '<div>🎂 <strong>Age:</strong> ' + (w.age || 'N/A') + '</div>' +
         '<div>⚡ <strong>Notice Period:</strong> ' + (w.noticeperiod || 'Immediate') + '</div>' +
+        '<div>🕒 <strong>Shifts:</strong> ' + sh + '</div>' +
+        '<div>📍 <strong>Districts:</strong> ' + lo + '</div>' +
         '<div style="grid-column:1/-1;">💡 <strong>Skills:</strong> ' + sk + '</div>' +
-        '<div style="grid-column:1/-1;">📍 <strong>Districts:</strong> ' + lo + '</div>' +
         '</div></div>' +
-        '<div style="display:flex;justify-content:flex-end;">' +
+        '<div style="display:flex;justify-content:flex-end;gap:10px;">' +
+        '<button onclick="window._CWM(); window._editWorker(\'' + w.id + '\')" style="padding:10px 18px;background:#F59E0B;color:#0f172a;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">✏️ Edit Worker</button>' +
         '<button onclick="window._CWM()" style="padding:10px 20px;background:#0f172a;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Close</button>' +
         '</div>';
 
     ov.appendChild(bx);
     document.body.appendChild(ov);
 };
+window._viewWorker = window._VWD;
+window._viewWorkerDetails = window._VWD;
 
 window._CWM = function () {
     var m = document.getElementById('wb-wmodal');
     if (m) m.parentNode.removeChild(m);
+};
+window._closeWorkerModal = window._CWM;
+
+// Edit Worker Modal
+window._editWorker = function (id) {
+    var old = document.getElementById('wb-wedit-modal');
+    if (old) old.parentNode.removeChild(old);
+
+    var ws = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+    var w = null;
+    for (var i = 0; i < ws.length; i++) {
+        if (String(ws[i].id) === String(id)) { w = ws[i]; break; }
+    }
+    if (!w) { alert('Worker #' + id + ' not found!'); return; }
+
+    var sk = Array.isArray(w.skills) ? w.skills.join(', ') : (w.skills || '');
+    var lo = Array.isArray(w.locations) ? w.locations.join(', ') : (w.locations || '');
+    var sh = Array.isArray(w.shifts) ? w.shifts.join(', ') : (w.shifts || 'Day');
+
+    var ov = document.createElement('div');
+    ov.id = 'wb-wedit-modal';
+    ov.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.88);z-index:999999;overflow-y:auto;padding:30px 20px;';
+    var bx = document.createElement('div');
+    bx.style.cssText = 'background:#fff;border-radius:16px;max-width:720px;width:100%;margin:0 auto;padding:28px;box-shadow:0 25px 50px rgba(0,0,0,0.4);position:relative;border:2px solid #F59E0B;';
+
+    bx.innerHTML = '<button onclick="window._closeEditWorkerModal()" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.8rem;cursor:pointer;color:#64748b;">&times;</button>' +
+        '<div style="margin-bottom:18px;border-bottom:2px solid #f1f5f9;padding-bottom:12px;">' +
+        '<span style="font-family:monospace;color:#F59E0B;font-weight:bold;">EDIT WORKER #' + w.id + '</span>' +
+        '<h2 style="color:#0f172a;margin:4px 0 0;">✏️ Edit Worker Profile</h2>' +
+        '</div>' +
+        '<form id="wb-edit-worker-form" onsubmit="window._saveWorker(event, \'' + w.id + '\')">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">First Name</label><input type="text" id="ew-fn" value="' + (w.firstName || '').replace(/"/g, '&quot;') + '" required style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Last Name</label><input type="text" id="ew-ln" value="' + (w.lastName || w.name || '').replace(/"/g, '&quot;') + '" required style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">NIC Number</label><input type="text" id="ew-nic" value="' + (w.nic || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Age</label><input type="number" id="ew-age" value="' + (w.age || 25) + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Phone Number</label><input type="text" id="ew-phone" value="' + (w.phone || '').replace(/"/g, '&quot;') + '" required style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">WhatsApp Number</label><input type="text" id="ew-wa" value="' + (w.whatsapp || w.phone || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Primary Category</label><input type="text" id="ew-cat" value="' + (w.category || 'General').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Experience (Years)</label><input type="number" id="ew-exp" value="' + (w.experience || 0) + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div style="grid-column:1/-1;"><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Skills (comma separated)</label><input type="text" id="ew-skills" value="' + sk.replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div style="grid-column:1/-1;"><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Locations / Districts (comma separated)</label><input type="text" id="ew-locs" value="' + lo.replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Shifts</label><input type="text" id="ew-shifts" value="' + sh.replace(/"/g, '&quot;') + '" placeholder="Day / Night" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Status</label><select id="ew-status" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"><option value="approved"' + (w.status === 'approved' ? ' selected' : '') + '>Approved</option><option value="pending"' + (w.status === 'pending' ? ' selected' : '') + '>Pending</option><option value="rejected"' + (w.status === 'rejected' ? ' selected' : '') + '>Rejected</option></select></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Nearest Police Station</label><input type="text" id="ew-ps" value="' + (w.policeStation || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Notice Period</label><input type="text" id="ew-np" value="' + (w.noticeperiod || 'Immediate').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div style="grid-column:1/-1;"><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Current Address</label><input type="text" id="ew-ca" value="' + (w.currentAddress || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div style="grid-column:1/-1;"><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Permanent Address</label><input type="text" id="ew-pa" value="' + (w.permanentAddress || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Next of Kin Name</label><input type="text" id="ew-kn" value="' + (w.nextOfKinName || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Next of Kin Phone</label><input type="text" id="ew-kp" value="' + (w.nextOfKinPhone || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '</div>' +
+        '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;border-top:1px solid #e2e8f0;padding-top:14px;">' +
+        '<button type="button" onclick="window._closeEditWorkerModal()" style="padding:10px 18px;background:#94a3b8;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Cancel</button>' +
+        '<button type="submit" style="padding:10px 24px;background:#10B981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">💾 Save Changes</button>' +
+        '</div>' +
+        '</form>';
+
+    ov.appendChild(bx);
+    document.body.appendChild(ov);
+};
+window._EWD = window._editWorker;
+
+window._closeEditWorkerModal = function () {
+    var m = document.getElementById('wb-wedit-modal');
+    if (m) m.parentNode.removeChild(m);
+};
+
+window._saveWorker = function (e, id) {
+    if (e) e.preventDefault();
+    var ws = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+    var found = false;
+    for (var i = 0; i < ws.length; i++) {
+        if (String(ws[i].id) === String(id)) {
+            var fn = document.getElementById('ew-fn').value.trim();
+            var ln = document.getElementById('ew-ln').value.trim();
+            var nic = document.getElementById('ew-nic').value.trim();
+            var age = parseInt(document.getElementById('ew-age').value, 10) || 25;
+            var phone = document.getElementById('ew-phone').value.trim();
+            var wa = document.getElementById('ew-wa').value.trim();
+            var cat = document.getElementById('ew-cat').value.trim();
+            var exp = parseInt(document.getElementById('ew-exp').value, 10) || 0;
+            var skillsRaw = document.getElementById('ew-skills').value.trim();
+            var locsRaw = document.getElementById('ew-locs').value.trim();
+            var shiftsRaw = document.getElementById('ew-shifts').value.trim();
+            var status = document.getElementById('ew-status').value;
+            var ps = document.getElementById('ew-ps').value.trim();
+            var np = document.getElementById('ew-np').value.trim();
+            var ca = document.getElementById('ew-ca').value.trim();
+            var pa = document.getElementById('ew-pa').value.trim();
+            var kn = document.getElementById('ew-kn').value.trim();
+            var kp = document.getElementById('ew-kp').value.trim();
+
+            ws[i].firstName = fn;
+            ws[i].lastName = ln;
+            ws[i].name = (fn + ' ' + ln).trim();
+            ws[i].nic = nic;
+            ws[i].age = age;
+            ws[i].phone = phone;
+            ws[i].whatsapp = wa;
+            ws[i].category = cat;
+            ws[i].experience = exp;
+            ws[i].skills = skillsRaw ? skillsRaw.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : [cat];
+            ws[i].locations = locsRaw ? locsRaw.split(',').map(function (l) { return l.trim(); }).filter(Boolean) : ['Colombo'];
+            ws[i].shifts = shiftsRaw ? shiftsRaw.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : ['Day'];
+            ws[i].status = status;
+            ws[i].policeStation = ps;
+            ws[i].noticeperiod = np;
+            ws[i].currentAddress = ca;
+            ws[i].permanentAddress = pa;
+            ws[i].nextOfKinName = kn;
+            ws[i].nextOfKinPhone = kp;
+
+            found = true;
+            break;
+        }
+    }
+
+    if (found) {
+        localStorage.setItem('workbee_worker_registrations', JSON.stringify(ws));
+        window._closeEditWorkerModal();
+        renderWorkers();
+        updateStats();
+        showToast('Worker #' + id + ' updated successfully!', 'success');
+    }
 };
 
 window._AW = function (id) {
@@ -281,6 +427,8 @@ window._DW = function (id) {
 };
 window._approveWorker = window._AW;
 window._deleteWorker = window._DW;
+
+// ----------------- COMPANIES TAB -----------------
 
 function renderCompanies(q) {
     var tbody = document.getElementById('companies-tbody');
@@ -306,10 +454,201 @@ function renderCompanies(q) {
         var c = cs[i]; var tr = document.createElement('tr');
         var fd = c.date ? (c.date.indexOf('T') !== -1 ? c.date.split('T')[0] : c.date) : 'Today';
         var compKey = String(c.id || c.name || i);
-        tr.innerHTML = '<td><strong>' + (c.name || c.companyName || 'Company') + '</strong></td><td>' + (c.brn || 'N/A') + '</td><td>' + (c.industry || 'General') + '</td><td>' + (c.contact || c.contactPerson || 'N/A') + '</td><td>' + (c.phone || 'N/A') + '</td><td>' + (c.email || 'N/A') + '</td><td>' + (c.city || 'N/A') + '</td><td><small>' + fd + '</small></td><td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-weight:600;">' + (c.status || 'approved') + '</span></td><td><button style="background:#ef4444;color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;" onclick="window._DC(\'' + compKey.replace(/'/g, "\\'") + '\')">Delete</button></td>';
+        var st = c.status || 'approved';
+        tr.innerHTML = '<td><strong>' + (c.name || c.companyName || 'Company') + '</strong></td>' +
+            '<td>' + (c.brn || c.regNumber || 'N/A') + '</td>' +
+            '<td>' + (c.industry || 'General') + '</td>' +
+            '<td>' + (c.contact || c.contactPerson || 'N/A') + '</td>' +
+            '<td>' + (c.phone || 'N/A') + '</td>' +
+            '<td>' + (c.email || 'N/A') + '</td>' +
+            '<td>' + (c.city || c.district || 'N/A') + '</td>' +
+            '<td><small>' + fd + '</small></td>' +
+            '<td><span style="background:' + (st === 'approved' ? '#dcfce7;color:#166534' : (st === 'rejected' ? '#fee2e2;color:#dc2626' : '#fef3c7;color:#92400e')) + ';padding:2px 8px;border-radius:4px;font-weight:600;">' + st + '</span></td>' +
+            '<td style="white-space:nowrap;">' +
+            '<button style="background:#0284c7;color:white;border:none;padding:5px 9px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;margin-right:4px;" onclick="window._viewCompany(\'' + compKey.replace(/'/g, "\\'") + '\')">👁️ Details</button>' +
+            '<button style="background:#f59e0b;color:#0f172a;border:none;padding:5px 9px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;margin-right:4px;" onclick="window._editCompany(\'' + compKey.replace(/'/g, "\\'") + '\')">✏️ Edit</button>' +
+            '<button style="background:#ef4444;color:white;border:none;padding:5px 9px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;" onclick="window._deleteCompany(\'' + compKey.replace(/'/g, "\\'") + '\')">🗑️ Delete</button>' +
+            '</td>';
         tbody.appendChild(tr);
     }
 }
+
+// ----------------- COMPANY MODALS -----------------
+
+window._viewCompany = function (id) {
+    var old = document.getElementById('wb-cmodal');
+    if (old) old.parentNode.removeChild(old);
+
+    var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    var c = null;
+    for (var i = 0; i < cs.length; i++) {
+        if (String(cs[i].id || cs[i].name) === String(id) || String(cs[i].name) === String(id)) { c = cs[i]; break; }
+    }
+    if (!c) { alert('Company not found!'); return; }
+
+    var cName = c.name || c.companyName || 'Company';
+    var fd = c.date ? (c.date.indexOf('T') !== -1 ? c.date.split('T')[0] : c.date) : 'Recent';
+
+    // Find job postings by this company
+    var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+    var compReqs = reqs.filter(function (r) {
+        return r.company && r.company.toLowerCase() === cName.toLowerCase();
+    });
+
+    var ov = document.createElement('div');
+    ov.id = 'wb-cmodal';
+    ov.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.88);z-index:999999;overflow-y:auto;padding:30px 20px;';
+    var bx = document.createElement('div');
+    bx.style.cssText = 'background:#fff;border-radius:16px;max-width:680px;width:100%;margin:0 auto;padding:28px;box-shadow:0 25px 50px rgba(0,0,0,0.4);position:relative;border:2px solid #F59E0B;';
+
+    var reqsHtml = '';
+    if (compReqs.length > 0) {
+        reqsHtml = '<div style="margin-top:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;">' +
+            '<div style="font-weight:bold;color:#0f172a;margin-bottom:8px;font-size:0.85rem;">📋 Active Requirements Posted (' + compReqs.length + ')</div>';
+        for (var k = 0; k < compReqs.length; k++) {
+            var cr = compReqs[k];
+            var crSk = Array.isArray(cr.skills) ? cr.skills.join(', ') : (cr.skills || cr.industry || 'General');
+            reqsHtml += '<div style="padding:6px 0;border-bottom:1px solid #e2e8f0;font-size:0.8rem;display:flex;justify-content:space-between;">' +
+                '<span><strong>#' + cr.id + '</strong> - ' + crSk + ' (' + (cr.workersReq || 1) + ' workers)</span>' +
+                '<span style="color:#059669;font-weight:bold;">' + (cr.status || 'OPEN') + '</span>' +
+                '</div>';
+        }
+        reqsHtml += '</div>';
+    }
+
+    bx.innerHTML = '<button onclick="window._closeCompanyModal()" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.8rem;cursor:pointer;color:#64748b;">&times;</button>' +
+        '<div style="margin-bottom:16px;border-bottom:2px solid #f1f5f9;padding-bottom:12px;">' +
+        '<span style="font-family:monospace;color:#F59E0B;font-weight:bold;">COMPANY ID: ' + (c.id || 'N/A') + '</span>' +
+        '<h2 style="color:#0f172a;margin:4px 0 2px;">🏢 ' + cName + '</h2>' +
+        '<span style="background:' + (c.status === 'approved' ? '#dcfce7;color:#166534' : '#fef3c7;color:#92400e') + ';padding:2px 10px;border-radius:12px;font-size:0.8rem;font-weight:bold;">Status: ' + (c.status || 'approved') + '</span>' +
+        '</div>' +
+        '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:16px;color:#1e3a8a;font-size:0.875rem;">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+        '<div>📑 <strong>BR Number:</strong> ' + (c.brn || c.regNumber || 'N/A') + '</div>' +
+        '<div>🏭 <strong>Industry:</strong> ' + (c.industry || 'General') + '</div>' +
+        '<div>👤 <strong>Contact Person:</strong> ' + (c.contact || c.contactPerson || 'N/A') + '</div>' +
+        '<div>📞 <strong>Phone:</strong> ' + (c.phone || 'N/A') + '</div>' +
+        '<div>📧 <strong>Email:</strong> ' + (c.email || 'N/A') + '</div>' +
+        '<div>📍 <strong>City / District:</strong> ' + (c.city || c.district || 'N/A') + '</div>' +
+        '<div style="grid-column:1/-1;">🏠 <strong>Address:</strong> ' + (c.address || c.city || 'N/A') + '</div>' +
+        '<div>📅 <strong>Registered Date:</strong> ' + fd + '</div>' +
+        '</div></div>' +
+        reqsHtml +
+        '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;">' +
+        '<button onclick="window._closeCompanyModal(); window._editCompany(\'' + String(c.id || c.name).replace(/'/g, "\\'") + '\')" style="padding:10px 18px;background:#F59E0B;color:#0f172a;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">✏️ Edit Company</button>' +
+        '<button onclick="window._closeCompanyModal()" style="padding:10px 20px;background:#0f172a;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Close</button>' +
+        '</div>';
+
+    ov.appendChild(bx);
+    document.body.appendChild(ov);
+};
+window._VCD = window._viewCompany;
+window._viewCompanyDetails = window._viewCompany;
+
+window._closeCompanyModal = function () {
+    var m = document.getElementById('wb-cmodal');
+    if (m) m.parentNode.removeChild(m);
+};
+
+// Edit Company Modal
+window._editCompany = function (id) {
+    var old = document.getElementById('wb-cedit-modal');
+    if (old) old.parentNode.removeChild(old);
+
+    var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    var c = null;
+    for (var i = 0; i < cs.length; i++) {
+        if (String(cs[i].id || cs[i].name) === String(id) || String(cs[i].name) === String(id)) { c = cs[i]; break; }
+    }
+    if (!c) { alert('Company not found!'); return; }
+
+    var cName = c.name || c.companyName || '';
+    var compKey = String(c.id || c.name);
+
+    var ov = document.createElement('div');
+    ov.id = 'wb-cedit-modal';
+    ov.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.88);z-index:999999;overflow-y:auto;padding:30px 20px;';
+    var bx = document.createElement('div');
+    bx.style.cssText = 'background:#fff;border-radius:16px;max-width:640px;width:100%;margin:0 auto;padding:28px;box-shadow:0 25px 50px rgba(0,0,0,0.4);position:relative;border:2px solid #F59E0B;';
+
+    bx.innerHTML = '<button onclick="window._closeEditCompanyModal()" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.8rem;cursor:pointer;color:#64748b;">&times;</button>' +
+        '<div style="margin-bottom:18px;border-bottom:2px solid #f1f5f9;padding-bottom:12px;">' +
+        '<span style="font-family:monospace;color:#F59E0B;font-weight:bold;">EDIT COMPANY</span>' +
+        '<h2 style="color:#0f172a;margin:4px 0 0;">🏢 Edit Company Profile</h2>' +
+        '</div>' +
+        '<form id="wb-edit-company-form" onsubmit="window._saveCompany(event, \'' + compKey.replace(/'/g, "\\'") + '\')">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">' +
+        '<div style="grid-column:1/-1;"><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Company Name</label><input type="text" id="ec-name" value="' + cName.replace(/"/g, '&quot;') + '" required style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">BR Number</label><input type="text" id="ec-brn" value="' + (c.brn || c.regNumber || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Industry</label><input type="text" id="ec-ind" value="' + (c.industry || 'General').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Contact Person</label><input type="text" id="ec-contact" value="' + (c.contact || c.contactPerson || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Phone</label><input type="text" id="ec-phone" value="' + (c.phone || '').replace(/"/g, '&quot;') + '" required style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Email</label><input type="email" id="ec-email" value="' + (c.email || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">City / District</label><input type="text" id="ec-city" value="' + (c.city || c.district || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div style="grid-column:1/-1;"><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Address</label><input type="text" id="ec-addr" value="' + (c.address || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Status</label><select id="ec-status" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"><option value="approved"' + (c.status === 'approved' ? ' selected' : '') + '>Approved</option><option value="pending"' + (c.status === 'pending' ? ' selected' : '') + '>Pending</option><option value="rejected"' + (c.status === 'rejected' ? ' selected' : '') + '>Rejected</option></select></div>' +
+        '</div>' +
+        '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;border-top:1px solid #e2e8f0;padding-top:14px;">' +
+        '<button type="button" onclick="window._closeEditCompanyModal()" style="padding:10px 18px;background:#94a3b8;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Cancel</button>' +
+        '<button type="submit" style="padding:10px 24px;background:#10B981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">💾 Save Changes</button>' +
+        '</div>' +
+        '</form>';
+
+    ov.appendChild(bx);
+    document.body.appendChild(ov);
+};
+window._ECD = window._editCompany;
+
+window._closeEditCompanyModal = function () {
+    var m = document.getElementById('wb-cedit-modal');
+    if (m) m.parentNode.removeChild(m);
+};
+
+window._saveCompany = function (e, key) {
+    if (e) e.preventDefault();
+    var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    var found = false;
+    for (var i = 0; i < cs.length; i++) {
+        if (String(cs[i].id || cs[i].name) === String(key) || String(cs[i].name) === String(key)) {
+            var n = document.getElementById('ec-name').value.trim();
+            var brn = document.getElementById('ec-brn').value.trim();
+            var ind = document.getElementById('ec-ind').value.trim();
+            var ct = document.getElementById('ec-contact').value.trim();
+            var p = document.getElementById('ec-phone').value.trim();
+            var em = document.getElementById('ec-email').value.trim();
+            var cy = document.getElementById('ec-city').value.trim();
+            var addr = document.getElementById('ec-addr').value.trim();
+            var st = document.getElementById('ec-status').value;
+
+            cs[i].name = n;
+            cs[i].companyName = n;
+            cs[i].brn = brn;
+            cs[i].regNumber = brn;
+            cs[i].industry = ind;
+            cs[i].contact = ct;
+            cs[i].contactPerson = ct;
+            cs[i].phone = p;
+            cs[i].email = em;
+            cs[i].city = cy;
+            cs[i].district = cy;
+            cs[i].address = addr;
+            cs[i].status = st;
+
+            found = true;
+            break;
+        }
+    }
+
+    if (found) {
+        localStorage.setItem('workbee_companies', JSON.stringify(cs));
+        window._closeEditCompanyModal();
+        var sc = document.getElementById('search-companies');
+        renderCompanies(sc ? sc.value.trim().toLowerCase() : '');
+        updateStats();
+        showToast('Company details updated successfully!', 'success');
+    }
+};
+
 window._DC = function (id) {
     if (!confirm('Delete this company record?')) return;
     var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
@@ -321,6 +660,8 @@ window._DC = function (id) {
     showToast('Company deleted.', 'info');
 };
 window._deleteCompany = window._DC;
+
+// ----------------- REQUIREMENTS TAB -----------------
 
 function renderRequirements() {
     var tbody = document.getElementById('requirements-tbody');
@@ -336,10 +677,199 @@ function renderRequirements() {
         var sk = Array.isArray(r.skills) ? r.skills.join(', ') : (r.skills || r.industry || 'General');
         var sh = Array.isArray(r.shifts) ? r.shifts.join('/') : (r.shifts || 'Day');
         var sb = iD ? '<span style="background:#dbeafe;color:#1e40af;padding:3px 10px;border-radius:20px;font-weight:bold;">DISPATCHED</span>' : (iF ? '<span style="background:#fee2e2;color:#dc2626;padding:3px 10px;border-radius:20px;font-weight:bold;">FILLED</span>' : '<span style="background:#dcfce7;color:#166534;padding:3px 10px;border-radius:20px;font-weight:bold;">OPEN</span>');
-        tr.innerHTML = '<td><strong style="color:#F59E0B;">#' + rid + '</strong></td><td><strong>' + (r.company || 'Client') + '</strong><br><small style="color:#64748b;">Ph: ' + (r.phone || 'N/A') + '</small></td><td>' + sk + '</td><td>' + (r.workersReq || 1) + '</td><td>' + (r.district || 'N/A') + '</td><td>' + sh + '</td><td>' + (r.fromDate || 'N/A') + ' - ' + (r.toDate || 'N/A') + '<br><small style="color:#059669;">LKR ' + Number(r.totalPay || 0).toLocaleString() + '</small></td><td><button onclick="event.stopPropagation();window._ODM(\'' + rid + '\')" style="background:#e0f2fe;color:#0369a1;border:1px solid #7dd3fc;padding:4px 8px;border-radius:6px;font-size:0.75rem;cursor:pointer;">View (' + ac + '/' + (r.workersReq || 1) + ')</button></td><td>' + sb + '</td><td><button onclick="event.stopPropagation();window._ODM(\'' + rid + '\')" style="background:#10B981;color:white;padding:5px 10px;border-radius:4px;border:none;cursor:pointer;font-size:0.75rem;font-weight:bold;margin-right:4px;">Dispatch</button><button onclick="event.stopPropagation();window._TJS(\'' + rid + '\')" style="background:' + (iF ? '#3B82F6' : '#EF4444') + ';color:white;padding:5px 8px;border-radius:4px;border:none;cursor:pointer;font-size:0.75rem;">' + (iF ? 'Re-Open' : 'Mark FILLED') + '</button> <button onclick="event.stopPropagation();window._DR(\'' + rid + '\')" style="background:#64748b;color:white;padding:5px 8px;border-radius:4px;border:none;cursor:pointer;font-size:0.75rem;">Del</button></td>';
+        tr.innerHTML = '<td><strong style="color:#F59E0B;">#' + rid + '</strong></td>' +
+            '<td><strong>' + (r.company || 'Client') + '</strong><br><small style="color:#64748b;">Ph: ' + (r.phone || 'N/A') + '</small></td>' +
+            '<td>' + sk + '</td>' +
+            '<td>' + (r.workersReq || 1) + '</td>' +
+            '<td>' + (r.district || 'N/A') + '</td>' +
+            '<td>' + sh + '</td>' +
+            '<td>' + (r.fromDate || 'N/A') + ' - ' + (r.toDate || 'N/A') + '<br><small style="color:#059669;">LKR ' + Number(r.totalPay || 0).toLocaleString() + '</small></td>' +
+            '<td><button onclick="event.stopPropagation();window._viewRequirement(\'' + rid + '\')" style="background:#e0f2fe;color:#0369a1;border:1px solid #7dd3fc;padding:4px 8px;border-radius:6px;font-size:0.75rem;cursor:pointer;">View (' + ac + '/' + (r.workersReq || 1) + ')</button></td>' +
+            '<td>' + sb + '</td>' +
+            '<td style="white-space:nowrap;">' +
+            '<button onclick="event.stopPropagation();window._viewRequirement(\'' + rid + '\')" style="background:#0284c7;color:white;border:none;padding:5px 9px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;margin-right:4px;">👁️ Details</button>' +
+            '<button onclick="event.stopPropagation();window._editRequirement(\'' + rid + '\')" style="background:#f59e0b;color:#0f172a;border:none;padding:5px 9px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;margin-right:4px;">✏️ Edit</button>' +
+            '<button onclick="event.stopPropagation();window._deleteRequirement(\'' + rid + '\')" style="background:#ef4444;color:white;border:none;padding:5px 9px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;margin-right:4px;">🗑️ Delete</button>' +
+            '<button onclick="event.stopPropagation();window._ODM(\'' + rid + '\')" style="background:#10B981;color:white;padding:5px 9px;border-radius:6px;border:none;cursor:pointer;font-size:0.78rem;font-weight:bold;">🚀 Dispatch</button>' +
+            '</td>';
         tbody.appendChild(tr);
     }
 }
+
+// ----------------- REQUIREMENT MODALS -----------------
+
+window._viewRequirement = function (rid) {
+    var old = document.getElementById('wb-rmodal');
+    if (old) old.parentNode.removeChild(old);
+
+    var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+    var r = null;
+    for (var i = 0; i < reqs.length; i++) {
+        if (String(reqs[i].id) === String(rid)) { r = reqs[i]; break; }
+    }
+    if (!r) { alert('Job #' + rid + ' not found!'); return; }
+
+    var sk = Array.isArray(r.skills) ? r.skills.join(', ') : (r.skills || r.industry || 'General');
+    var sh = Array.isArray(r.shifts) ? r.shifts.join('/') : (r.shifts || 'Day');
+    var meals = r.meals ? (Array.isArray(r.meals) ? r.meals.join(', ') : r.meals) : 'N/A';
+    var ac = (r.applicants && r.applicants.length) ? r.applicants.length : 0;
+
+    var ov = document.createElement('div');
+    ov.id = 'wb-rmodal';
+    ov.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.88);z-index:999999;overflow-y:auto;padding:30px 20px;';
+    var bx = document.createElement('div');
+    bx.style.cssText = 'background:#fff;border-radius:16px;max-width:680px;width:100%;margin:0 auto;padding:28px;box-shadow:0 25px 50px rgba(0,0,0,0.4);position:relative;border:2px solid #F59E0B;';
+
+    bx.innerHTML = '<button onclick="window._closeRequirementModal()" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.8rem;cursor:pointer;color:#64748b;">&times;</button>' +
+        '<div style="margin-bottom:16px;border-bottom:2px solid #f1f5f9;padding-bottom:12px;">' +
+        '<span style="font-family:monospace;color:#F59E0B;font-weight:bold;">JOB REF: #' + r.id + '</span>' +
+        '<h2 style="color:#0f172a;margin:4px 0 2px;">📋 ' + (r.company || 'Client Requirement') + '</h2>' +
+        '<span style="background:' + (r.status === 'FILLED' ? '#fee2e2;color:#dc2626' : '#dcfce7;color:#166534') + ';padding:2px 10px;border-radius:12px;font-size:0.8rem;font-weight:bold;">Status: ' + (r.status || 'OPEN') + '</span>' +
+        '</div>' +
+        '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:16px;color:#1e3a8a;font-size:0.875rem;margin-bottom:14px;">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">' +
+        '<div>🏢 <strong>Company:</strong> ' + (r.company || 'Client') + '</div>' +
+        '<div>📞 <strong>Phone:</strong> ' + (r.phone || 'N/A') + '</div>' +
+        '<div>🛠️ <strong>Skills Needed:</strong> ' + sk + '</div>' +
+        '<div>👷 <strong>Workers Required:</strong> ' + (r.workersReq || 1) + ' worker(s)</div>' +
+        '<div>📍 <strong>Location:</strong> ' + (r.district || 'N/A') + (r.town ? ' (' + r.town + ')' : '') + '</div>' +
+        '<div>🕒 <strong>Shift:</strong> ' + sh + '</div>' +
+        '<div>📅 <strong>Dates:</strong> ' + (r.fromDate || 'N/A') + ' to ' + (r.toDate || 'N/A') + '</div>' +
+        '<div>⏳ <strong>Duration:</strong> ' + (r.totalDays || 1) + ' days</div>' +
+        '<div>💵 <strong>Daily Rate:</strong> LKR ' + Number(r.payRate || 0).toLocaleString() + '</div>' +
+        '<div>💰 <strong>Total Payout:</strong> LKR ' + Number(r.totalPay || 0).toLocaleString() + '</div>' +
+        '<div style="grid-column:1/-1;">🍱 <strong>Meals Provided:</strong> ' + meals + '</div>' +
+        (r.desc ? '<div style="grid-column:1/-1;">📝 <strong>Description / Notes:</strong> ' + r.desc + '</div>' : '') +
+        '</div></div>' +
+        '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;font-size:0.85rem;color:#334155;margin-bottom:16px;">' +
+        '<strong>👥 Current Applicants / Assigned:</strong> ' + ac + ' worker(s)' +
+        '</div>' +
+        '<div style="display:flex;justify-content:flex-end;gap:10px;">' +
+        '<button onclick="window._closeRequirementModal(); window._ODM(\'' + r.id + '\')" style="padding:10px 18px;background:#10B981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">🚀 Dispatch Workers</button>' +
+        '<button onclick="window._closeRequirementModal(); window._editRequirement(\'' + r.id + '\')" style="padding:10px 18px;background:#F59E0B;color:#0f172a;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">✏️ Edit Requirement</button>' +
+        '<button onclick="window._closeRequirementModal()" style="padding:10px 20px;background:#0f172a;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Close</button>' +
+        '</div>';
+
+    ov.appendChild(bx);
+    document.body.appendChild(ov);
+};
+window._VRD = window._viewRequirement;
+window._viewRequirementDetails = window._viewRequirement;
+
+window._closeRequirementModal = function () {
+    var m = document.getElementById('wb-rmodal');
+    if (m) m.parentNode.removeChild(m);
+};
+
+// Edit Requirement Modal
+window._editRequirement = function (rid) {
+    var old = document.getElementById('wb-redit-modal');
+    if (old) old.parentNode.removeChild(old);
+
+    var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+    var r = null;
+    for (var i = 0; i < reqs.length; i++) {
+        if (String(reqs[i].id) === String(rid)) { r = reqs[i]; break; }
+    }
+    if (!r) { alert('Job #' + rid + ' not found!'); return; }
+
+    var sk = Array.isArray(r.skills) ? r.skills.join(', ') : (r.skills || r.industry || '');
+    var sh = Array.isArray(r.shifts) ? r.shifts.join(', ') : (r.shifts || 'Day');
+    var meals = r.meals ? (Array.isArray(r.meals) ? r.meals.join(', ') : r.meals) : '';
+
+    var ov = document.createElement('div');
+    ov.id = 'wb-redit-modal';
+    ov.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.88);z-index:999999;overflow-y:auto;padding:30px 20px;';
+    var bx = document.createElement('div');
+    bx.style.cssText = 'background:#fff;border-radius:16px;max-width:680px;width:100%;margin:0 auto;padding:28px;box-shadow:0 25px 50px rgba(0,0,0,0.4);position:relative;border:2px solid #F59E0B;';
+
+    bx.innerHTML = '<button onclick="window._closeEditRequirementModal()" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.8rem;cursor:pointer;color:#64748b;">&times;</button>' +
+        '<div style="margin-bottom:18px;border-bottom:2px solid #f1f5f9;padding-bottom:12px;">' +
+        '<span style="font-family:monospace;color:#F59E0B;font-weight:bold;">EDIT JOB REQUIREMENT #' + r.id + '</span>' +
+        '<h2 style="color:#0f172a;margin:4px 0 0;">📋 Edit Job Requirement</h2>' +
+        '</div>' +
+        '<form id="wb-edit-requirement-form" onsubmit="window._saveRequirement(event, \'' + r.id + '\')">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Company Name</label><input type="text" id="er-comp" value="' + (r.company || '').replace(/"/g, '&quot;') + '" required style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Phone</label><input type="text" id="er-phone" value="' + (r.phone || '').replace(/"/g, '&quot;') + '" required style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Required Skills</label><input type="text" id="er-skills" value="' + sk.replace(/"/g, '&quot;') + '" required style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Workers Required</label><input type="number" id="er-num" value="' + (r.workersReq || 1) + '" min="1" required style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">District / City</label><input type="text" id="er-dist" value="' + (r.district || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Town / Area</label><input type="text" id="er-town" value="' + (r.town || '').replace(/"/g, '&quot;') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Shifts</label><input type="text" id="er-shifts" value="' + sh.replace(/"/g, '&quot;') + '" placeholder="Day / Night" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Status</label><select id="er-status" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"><option value="OPEN"' + (r.status === 'OPEN' ? ' selected' : '') + '>OPEN</option><option value="FILLED"' + (r.status === 'FILLED' ? ' selected' : '') + '>FILLED</option><option value="CANCELLED"' + (r.status === 'CANCELLED' ? ' selected' : '') + '>CANCELLED</option></select></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">From Date</label><input type="date" id="er-fd" value="' + (r.fromDate || '') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">To Date</label><input type="date" id="er-td" value="' + (r.toDate || '') + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Daily Pay Rate (LKR)</label><input type="number" id="er-rate" value="' + (r.payRate || 0) + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Total Pay (LKR)</label><input type="number" id="er-tot" value="' + (r.totalPay || 0) + '" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div style="grid-column:1/-1;"><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Meals Provided (comma separated)</label><input type="text" id="er-meals" value="' + meals.replace(/"/g, '&quot;') + '" placeholder="Breakfast, Lunch" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;"></div>' +
+        '<div style="grid-column:1/-1;"><label style="font-size:0.8rem;font-weight:600;color:#475569;display:block;margin-bottom:4px;">Notes / Description</label><textarea id="er-desc" rows="2" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.9rem;">' + (r.desc || '').replace(/</g, '&lt;') + '</textarea></div>' +
+        '</div>' +
+        '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;border-top:1px solid #e2e8f0;padding-top:14px;">' +
+        '<button type="button" onclick="window._closeEditRequirementModal()" style="padding:10px 18px;background:#94a3b8;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Cancel</button>' +
+        '<button type="submit" style="padding:10px 24px;background:#10B981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">💾 Save Changes</button>' +
+        '</div>' +
+        '</form>';
+
+    ov.appendChild(bx);
+    document.body.appendChild(ov);
+};
+window._ERD = window._editRequirement;
+
+window._closeEditRequirementModal = function () {
+    var m = document.getElementById('wb-redit-modal');
+    if (m) m.parentNode.removeChild(m);
+};
+
+window._saveRequirement = function (e, rid) {
+    if (e) e.preventDefault();
+    var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+    var found = false;
+    for (var i = 0; i < reqs.length; i++) {
+        if (String(reqs[i].id) === String(rid)) {
+            var comp = document.getElementById('er-comp').value.trim();
+            var phone = document.getElementById('er-phone').value.trim();
+            var skRaw = document.getElementById('er-skills').value.trim();
+            var num = parseInt(document.getElementById('er-num').value, 10) || 1;
+            var dist = document.getElementById('er-dist').value.trim();
+            var town = document.getElementById('er-town').value.trim();
+            var shRaw = document.getElementById('er-shifts').value.trim();
+            var st = document.getElementById('er-status').value;
+            var fd = document.getElementById('er-fd').value;
+            var td = document.getElementById('er-td').value;
+            var rate = parseFloat(document.getElementById('er-rate').value) || 0;
+            var tot = parseFloat(document.getElementById('er-tot').value) || 0;
+            var mealsRaw = document.getElementById('er-meals').value.trim();
+            var desc = document.getElementById('er-desc').value.trim();
+
+            reqs[i].company = comp;
+            reqs[i].phone = phone;
+            reqs[i].skills = skRaw ? skRaw.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : ['General'];
+            reqs[i].workersReq = num;
+            reqs[i].district = dist;
+            reqs[i].town = town;
+            reqs[i].shifts = shRaw ? shRaw.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : ['Day'];
+            reqs[i].status = st;
+            reqs[i].fromDate = fd;
+            reqs[i].toDate = td;
+            reqs[i].payRate = rate;
+            reqs[i].totalPay = tot;
+            reqs[i].meals = mealsRaw ? mealsRaw.split(',').map(function (m) { return m.trim(); }).filter(Boolean) : [];
+            reqs[i].desc = desc;
+
+            found = true;
+            break;
+        }
+    }
+
+    if (found) {
+        localStorage.setItem('workbee_requirements', JSON.stringify(reqs));
+        window._closeEditRequirementModal();
+        renderRequirements();
+        updateStats();
+        showToast('Requirement #' + rid + ' updated successfully!', 'success');
+    }
+};
 
 window._TJS = function (rid) {
     var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
