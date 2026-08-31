@@ -218,8 +218,17 @@
                 <h3>Company Registration Submitted!</h3>
                 <p>Your Company Reference Number:</p>
                 <div class="ref-number" id="generatedCompRef">C-XXXX</div>
+                <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px;margin:1rem auto;max-width:400px;text-align:left;">
+                    <div style="font-weight:700;color:#166534;margin-bottom:6px;">🔑 Your Login Credentials:</div>
+                    <div style="color:#15803d;font-size:0.95rem;">Username: <strong id="displayCompUsername">-</strong></div>
+                    <div style="color:#15803d;font-size:0.95rem;">Password: Your chosen password</div>
+                    <div style="color:#6b7280;font-size:0.82rem;margin-top:6px;">Use these to login at <a href="login.html" style="color:#D97706;">login.html</a></div>
+                </div>
                 <p style="font-size: 1.1rem; color: var(--gray);">Company registered successfully! You can now post job requirements for workers.</p>
-                <button type="button" class="btn btn-primary" onclick="switchTab(1)" style="margin-top: 15px; font-size: 1.1rem; padding: 14px;">🚀 Proceed to Post Job Requirement &rarr;</button>
+                <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:15px;">
+                    <a href="login.html" class="btn btn-dark" style="text-decoration:none; display:inline-block;">🔑 Login Now</a>
+                    <button type="button" class="btn btn-primary" onclick="switchTab(1)" style="font-size: 1.0rem; padding: 12px 20px;">🚀 Post Job Requirement &rarr;</button>
+                </div>
             </div>
         </div>
 
@@ -534,6 +543,18 @@
         function submitRegister(e) {
             e.preventDefault();
 
+            const compUsername = document.getElementById('compUsername') ? document.getElementById('compUsername').value.trim() : '';
+            const compPassword = document.getElementById('compPassword') ? document.getElementById('compPassword').value : '';
+
+            if (compUsername && typeof Auth !== 'undefined') {
+                const dupCheck = Auth.register(compUsername, compPassword, 'company', {});
+                if (!dupCheck.success) {
+                    alert('⚠️ ' + dupCheck.message);
+                    document.getElementById('compUsername').focus();
+                    return;
+                }
+            }
+
             const compName = document.getElementById('companyName') ? document.getElementById('companyName').value.trim() : 'Company';
             const brn = document.getElementById('brNumber') ? document.getElementById('brNumber').value.trim() : 'N/A';
             const industry = document.getElementById('companyIndustry') ? document.getElementById('companyIndustry').value : 'General';
@@ -547,9 +568,11 @@
             const newCompany = {
                 id: compId,
                 name: compName,
+                companyName: compName,
                 brn: brn,
                 industry: industry,
                 contact: contact,
+                contactPerson: contact,
                 phone: phone,
                 email: email,
                 city: city,
@@ -557,12 +580,28 @@
                 date: new Date().toISOString()
             };
 
+            if (compUsername && typeof Auth !== 'undefined') {
+                let users = JSON.parse(localStorage.getItem('workbee_users') || '[]');
+                const uIdx = users.findIndex(u => u.username === compUsername.trim().toLowerCase());
+                if (uIdx !== -1) {
+                    users[uIdx].profileData = newCompany;
+                    localStorage.setItem('workbee_users', JSON.stringify(users));
+                    newCompany.userId = users[uIdx].id;
+                    newCompany.username = compUsername;
+                }
+            }
+
             let existingCompanies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+            existingCompanies = existingCompanies.filter(c => c.id !== compId);
             existingCompanies.unshift(newCompany);
             localStorage.setItem('workbee_companies', JSON.stringify(existingCompanies));
+            localStorage.setItem('workbee_seeded_initial', 'true');
 
             const refEl = document.getElementById('generatedCompRef');
             if(refEl) refEl.innerText = compId;
+
+            const displayCompUsernameEl = document.getElementById('displayCompUsername');
+            if (displayCompUsernameEl && compUsername) displayCompUsernameEl.innerText = compUsername;
 
             // Pre-fill "Post a Requirement" form with registered company info
             if(document.getElementById('jobCompanyName')) document.getElementById('jobCompanyName').value = compName;
@@ -689,6 +728,7 @@
             let reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
             reqs.unshift(newReq);
             localStorage.setItem('workbee_requirements', JSON.stringify(reqs));
+            localStorage.setItem('workbee_seeded_initial', 'true');
 
             document.getElementById('generatedJobRef').innerText = reqId;
             document.getElementById('formJob').style.display = 'none';

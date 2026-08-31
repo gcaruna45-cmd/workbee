@@ -4,7 +4,7 @@ const AUTH_KEYS = {
     USERS: 'workbee_users',
     SESSION: 'workbee_session',
     WORKERS: 'workbee_worker_registrations',
-    COMPANIES: 'workbee_company_registrations',
+    COMPANIES: 'workbee_companies',
     JOB_POSTINGS: 'workbee_job_postings',
     APPLICATIONS: 'workbee_job_applications'
 };
@@ -45,19 +45,25 @@ const Auth = {
         users.push(newUser);
         localStorage.setItem(AUTH_KEYS.USERS, JSON.stringify(users));
 
-        // Save to respective legacy lists for compatibility with Admin panel
+        // Save to respective lists for compatibility with Admin panel
         if (role === 'worker') {
             let workers = JSON.parse(localStorage.getItem(AUTH_KEYS.WORKERS) || '[]');
             profileData.userId = userId;
             profileData.username = username;
-            workers.push(profileData);
-            localStorage.setItem(AUTH_KEYS.WORKERS, JSON.stringify(workers));
+            if (profileData.id) {
+                workers = workers.filter(w => w.id !== profileData.id);
+                workers.unshift(profileData);
+                localStorage.setItem(AUTH_KEYS.WORKERS, JSON.stringify(workers));
+            }
         } else if (role === 'company') {
             let companies = JSON.parse(localStorage.getItem(AUTH_KEYS.COMPANIES) || '[]');
             profileData.userId = userId;
             profileData.username = username;
-            companies.push(profileData);
-            localStorage.setItem(AUTH_KEYS.COMPANIES, JSON.stringify(companies));
+            if (profileData.id) {
+                companies = companies.filter(c => c.id !== profileData.id);
+                companies.unshift(profileData);
+                localStorage.setItem(AUTH_KEYS.COMPANIES, JSON.stringify(companies));
+            }
         }
 
         return { success: true, user: newUser };
@@ -81,7 +87,22 @@ const Auth = {
             return { success: true, user: adminSession, redirect: 'admin.html' };
         }
 
-        const user = users.find(u => u.username === username && u.password === password);
+        let user = users.find(u => u.username === username && u.password === password);
+        
+        // Also check if username matches phone number, NIC, or email of any registered user
+        if (!user) {
+            user = users.find(u => {
+                if (u.password !== password) return false;
+                const p = u.profileData || {};
+                const ph = (p.phone || '').replace(/[^0-9]/g, '');
+                const qPh = username.replace(/[^0-9]/g, '');
+                if (qPh && ph && (ph === qPh || ph.endsWith(qPh) || qPh.endsWith(ph))) return true;
+                if (p.nic && p.nic.toLowerCase() === username) return true;
+                if (p.email && p.email.toLowerCase() === username) return true;
+                return false;
+            });
+        }
+
         if (!user) {
             return { success: false, message: 'Invalid Username or Password!' };
         }

@@ -487,8 +487,17 @@
                 <div class="success-icon">✓</div>
                 <h2 style="color: var(--success); margin-bottom: 0.5rem;">Registration Successful!</h2>
                 <h3 style="margin-top: 0;">Your Worker ID: <span id="assignedWorkerId" style="color: var(--dark);">#WB-592A</span></h3>
-                <p style="color: var(--gray); font-size: 1.1rem; max-width: 400px; margin: 1rem auto 2rem;">WorkBee admin will review your profile within 24 hours. You will receive an SMS confirmation.</p>
-                <a href="workers.html" class="btn btn-primary" style="text-decoration:none; display:inline-block;">View Worker Directory</a>
+                <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px;margin:1rem auto;max-width:400px;text-align:left;">
+                    <div style="font-weight:700;color:#166534;margin-bottom:6px;">🔑 Your Login Credentials:</div>
+                    <div style="color:#15803d;font-size:0.95rem;">Username: <strong id="displayUsername">-</strong></div>
+                    <div style="color:#15803d;font-size:0.95rem;">Password: Your chosen password</div>
+                    <div style="color:#6b7280;font-size:0.82rem;margin-top:6px;">Use these to login at <a href="login.html" style="color:#D97706;">login.html</a></div>
+                </div>
+                <p style="color: var(--gray); font-size: 1.0rem; max-width: 400px; margin: 0.5rem auto 1.5rem;">WorkBee admin will review your profile within 24 hours. You can login and view your dashboard anytime.</p>
+                <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                    <a href="login.html" class="btn btn-primary" style="text-decoration:none; display:inline-block;">🔑 Login Now</a>
+                    <a href="workers.html" class="btn btn-outline" style="text-decoration:none; display:inline-block;">View Worker Directory</a>
+                </div>
             </div>
         </div>
     </main>
@@ -636,6 +645,20 @@
         function submitForm() {
             if(!validateForm()) return;
 
+            // Get login credentials
+            const regUsername = document.getElementById('regUsername') ? document.getElementById('regUsername').value.trim() : '';
+            const regPassword = document.getElementById('regPassword') ? document.getElementById('regPassword').value : '';
+
+            // Check username duplicate before proceeding
+            if (regUsername && typeof Auth !== 'undefined') {
+                const dupCheck = Auth.register(regUsername, regPassword, 'worker', {});
+                if (!dupCheck.success) {
+                    alert('⚠️ ' + dupCheck.message);
+                    document.getElementById('regUsername').focus();
+                    return;
+                }
+            }
+
             // Collect Worker Form Data
             const randomId = 'WB-' + Math.floor(1000 + Math.random() * 9000);
             const firstName = document.getElementById("firstName") ? document.getElementById("firstName").value.trim() : "";
@@ -719,14 +742,36 @@
                 date: new Date().toISOString()
             };
 
+            newWorker.id = randomId;
+
             // Save to localStorage for Admin Panel
             let existingWorkers = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+
+            // Update the auth user record with the worker profile (Auth.register already saved a placeholder)
+            if (regUsername && typeof Auth !== 'undefined') {
+                let users = JSON.parse(localStorage.getItem('workbee_users') || '[]');
+                const uIdx = users.findIndex(u => u.username === regUsername.trim().toLowerCase());
+                if (uIdx !== -1) {
+                    users[uIdx].profileData = newWorker;
+                    localStorage.setItem('workbee_users', JSON.stringify(users));
+                    newWorker.userId = users[uIdx].id;
+                    newWorker.username = regUsername;
+                }
+            }
+
+            // Remove duplicate if already added by Auth.register
+            existingWorkers = existingWorkers.filter(w => w.id !== randomId);
             existingWorkers.unshift(newWorker);
             localStorage.setItem('workbee_worker_registrations', JSON.stringify(existingWorkers));
+            localStorage.setItem('workbee_seeded_initial', 'true');
 
             // Display Assigned ID on Success Screen
             const successIdEl = document.getElementById("assignedWorkerId");
             if(successIdEl) successIdEl.innerText = '#' + randomId;
+
+            // Show username in success state
+            const displayUsernameEl = document.getElementById("displayUsername");
+            if(displayUsernameEl && regUsername) displayUsernameEl.innerText = regUsername;
 
             document.getElementById("workerForm").style.display = "none";
             document.getElementById("progress-container").style.display = "none";

@@ -328,14 +328,22 @@
             reqs.unshift({
                 id: newJob.id,
                 company: newJob.companyName,
-                contact: newJob.companyPhone,
-                skill: newJob.skillRequired,
-                count: newJob.workersNeeded,
-                location: newJob.location,
-                date: newJob.requiredDate,
-                status: 'Pending'
+                phone: newJob.companyPhone,
+                skills: [newJob.skillRequired],
+                workersReq: parseInt(newJob.workersNeeded) || 1,
+                district: newJob.location,
+                fromDate: newJob.requiredDate,
+                toDate: newJob.requiredDate,
+                totalPay: (parseInt(newJob.workersNeeded) || 1) * (parseFloat(newJob.dailyPay) || 2500),
+                shifts: ['Day'],
+                meals: ['Provided by Employer'],
+                desc: newJob.notes || '',
+                status: 'OPEN',
+                applicants: [],
+                postedDate: new Date().toISOString().split('T')[0]
             });
             localStorage.setItem('workbee_requirements', JSON.stringify(reqs));
+            localStorage.setItem('workbee_seeded_initial', 'true');
 
             alert('Requirement submitted! WorkBee Admin will review and dispatch verified workers to your location.');
             document.getElementById('postJobForm').reset();
