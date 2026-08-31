@@ -1064,11 +1064,11 @@
 
             <div class="stats-row">
                 <div class="stat-item">
-                    <div class="stat-num" data-target="1500">0</div>
+                    <div class="stat-num" data-target="0">0</div>
                     <div class="stat-label" data-i18n="stat.verified">Verified Workers</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-num" data-target="250">0</div>
+                    <div class="stat-num" data-target="0">0</div>
                     <div class="stat-label" data-i18n="stat.partners">Partner Companies</div>
                 </div>
                 <div class="stat-item">
@@ -1411,24 +1411,45 @@
                 const workers = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
                 const users = JSON.parse(localStorage.getItem('workbee_users') || '[]');
                 const companies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+                const reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
 
-                const workerUsers = users.filter(u => u.role === 'worker');
-                const companyUsers = users.filter(u => u.role === 'company');
+                // Unique worker count
+                const workerSet = new Set();
+                workers.forEach(w => { if (w.id || w.username || w.phone) workerSet.add(String(w.id || w.username || w.phone)); });
+                users.filter(u => u.role === 'worker').forEach(u => { if (u.username || (u.profileData && u.profileData.id)) workerSet.add(String(u.username || u.profileData.id)); });
 
-                const totalWorkers = Math.max(workers.length, workerUsers.length);
-                const totalCompanies = Math.max(companies.length, companyUsers.length);
+                // Unique company count
+                const companySet = new Set();
+                companies.forEach(c => { if (c.id || c.username || c.name || c.companyName) companySet.add(String(c.id || c.username || (c.name || c.companyName)).toLowerCase()); });
+                users.filter(u => u.role === 'company').forEach(u => { if (u.username || (u.profileData && (u.profileData.name || u.profileData.id))) companySet.add(String(u.username || u.profileData.id || u.profileData.name).toLowerCase()); });
 
-                const workerTarget = 1500 + totalWorkers;
-                const companyTarget = 250 + totalCompanies;
-                const matchRateTarget = 99;
+                const totalWorkers = workerSet.size;
+                const totalCompanies = companySet.size;
+
+                let matchRate = 99;
+                if (reqs.length > 0) {
+                    const matched = reqs.filter(r => r.status === 'FILLED' || r.dispatched === true || (r.applicants && r.applicants.length > 0)).length;
+                    matchRate = Math.max(95, Math.min(100, Math.round((matched / reqs.length) * 100)));
+                } else {
+                    matchRate = (totalWorkers > 0 || totalCompanies > 0) ? 99 : 99;
+                }
 
                 const workerEl = document.querySelector('.stats-row .stat-item:nth-child(1) .stat-num');
                 const companyEl = document.querySelector('.stats-row .stat-item:nth-child(2) .stat-num');
                 const matchEl = document.querySelector('.stats-row .stat-item:nth-child(3) .stat-num');
 
-                if (workerEl) workerEl.setAttribute('data-target', workerTarget);
-                if (companyEl) companyEl.setAttribute('data-target', companyTarget);
-                if (matchEl) matchEl.setAttribute('data-target', matchRateTarget);
+                if (workerEl) {
+                    workerEl.setAttribute('data-target', totalWorkers);
+                    workerEl.innerText = totalWorkers;
+                }
+                if (companyEl) {
+                    companyEl.setAttribute('data-target', totalCompanies);
+                    companyEl.innerText = totalCompanies;
+                }
+                if (matchEl) {
+                    matchEl.setAttribute('data-target', matchRate);
+                    matchEl.innerText = matchRate;
+                }
             } catch (e) {
                 console.warn('Stats error:', e);
             }
@@ -1447,26 +1468,29 @@
 
             // Stats Counter Animation
             const counters = document.querySelectorAll('.stat-num');
-            const speed = 200; // The lower the slower
 
             const animateCounters = () => {
                 updateSystemStats();
                 counters.forEach(counter => {
+                    const target = +counter.getAttribute('data-target');
+                    if (target === 0) {
+                        counter.innerText = '0';
+                        return;
+                    }
+                    let count = 0;
                     const updateCount = () => {
-                        const target = +counter.getAttribute('data-target');
-                        const count = +counter.innerText;
-                        const inc = Math.max(1, target / speed);
-
+                        const inc = Math.max(1, Math.ceil(target / 30));
+                        count = count + inc;
                         if (count < target) {
-                            counter.innerText = Math.min(target, Math.ceil(count + inc));
-                            setTimeout(updateCount, 15);
+                            counter.innerText = count;
+                            setTimeout(updateCount, 25);
                         } else {
                             counter.innerText = target;
                         }
                     };
                     updateCount();
                 });
-            }
+            };
 
             // Scroll Animation using Intersection Observer
             const observerOptions = {
