@@ -271,7 +271,7 @@ const sampleJobRequirements = [
 
 function initJobRequirements() {
     let reqs = localStorage.getItem('workbee_requirements');
-    if (!reqs || JSON.parse(reqs).length === 0) {
+    if (reqs === null && !localStorage.getItem('workbee_seeded_initial')) {
         localStorage.setItem('workbee_requirements', JSON.stringify(sampleJobRequirements));
     }
 }

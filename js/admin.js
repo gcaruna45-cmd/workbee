@@ -73,35 +73,43 @@ function setupLoginForm() {
 }
 
 function seedData() {
-    var sw = [
-        { id: 'WB-9001', firstName: 'Kamal', lastName: 'Perera', nic: '912345678V', phone: '0771234567', whatsapp: '0771234567', age: 32, category: 'Construction', experience: 5, skills: ['Masonry', 'Construction Helper'], locations: ['Colombo'], shifts: ['Day'], status: 'approved', date: new Date().toISOString(), policeStation: 'Maharagama', currentAddress: 'No. 12, High Level Rd, Maharagama', permanentAddress: 'No. 12, High Level Rd, Maharagama', nextOfKinName: 'Sunethra Perera', nextOfKinPhone: '0779988776', nextOfKinRelationship: 'Spouse (ස්වාමියා / බිරිඳ)', nextOfKinAddress: 'No. 12, High Level Rd, Maharagama' },
-        { id: 'WB-9002', firstName: 'Nimal', lastName: 'Silva', nic: '852345678V', phone: '0711234567', whatsapp: '0711234567', age: 40, category: 'Hospitality', experience: 10, skills: ['Cooking', 'Kitchen Helper', 'Steward'], locations: ['Kandy'], shifts: ['Night'], status: 'approved', date: new Date().toISOString(), policeStation: 'Kandy', currentAddress: 'No. 45, Peradeniya Rd, Kandy', permanentAddress: 'No. 45, Peradeniya Rd, Kandy', nextOfKinName: 'Malini Silva', nextOfKinPhone: '0719876543', nextOfKinRelationship: 'Spouse (ස්වාමියා / බිරිඳ)', nextOfKinAddress: 'No. 45, Peradeniya Rd, Kandy' },
-        { id: 'WB-9003', firstName: 'Sunil', lastName: 'Fernando', nic: '952345678V', phone: '0781234567', whatsapp: '0781234567', age: 28, category: 'Factory', experience: 2, skills: ['Packing', 'Machine Operator'], locations: ['Gampaha'], shifts: ['Day'], status: 'approved', date: new Date().toISOString(), policeStation: 'Ja-Ela', currentAddress: 'No. 88, Negombo Rd, Ja-Ela', permanentAddress: 'No. 88, Negombo Rd, Ja-Ela', nextOfKinName: 'Anula Fernando', nextOfKinPhone: '0788877665', nextOfKinRelationship: 'Parent (මව / පියා)', nextOfKinAddress: 'No. 88, Negombo Rd, Ja-Ela' },
-        { id: 'WB-9004', firstName: 'Ruwan', lastName: 'Wickramasinghe', nic: '931122334V', phone: '0765544332', whatsapp: '0765544332', age: 35, category: 'Electronics', experience: 7, skills: ['Electrician', 'Wiring', 'CCTV Technician'], locations: ['Colombo'], shifts: ['Day'], status: 'approved', date: new Date().toISOString(), policeStation: 'Nugegoda', currentAddress: 'No. 15, Station Rd, Nugegoda', permanentAddress: 'No. 15, Station Rd, Nugegoda', nextOfKinName: 'Champa Wickramasinghe', nextOfKinPhone: '0761122334', nextOfKinRelationship: 'Spouse (ස්වාමියා / බිරිඳ)', nextOfKinAddress: 'No. 15, Station Rd, Nugegoda' },
-        { id: 'WB-9005', firstName: 'Priyantha', lastName: 'Kumara', nic: '889988776V', phone: '0756677889', whatsapp: '0756677889', age: 45, category: 'Cleaning', experience: 8, skills: ['Cleaner', 'Gardening', 'Commercial Cleaning'], locations: ['Colombo'], shifts: ['Day', 'Night'], status: 'approved', date: new Date().toISOString(), policeStation: 'Piliyandala', currentAddress: 'No. 24, Main St, Piliyandala', permanentAddress: 'No. 24, Main St, Piliyandala', nextOfKinName: 'Kanthi Kumara', nextOfKinPhone: '0751122334', nextOfKinRelationship: 'Spouse (ස්වාමියා / බිරිඳ)', nextOfKinAddress: 'No. 24, Main St, Piliyandala' },
-        { id: 'WB-9006', firstName: 'Kasun', lastName: 'Rajapaksha', nic: '971122445V', phone: '0723344556', whatsapp: '0723344556', age: 29, category: 'Construction', experience: 4, skills: ['Masonry', 'Painter', 'Tiler'], locations: ['Colombo', 'Gampaha'], shifts: ['Day'], status: 'approved', date: new Date().toISOString(), policeStation: 'Kadawatha', currentAddress: 'No. 7, Kandy Rd, Kadawatha', permanentAddress: 'No. 7, Kandy Rd, Kadawatha', nextOfKinName: 'Dhammika Rajapaksha', nextOfKinPhone: '0729988776', nextOfKinRelationship: 'Parent (මව / පියා)', nextOfKinAddress: 'No. 7, Kandy Rd, Kadawatha' }
-    ];
-    var ew = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
-    if (ew.length < 4) localStorage.setItem('workbee_worker_registrations', JSON.stringify(sw));
+    var hasSeeded = localStorage.getItem('workbee_seeded_initial');
+    if (!hasSeeded) {
+        var sw = [
+            { id: 'WB-9001', firstName: 'Kamal', lastName: 'Perera', nic: '912345678V', phone: '0771234567', whatsapp: '0771234567', age: 32, category: 'Construction', experience: 5, skills: ['Masonry', 'Construction Helper'], locations: ['Colombo'], shifts: ['Day'], status: 'approved', date: new Date().toISOString(), policeStation: 'Maharagama', currentAddress: 'No. 12, High Level Rd, Maharagama', permanentAddress: 'No. 12, High Level Rd, Maharagama', nextOfKinName: 'Sunethra Perera', nextOfKinPhone: '0779988776', nextOfKinRelationship: 'Spouse (ස්වාමියා / බිරිඳ)', nextOfKinAddress: 'No. 12, High Level Rd, Maharagama' },
+            { id: 'WB-9002', firstName: 'Nimal', lastName: 'Silva', nic: '852345678V', phone: '0711234567', whatsapp: '0711234567', age: 40, category: 'Hospitality', experience: 10, skills: ['Cooking', 'Kitchen Helper', 'Steward'], locations: ['Kandy'], shifts: ['Night'], status: 'approved', date: new Date().toISOString(), policeStation: 'Kandy', currentAddress: 'No. 45, Peradeniya Rd, Kandy', permanentAddress: 'No. 45, Peradeniya Rd, Kandy', nextOfKinName: 'Malini Silva', nextOfKinPhone: '0719876543', nextOfKinRelationship: 'Spouse (ස්වාමියා / බිරිඳ)', nextOfKinAddress: 'No. 45, Peradeniya Rd, Kandy' },
+            { id: 'WB-9003', firstName: 'Sunil', lastName: 'Fernando', nic: '952345678V', phone: '0781234567', whatsapp: '0781234567', age: 28, category: 'Factory', experience: 2, skills: ['Packing', 'Machine Operator'], locations: ['Gampaha'], shifts: ['Day'], status: 'approved', date: new Date().toISOString(), policeStation: 'Ja-Ela', currentAddress: 'No. 88, Negombo Rd, Ja-Ela', permanentAddress: 'No. 88, Negombo Rd, Ja-Ela', nextOfKinName: 'Anula Fernando', nextOfKinPhone: '0788877665', nextOfKinRelationship: 'Parent (මව / පියා)', nextOfKinAddress: 'No. 88, Negombo Rd, Ja-Ela' },
+            { id: 'WB-9004', firstName: 'Ruwan', lastName: 'Wickramasinghe', nic: '931122334V', phone: '0765544332', whatsapp: '0765544332', age: 35, category: 'Electronics', experience: 7, skills: ['Electrician', 'Wiring', 'CCTV Technician'], locations: ['Colombo'], shifts: ['Day'], status: 'approved', date: new Date().toISOString(), policeStation: 'Nugegoda', currentAddress: 'No. 15, Station Rd, Nugegoda', permanentAddress: 'No. 15, Station Rd, Nugegoda', nextOfKinName: 'Champa Wickramasinghe', nextOfKinPhone: '0761122334', nextOfKinRelationship: 'Spouse (ස්වාමියා / බිරිඳ)', nextOfKinAddress: 'No. 15, Station Rd, Nugegoda' },
+            { id: 'WB-9005', firstName: 'Priyantha', lastName: 'Kumara', nic: '889988776V', phone: '0756677889', whatsapp: '0756677889', age: 45, category: 'Cleaning', experience: 8, skills: ['Cleaner', 'Gardening', 'Commercial Cleaning'], locations: ['Colombo'], shifts: ['Day', 'Night'], status: 'approved', date: new Date().toISOString(), policeStation: 'Piliyandala', currentAddress: 'No. 24, Main St, Piliyandala', permanentAddress: 'No. 24, Main St, Piliyandala', nextOfKinName: 'Kanthi Kumara', nextOfKinPhone: '0751122334', nextOfKinRelationship: 'Spouse (ස්වාමියා / බිරිඳ)', nextOfKinAddress: 'No. 24, Main St, Piliyandala' },
+            { id: 'WB-9006', firstName: 'Kasun', lastName: 'Rajapaksha', nic: '971122445V', phone: '0723344556', whatsapp: '0723344556', age: 29, category: 'Construction', experience: 4, skills: ['Masonry', 'Painter', 'Tiler'], locations: ['Colombo', 'Gampaha'], shifts: ['Day'], status: 'approved', date: new Date().toISOString(), policeStation: 'Kadawatha', currentAddress: 'No. 7, Kandy Rd, Kadawatha', permanentAddress: 'No. 7, Kandy Rd, Kadawatha', nextOfKinName: 'Dhammika Rajapaksha', nextOfKinPhone: '0729988776', nextOfKinRelationship: 'Parent (මව / පියා)', nextOfKinAddress: 'No. 7, Kandy Rd, Kadawatha' }
+        ];
+        if (localStorage.getItem('workbee_worker_registrations') === null) {
+            localStorage.setItem('workbee_worker_registrations', JSON.stringify(sw));
+        }
 
-    var sc = [
-        { id: 'C-8001', name: 'ABC Construction Ltd', brn: 'PV12345', contact: 'Saman Perera', phone: '0112345678', email: 'info@abc.com', city: 'Colombo', status: 'approved', date: new Date().toISOString() },
-        { id: 'C-8002', name: 'Grand Lanka Hotel and Resorts', brn: 'PV67890', contact: 'Dilshan Fernando', phone: '0812233445', email: 'hr@grandlanka.lk', city: 'Kandy', status: 'approved', date: new Date().toISOString() },
-        { id: 'C-8003', name: 'LogiTrans Logistics Pvt Ltd', brn: 'PV99887', contact: 'Kavinda Silva', phone: '0312255888', email: 'ops@logitrans.lk', city: 'Gampaha', status: 'approved', date: new Date().toISOString() },
-        { id: 'C-8004', name: 'CleanTech Commercial Services', brn: 'PV44332', contact: 'Nirmala Jayasinghe', phone: '0117766554', email: 'contact@cleantech.lk', city: 'Colombo', status: 'approved', date: new Date().toISOString() },
-        { id: 'C-8005', name: 'Gagana Construction', brn: 'PV88441', contact: 'Gagana Ranasinghe', phone: '0769447538', email: 'gagana@gmail.com', city: 'Colombo', status: 'approved', date: new Date().toISOString() }
-    ];
-    var ec = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
-    if (ec.length < 3) localStorage.setItem('workbee_companies', JSON.stringify(sc));
+        var sc = [
+            { id: 'C-8001', name: 'ABC Construction Ltd', brn: 'PV12345', contact: 'Saman Perera', phone: '0112345678', email: 'info@abc.com', city: 'Colombo', status: 'approved', date: new Date().toISOString() },
+            { id: 'C-8002', name: 'Grand Lanka Hotel and Resorts', brn: 'PV67890', contact: 'Dilshan Fernando', phone: '0812233445', email: 'hr@grandlanka.lk', city: 'Kandy', status: 'approved', date: new Date().toISOString() },
+            { id: 'C-8003', name: 'LogiTrans Logistics Pvt Ltd', brn: 'PV99887', contact: 'Kavinda Silva', phone: '0312255888', email: 'ops@logitrans.lk', city: 'Gampaha', status: 'approved', date: new Date().toISOString() },
+            { id: 'C-8004', name: 'CleanTech Commercial Services', brn: 'PV44332', contact: 'Nirmala Jayasinghe', phone: '0117766554', email: 'contact@cleantech.lk', city: 'Colombo', status: 'approved', date: new Date().toISOString() },
+            { id: 'C-8005', name: 'Gagana Construction', brn: 'PV88441', contact: 'Gagana Ranasinghe', phone: '0769447538', email: 'gagana@gmail.com', city: 'Colombo', status: 'approved', date: new Date().toISOString() }
+        ];
+        if (localStorage.getItem('workbee_companies') === null) {
+            localStorage.setItem('workbee_companies', JSON.stringify(sc));
+        }
 
-    var sr = [
-        { id: 'JOB-4821', company: 'ABC Construction Ltd', phone: '0112345678', industry: 'Construction', skills: ['Masonry', 'Construction Helper'], workersReq: 2, district: 'Colombo', town: 'Colombo 03', fromDate: '2026-09-01', toDate: '2026-09-15', totalDays: 15, payRate: 2500, totalPay: 75000, shifts: ['Day'], meals: ['Breakfast', 'Lunch'], desc: 'Commercial site construction.', status: 'OPEN', applicants: ['WB-9001'], applicantsDetails: [{ id: 'WB-9001', name: 'Kamal Perera', phone: '0771234567', nic: '912345678V', skills: ['Masonry'] }], postedDate: new Date().toISOString().split('T')[0] },
-        { id: 'JOB-9500', company: 'Gagana Construction', phone: '0769447538', industry: 'Construction', skills: ['Masonry'], workersReq: 2, district: 'Colombo', town: 'Nugegoda', fromDate: '2026-08-21', toDate: '2026-08-28', totalDays: 8, payRate: 3200, totalPay: 51200, shifts: ['Night'], meals: ['Lunch'], desc: 'Masonry work.', status: 'OPEN', applicants: ['WB-9001', 'WB-9006'], applicantsDetails: [{ id: 'WB-9001', name: 'Kamal Perera', phone: '0771234567', nic: '912345678V', skills: ['Masonry'] }, { id: 'WB-9006', name: 'Kasun Rajapaksha', phone: '0723344556', nic: '971122445V', skills: ['Masonry'] }], postedDate: new Date().toISOString().split('T')[0] },
-        { id: 'JOB-2280', company: 'Grand Lanka Hotel and Resorts', phone: '0812233445', industry: 'Hospitality', skills: ['Kitchen Helper', 'Steward'], workersReq: 2, district: 'Kandy', town: 'Kandy City', fromDate: '2026-09-05', toDate: '2026-09-20', totalDays: 15, payRate: 2200, totalPay: 66000, shifts: ['Day', 'Night'], meals: ['Breakfast', 'Lunch', 'Dinner'], desc: 'Hotel banquet catering.', status: 'OPEN', applicants: ['WB-9002'], applicantsDetails: [{ id: 'WB-9002', name: 'Nimal Silva', phone: '0711234567', nic: '852345678V', skills: ['Kitchen Helper'] }], postedDate: new Date().toISOString().split('T')[0] },
-        { id: 'JOB-7740', company: 'LogiTrans Logistics Pvt Ltd', phone: '0312255888', industry: 'Factory', skills: ['Packing', 'Machine Operator'], workersReq: 3, district: 'Gampaha', town: 'Ja-Ela', fromDate: '2026-09-10', toDate: '2026-09-25', totalDays: 15, payRate: 2000, totalPay: 90000, shifts: ['Day'], meals: ['Lunch', 'Tea'], desc: 'Factory packaging.', status: 'OPEN', applicants: ['WB-9003'], applicantsDetails: [{ id: 'WB-9003', name: 'Sunil Fernando', phone: '0781234567', nic: '952345678V', skills: ['Packing'] }], postedDate: new Date().toISOString().split('T')[0] }
-    ];
-    var er = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
-    if (er.length < 2) localStorage.setItem('workbee_requirements', JSON.stringify(sr));
+        var sr = [
+            { id: 'JOB-4821', company: 'ABC Construction Ltd', phone: '0112345678', industry: 'Construction', skills: ['Masonry', 'Construction Helper'], workersReq: 2, district: 'Colombo', town: 'Colombo 03', fromDate: '2026-09-01', toDate: '2026-09-15', totalDays: 15, payRate: 2500, totalPay: 75000, shifts: ['Day'], meals: ['Breakfast', 'Lunch'], desc: 'Commercial site construction.', status: 'OPEN', applicants: ['WB-9001'], applicantsDetails: [{ id: 'WB-9001', name: 'Kamal Perera', phone: '0771234567', nic: '912345678V', skills: ['Masonry'] }], postedDate: new Date().toISOString().split('T')[0] },
+            { id: 'JOB-9500', company: 'Gagana Construction', phone: '0769447538', industry: 'Construction', skills: ['Masonry'], workersReq: 2, district: 'Colombo', town: 'Nugegoda', fromDate: '2026-08-21', toDate: '2026-08-28', totalDays: 8, payRate: 3200, totalPay: 51200, shifts: ['Night'], meals: ['Lunch'], desc: 'Masonry work.', status: 'OPEN', applicants: ['WB-9001', 'WB-9006'], applicantsDetails: [{ id: 'WB-9001', name: 'Kamal Perera', phone: '0771234567', nic: '912345678V', skills: ['Masonry'] }, { id: 'WB-9006', name: 'Kasun Rajapaksha', phone: '0723344556', nic: '971122445V', skills: ['Masonry'] }], postedDate: new Date().toISOString().split('T')[0] },
+            { id: 'JOB-2280', company: 'Grand Lanka Hotel and Resorts', phone: '0812233445', industry: 'Hospitality', skills: ['Kitchen Helper', 'Steward'], workersReq: 2, district: 'Kandy', town: 'Kandy City', fromDate: '2026-09-05', toDate: '2026-09-20', totalDays: 15, payRate: 2200, totalPay: 66000, shifts: ['Day', 'Night'], meals: ['Breakfast', 'Lunch', 'Dinner'], desc: 'Hotel banquet catering.', status: 'OPEN', applicants: ['WB-9002'], applicantsDetails: [{ id: 'WB-9002', name: 'Nimal Silva', phone: '0711234567', nic: '852345678V', skills: ['Kitchen Helper'] }], postedDate: new Date().toISOString().split('T')[0] },
+            { id: 'JOB-7740', company: 'LogiTrans Logistics Pvt Ltd', phone: '0312255888', industry: 'Factory', skills: ['Packing', 'Machine Operator'], workersReq: 3, district: 'Gampaha', town: 'Ja-Ela', fromDate: '2026-09-10', toDate: '2026-09-25', totalDays: 15, payRate: 2000, totalPay: 90000, shifts: ['Day'], meals: ['Lunch', 'Tea'], desc: 'Factory packaging.', status: 'OPEN', applicants: ['WB-9003'], applicantsDetails: [{ id: 'WB-9003', name: 'Sunil Fernando', phone: '0781234567', nic: '952345678V', skills: ['Packing'] }], postedDate: new Date().toISOString().split('T')[0] }
+        ];
+        if (localStorage.getItem('workbee_requirements') === null) {
+            localStorage.setItem('workbee_requirements', JSON.stringify(sr));
+        }
+
+        localStorage.setItem('workbee_seeded_initial', 'true');
+    }
 }
 
 function initAdmin() {
@@ -446,6 +454,21 @@ window._DW = function (id) {
 window._approveWorker = window._AW;
 window._deleteWorker = window._DW;
 
+window._deleteAllWorkers = function () {
+    var ws = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+    if (!ws.length) {
+        alert('Worker list is already empty.');
+        return;
+    }
+    if (!confirm('Are you sure you want to delete ALL ' + ws.length + ' registered workers? This cannot be undone.')) return;
+    localStorage.setItem('workbee_worker_registrations', JSON.stringify([]));
+    localStorage.setItem('workbee_seeded_initial', 'true');
+    renderWorkers();
+    updateStats();
+    showToast('All workers deleted successfully.', 'info');
+};
+window.deleteAllWorkers = window._deleteAllWorkers;
+
 // ----------------- COMPANIES TAB -----------------
 
 function renderCompanies(q) {
@@ -679,6 +702,22 @@ window._DC = function (id) {
 };
 window._deleteCompany = window._DC;
 
+window._deleteAllCompanies = function () {
+    var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    if (!cs.length) {
+        alert('Company list is already empty.');
+        return;
+    }
+    if (!confirm('Are you sure you want to delete ALL ' + cs.length + ' registered companies? This cannot be undone.')) return;
+    localStorage.setItem('workbee_companies', JSON.stringify([]));
+    localStorage.setItem('workbee_seeded_initial', 'true');
+    var sc = document.getElementById('search-companies');
+    renderCompanies(sc ? sc.value.trim().toLowerCase() : '');
+    updateStats();
+    showToast('All companies deleted successfully.', 'info');
+};
+window.deleteAllCompanies = window._deleteAllCompanies;
+
 // ----------------- REQUIREMENTS TAB -----------------
 
 function renderRequirements() {
@@ -905,6 +944,21 @@ window._DR = function (rid) {
     renderRequirements(); updateStats(); showToast('Deleted.', 'info');
 };
 window.deleteRequirement = window._DR;
+
+window._deleteAllRequirements = function () {
+    var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+    if (!reqs.length) {
+        alert('Job requirements list is already empty.');
+        return;
+    }
+    if (!confirm('Are you sure you want to delete ALL ' + reqs.length + ' job requirements? This cannot be undone.')) return;
+    localStorage.setItem('workbee_requirements', JSON.stringify([]));
+    localStorage.setItem('workbee_seeded_initial', 'true');
+    renderRequirements();
+    updateStats();
+    showToast('All job requirements deleted successfully.', 'info');
+};
+window.deleteAllRequirements = window._deleteAllRequirements;
 
 window._ODM = function (reqId) {
     var old = document.getElementById('wb-dm');

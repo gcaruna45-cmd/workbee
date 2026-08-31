@@ -955,6 +955,7 @@
                         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                             <button id="export-workers-btn" class="filter-btn" style="background: #10B981; color: white; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">📥 Export Excel</button>
                             <button id="import-workers-btn" class="filter-btn" style="background: #3B82F6; color: white; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">📤 Import Excel</button>
+                            <button id="delete-all-workers-btn" onclick="window._deleteAllWorkers()" class="filter-btn" style="background: #EF4444; color: white; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">🗑️ Delete All</button>
                             <input type="file" id="worker-file-input" accept=".xlsx, .xls, .csv" style="display: none;">
                         </div>
                     </div>
@@ -994,6 +995,7 @@
                         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                             <button id="export-companies-btn" class="filter-btn" style="background: #10B981; color: white; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">📥 Export Excel</button>
                             <button id="import-companies-btn" class="filter-btn" style="background: #3B82F6; color: white; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">📤 Import Excel</button>
+                            <button id="delete-all-companies-btn" onclick="window._deleteAllCompanies()" class="filter-btn" style="background: #EF4444; color: white; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">🗑️ Delete All</button>
                             <input type="file" id="company-file-input" accept=".xlsx, .xls, .csv" style="display: none;">
                         </div>
                     </div>
@@ -1022,8 +1024,11 @@
 
                 <!-- 7. Requirements Tab -->
                 <div class="tab-content" id="tab-requirements">
-                    <div class="tab-header">
+                    <div class="tab-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                         <h2>Job Requirements</h2>
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <button id="delete-all-requirements-btn" onclick="window._deleteAllRequirements()" class="filter-btn" style="background: #EF4444; color: white; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">🗑️ Delete All</button>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table id="requirements-table">
@@ -1203,6 +1208,25 @@
                             <input type="file" id="backup-file-input" accept=".json, .xlsx, .xls" style="display: none;">
                         </div>
 
+                        <!-- Card 4: Delete All Records -->
+                        <div class="panel-card" style="border: 2px solid #FECACA; border-radius: 12px; padding: 1.5rem; background: #FEF2F2; box-shadow: 0 2px 4px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                    <div style="width: 44px; height: 44px; background: #FEE2E2; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #DC2626;">🗑️</div>
+                                    <div>
+                                        <h3 style="font-size: 1.1rem; color: #991B1B; margin: 0;">Delete All Records</h3>
+                                        <span style="font-size: 0.75rem; color: #DC2626; font-weight: 600;">Clear Table Data</span>
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.85rem; color: #991B1B; margin-bottom: 16px; line-height: 1.5;">Permanently delete all registered records for workers, companies, or job requirements.</p>
+                            </div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button onclick="window._deleteAllWorkers()" class="filter-btn" style="background: #EF4444; color: white; border: none; font-size: 0.8rem; cursor: pointer; flex: 1; min-width: 90px;">🗑️ Workers</button>
+                                <button onclick="window._deleteAllCompanies()" class="filter-btn" style="background: #EF4444; color: white; border: none; font-size: 0.8rem; cursor: pointer; flex: 1; min-width: 90px;">🗑️ Companies</button>
+                                <button onclick="window._deleteAllRequirements()" class="filter-btn" style="background: #EF4444; color: white; border: none; font-size: 0.8rem; cursor: pointer; flex: 1; min-width: 90px;">🗑️ Requirements</button>
+                            </div>
+                        </div>
+
                     </div>
 
                     <!-- Bulk Excel Operations Panel -->
@@ -1242,7 +1266,7 @@
 
     <!-- Scripts -->
     <script src="js/xlsx.full.min.js"></script>
-    <script src="js/admin.js?v=70"></script>
+    <script src="js/admin.js?v=75"></script>
     <!-- PWA Install Banner (Android + iOS smart detection) -->
     <div id="pwa-install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:white;padding:14px 16px;box-shadow:0 -4px 24px rgba(0,0,0,0.4);border-top:2px solid #F59E0B;">
       <!-- Android install row -->
