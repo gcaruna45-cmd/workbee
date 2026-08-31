@@ -179,10 +179,116 @@ function initAdmin() {
     renderRequirements();
 }
 
-function updateStats() {
-    var workers = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
-    var companies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+function getWorkersData() {
+    var ws = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+    var users = JSON.parse(localStorage.getItem('workbee_users') || '[]');
+    var modified = false;
+
+    for (var i = 0; i < users.length; i++) {
+        var u = users[i];
+        if (u.role === 'worker' && u.profileData) {
+            var p = u.profileData;
+            var exists = ws.some(function (w) {
+                return (w.id && p.id && String(w.id) === String(p.id)) ||
+                       (w.username && u.username && w.username.toLowerCase() === u.username.toLowerCase()) ||
+                       (w.phone && p.phone && w.phone.replace(/[^0-9]/g, '') === p.phone.replace(/[^0-9]/g, '')) ||
+                       (w.nic && p.nic && w.nic.toLowerCase() === p.nic.toLowerCase());
+            });
+            if (!exists) {
+                p.id = p.id || ('WB-' + Math.floor(1000 + Math.random() * 9000));
+                p.username = p.username || u.username;
+                p.status = p.status || 'pending';
+                p.date = p.date || u.createdAt || new Date().toISOString();
+                ws.unshift(p);
+                modified = true;
+            }
+        }
+    }
+    if (modified) {
+        localStorage.setItem('workbee_worker_registrations', JSON.stringify(ws));
+    }
+    return ws;
+}
+
+function getCompaniesData() {
+    var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    var legacyCs = JSON.parse(localStorage.getItem('workbee_company_registrations') || '[]');
+    var users = JSON.parse(localStorage.getItem('workbee_users') || '[]');
+    var modified = false;
+
+    for (var l = 0; l < legacyCs.length; l++) {
+        var lc = legacyCs[l];
+        var ex = cs.some(function (c) { return (c.id && lc.id && String(c.id) === String(lc.id)) || (c.name && lc.name && c.name.toLowerCase() === lc.name.toLowerCase()); });
+        if (!ex) { cs.unshift(lc); modified = true; }
+    }
+
+    for (var i = 0; i < users.length; i++) {
+        var u = users[i];
+        if (u.role === 'company' && u.profileData) {
+            var cp = u.profileData;
+            var exists = cs.some(function (c) {
+                return (c.id && cp.id && String(c.id) === String(cp.id)) ||
+                       (c.username && u.username && c.username.toLowerCase() === u.username.toLowerCase()) ||
+                       (c.phone && cp.phone && c.phone.replace(/[^0-9]/g, '') === cp.phone.replace(/[^0-9]/g, '')) ||
+                       (c.name && cp.name && c.name.toLowerCase() === cp.name.toLowerCase()) ||
+                       (c.brn && cp.brn && c.brn.toLowerCase() === cp.brn.toLowerCase());
+            });
+            if (!exists) {
+                cp.id = cp.id || ('C-' + Math.floor(1000 + Math.random() * 9000));
+                cp.username = cp.username || u.username;
+                cp.status = cp.status || 'approved';
+                cp.date = cp.date || u.createdAt || new Date().toISOString();
+                cs.unshift(cp);
+                modified = true;
+            }
+        }
+    }
+    if (modified) {
+        localStorage.setItem('workbee_companies', JSON.stringify(cs));
+    }
+    return cs;
+}
+
+function getRequirementsData() {
     var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+    var postings = JSON.parse(localStorage.getItem('workbee_job_postings') || '[]');
+    var modified = false;
+
+    for (var i = 0; i < postings.length; i++) {
+        var p = postings[i];
+        var exists = reqs.some(function (r) { return String(r.id) === String(p.id); });
+        if (!exists) {
+            reqs.unshift({
+                id: p.id || ('JOB-' + Math.floor(1000 + Math.random() * 9000)),
+                company: p.companyName || p.company || 'Client',
+                phone: p.companyPhone || p.phone || 'N/A',
+                skills: p.skillRequired ? [p.skillRequired] : (p.skills || ['General']),
+                workersReq: parseInt(p.workersNeeded || p.workersReq) || 1,
+                district: p.location || p.district || 'Colombo',
+                town: p.town || '',
+                fromDate: p.requiredDate || p.fromDate || new Date().toISOString().split('T')[0],
+                toDate: p.requiredDate || p.toDate || new Date().toISOString().split('T')[0],
+                totalPay: parseFloat(p.dailyPay || p.totalPay) || 0,
+                shifts: p.shifts || ['Day'],
+                meals: p.meals || ['Provided by Employer'],
+                desc: p.notes || p.desc || '',
+                status: p.status === 'Awaiting Admin Dispatch' ? 'OPEN' : (p.status || 'OPEN'),
+                applicants: p.applicants || [],
+                postedDate: p.createdAt ? p.createdAt.split('T')[0] : (p.postedDate || new Date().toISOString().split('T')[0])
+            });
+            modified = true;
+        }
+    }
+    if (modified) {
+        localStorage.setItem('workbee_requirements', JSON.stringify(reqs));
+    }
+    return reqs;
+}
+
+function updateStats() {
+    var workers = getWorkersData();
+    var companies = getCompaniesData();
+    var reqs = getRequirementsData();
     var w = document.getElementById('stat-total-workers');
     var p = document.getElementById('stat-pending');
     var c = document.getElementById('stat-companies');
@@ -196,7 +302,7 @@ function updateStats() {
 function renderWorkers(q) {
     var tbody = document.getElementById('workers-tbody');
     if (!tbody) return;
-    var workers = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+    var workers = getWorkersData();
     var fb = document.querySelector('#worker-filters .filter-btn.active');
     var f = fb ? fb.getAttribute('data-filter') : 'all';
     var filtered = (f && f !== 'all') ? workers.filter(function (w) { return w.status === f; }) : workers;
@@ -474,7 +580,7 @@ window.deleteAllWorkers = window._deleteAllWorkers;
 function renderCompanies(q) {
     var tbody = document.getElementById('companies-tbody');
     if (!tbody) return;
-    var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    var cs = getCompaniesData();
     if (q) {
         var ql = q.toLowerCase();
         cs = cs.filter(function (c) {
@@ -723,7 +829,7 @@ window.deleteAllCompanies = window._deleteAllCompanies;
 function renderRequirements() {
     var tbody = document.getElementById('requirements-tbody');
     if (!tbody) return;
-    var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+    var reqs = getRequirementsData();
     tbody.innerHTML = '';
     if (!reqs.length) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:#64748b;">No job requirements yet.</td></tr>'; return; }
     for (var i = 0; i < reqs.length; i++) {
