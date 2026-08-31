@@ -78,19 +78,97 @@ const WB_FIREBASE = (function () {
             return await apiRequest('users/' + key, 'PUT', user);
         },
 
-        deleteWorker: async function (id) {
-            const key = sanitizeKey(id);
-            return await apiRequest('workers/' + key, 'DELETE');
+        // ---- DELETE HELPERS (INSTANT CLOUD DELETE) ----
+        deleteWorker: async function (id, username) {
+            const promises = [];
+            if (id) promises.push(apiRequest('workers/' + sanitizeKey(id), 'DELETE'));
+            if (username && username !== id) promises.push(apiRequest('workers/' + sanitizeKey(username), 'DELETE'));
+            if (username) promises.push(apiRequest('users/' + sanitizeKey(username), 'DELETE'));
+            if (id) promises.push(apiRequest('users/' + sanitizeKey(id), 'DELETE'));
+            try {
+                await Promise.all(promises);
+                return { success: true };
+            } catch (err) {
+                console.warn('[Firebase deleteWorker Error]:', err);
+                return { success: false, error: err };
+            }
         },
 
-        deleteCompany: async function (id) {
-            const key = sanitizeKey(id);
-            return await apiRequest('companies/' + key, 'DELETE');
+        deleteCompany: async function (id, name, username) {
+            const promises = [];
+            if (id) promises.push(apiRequest('companies/' + sanitizeKey(id), 'DELETE'));
+            if (name && name !== id) promises.push(apiRequest('companies/' + sanitizeKey(name), 'DELETE'));
+            if (username && username !== id && username !== name) promises.push(apiRequest('companies/' + sanitizeKey(username), 'DELETE'));
+            if (username) promises.push(apiRequest('users/' + sanitizeKey(username), 'DELETE'));
+            if (id) promises.push(apiRequest('users/' + sanitizeKey(id), 'DELETE'));
+            if (name) promises.push(apiRequest('users/' + sanitizeKey(name), 'DELETE'));
+            try {
+                await Promise.all(promises);
+                return { success: true };
+            } catch (err) {
+                console.warn('[Firebase deleteCompany Error]:', err);
+                return { success: false, error: err };
+            }
         },
 
         deleteRequirement: async function (id) {
-            const key = sanitizeKey(id);
-            return await apiRequest('requirements/' + key, 'DELETE');
+            if (!id) return;
+            try {
+                await apiRequest('requirements/' + sanitizeKey(id), 'DELETE');
+                return { success: true };
+            } catch (err) {
+                console.warn('[Firebase deleteRequirement Error]:', err);
+                return { success: false, error: err };
+            }
+        },
+
+        deleteUser: async function (usernameOrId) {
+            if (!usernameOrId) return;
+            try {
+                await apiRequest('users/' + sanitizeKey(usernameOrId), 'DELETE');
+                return { success: true };
+            } catch (err) {
+                console.warn('[Firebase deleteUser Error]:', err);
+                return { success: false, error: err };
+            }
+        },
+
+        deleteAllWorkers: async function () {
+            try {
+                await apiRequest('workers', 'DELETE');
+                // Remove worker users
+                const users = await this.getAllUsers();
+                const workerUsers = users.filter(u => u && u.role === 'worker');
+                await Promise.all(workerUsers.map(u => this.deleteUser(u.username || u.id)));
+                return { success: true };
+            } catch (err) {
+                console.warn('[Firebase deleteAllWorkers Error]:', err);
+                return { success: false, error: err };
+            }
+        },
+
+        deleteAllCompanies: async function () {
+            try {
+                await apiRequest('companies', 'DELETE');
+                // Remove company users
+                const users = await this.getAllUsers();
+                const compUsers = users.filter(u => u && u.role === 'company');
+                await Promise.all(compUsers.map(u => this.deleteUser(u.username || u.id)));
+                return { success: true };
+            } catch (err) {
+                console.warn('[Firebase deleteAllCompanies Error]:', err);
+                return { success: false, error: err };
+            }
+        },
+
+        deleteAllRequirements: async function () {
+            try {
+                await apiRequest('requirements', 'DELETE');
+                return { success: true };
+            } catch (err) {
+                console.warn('[Firebase deleteAllRequirements Error]:', err);
+                return { success: false, error: err };
+            }
         },
 
         // ---- READ ALL FROM CLOUD ----

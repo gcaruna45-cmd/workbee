@@ -641,25 +641,70 @@ window._AW = function (id) {
 window._DW = function (id) {
     if (!confirm('Delete worker ' + id + '?')) return;
     var ws = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
-    ws = ws.filter(function (w) { return String(w.id) !== String(id); });
+    var targetWorker = null;
+    for (var i = 0; i < ws.length; i++) {
+        if (String(ws[i].id) === String(id) || String(ws[i].username) === String(id)) {
+            targetWorker = ws[i];
+            break;
+        }
+    }
+    var targetUsername = targetWorker ? targetWorker.username : null;
+    var targetPhone = targetWorker ? (targetWorker.phone || '').replace(/[^0-9]/g, '') : '';
+    var targetNic = targetWorker ? (targetWorker.nic || '').toLowerCase() : '';
+
+    // 1. Remove from workbee_worker_registrations
+    ws = ws.filter(function (w) { return String(w.id) !== String(id) && (!targetUsername || String(w.username) !== String(targetUsername)); });
     localStorage.setItem('workbee_worker_registrations', JSON.stringify(ws));
-    renderWorkers(); updateStats(); showToast('Worker deleted.', 'info');
+
+    // 2. Remove from workbee_users
+    var users = JSON.parse(localStorage.getItem('workbee_users') || '[]');
+    users = users.filter(function (u) {
+        if (u.role !== 'worker') return true;
+        var p = u.profileData || {};
+        if (String(u.id) === String(id) || (p.id && String(p.id) === String(id))) return false;
+        if (targetUsername && (u.username === targetUsername || p.username === targetUsername)) return false;
+        if (targetPhone && p.phone && p.phone.replace(/[^0-9]/g, '') === targetPhone) return false;
+        if (targetNic && p.nic && p.nic.toLowerCase() === targetNic) return false;
+        return true;
+    });
+    localStorage.setItem('workbee_users', JSON.stringify(users));
+
+    // 3. Delete from Firebase Cloud DB immediately
+    if (typeof WB_FIREBASE !== 'undefined') {
+        WB_FIREBASE.deleteWorker(id, targetUsername);
+    }
+
+    renderWorkers();
+    updateStats();
+    showToast('Worker deleted from system & cloud.', 'info');
 };
 window._approveWorker = window._AW;
 window._deleteWorker = window._DW;
 
 window._deleteAllWorkers = function () {
     var ws = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
-    if (!ws.length) {
+    var users = JSON.parse(localStorage.getItem('workbee_users') || '[]');
+    var workerUsersCount = users.filter(function (u) { return u.role === 'worker'; }).length;
+    var totalCount = Math.max(ws.length, workerUsersCount);
+
+    if (!totalCount) {
         alert('Worker list is already empty.');
         return;
     }
-    if (!confirm('Are you sure you want to delete ALL ' + ws.length + ' registered workers? This cannot be undone.')) return;
+    if (!confirm('Are you sure you want to delete ALL ' + totalCount + ' registered workers? This will permanently delete them from system & cloud.')) return;
+
     localStorage.setItem('workbee_worker_registrations', JSON.stringify([]));
+    users = users.filter(function (u) { return u.role !== 'worker'; });
+    localStorage.setItem('workbee_users', JSON.stringify(users));
     localStorage.setItem('workbee_seeded_initial', 'true');
+
+    if (typeof WB_FIREBASE !== 'undefined') {
+        WB_FIREBASE.deleteAllWorkers();
+    }
+
     renderWorkers();
     updateStats();
-    showToast('All workers deleted successfully.', 'info');
+    showToast('All workers deleted successfully from system & cloud.', 'info');
 };
 window.deleteAllWorkers = window._deleteAllWorkers;
 
@@ -887,28 +932,80 @@ window._saveCompany = function (e, key) {
 window._DC = function (id) {
     if (!confirm('Delete this company record?')) return;
     var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
-    cs = cs.filter(function (c) { return String(c.id || c.name) !== String(id); });
+    var targetComp = null;
+    for (var i = 0; i < cs.length; i++) {
+        if (String(cs[i].id || cs[i].name) === String(id) || String(cs[i].name) === String(id)) {
+            targetComp = cs[i];
+            break;
+        }
+    }
+    var cName = targetComp ? (targetComp.name || targetComp.companyName || id) : id;
+    var cUsername = targetComp ? targetComp.username : null;
+    var cBrn = targetComp ? (targetComp.brn || targetComp.regNumber || '').toLowerCase() : '';
+
+    // 1. Remove from workbee_companies & workbee_company_registrations
+    cs = cs.filter(function (c) {
+        return String(c.id || c.name) !== String(id) && String(c.name || '') !== String(cName);
+    });
     localStorage.setItem('workbee_companies', JSON.stringify(cs));
+
+    var legCs = JSON.parse(localStorage.getItem('workbee_company_registrations') || '[]');
+    legCs = legCs.filter(function (c) {
+        return String(c.id || c.name) !== String(id) && String(c.name || '') !== String(cName);
+    });
+    localStorage.setItem('workbee_company_registrations', JSON.stringify(legCs));
+
+    // 2. Remove from workbee_users
+    var users = JSON.parse(localStorage.getItem('workbee_users') || '[]');
+    users = users.filter(function (u) {
+        if (u.role !== 'company') return true;
+        var p = u.profileData || {};
+        if (String(u.id) === String(id) || (p.id && String(p.id) === String(id))) return false;
+        if (cUsername && (u.username === cUsername || p.username === cUsername)) return false;
+        if (cName && ((p.companyName && p.companyName.toLowerCase() === cName.toLowerCase()) || (p.name && p.name.toLowerCase() === cName.toLowerCase()) || (u.username && u.username.toLowerCase() === cName.toLowerCase()))) return false;
+        if (cBrn && (p.brn && p.brn.toLowerCase() === cBrn || p.regNumber && p.regNumber.toLowerCase() === cBrn)) return false;
+        return true;
+    });
+    localStorage.setItem('workbee_users', JSON.stringify(users));
+
+    // 3. Delete from Firebase Cloud DB immediately
+    if (typeof WB_FIREBASE !== 'undefined') {
+        WB_FIREBASE.deleteCompany(id, cName, cUsername);
+    }
+
     var sc = document.getElementById('search-companies');
     renderCompanies(sc ? sc.value.trim().toLowerCase() : '');
     updateStats();
-    showToast('Company deleted.', 'info');
+    showToast('Company deleted from system & cloud.', 'info');
 };
 window._deleteCompany = window._DC;
 
 window._deleteAllCompanies = function () {
     var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
-    if (!cs.length) {
+    var users = JSON.parse(localStorage.getItem('workbee_users') || '[]');
+    var compUsersCount = users.filter(function (u) { return u.role === 'company'; }).length;
+    var totalCount = Math.max(cs.length, compUsersCount);
+
+    if (!totalCount) {
         alert('Company list is already empty.');
         return;
     }
-    if (!confirm('Are you sure you want to delete ALL ' + cs.length + ' registered companies? This cannot be undone.')) return;
+    if (!confirm('Are you sure you want to delete ALL ' + totalCount + ' registered companies? This will permanently delete them from system & cloud.')) return;
+
     localStorage.setItem('workbee_companies', JSON.stringify([]));
+    localStorage.setItem('workbee_company_registrations', JSON.stringify([]));
+    users = users.filter(function (u) { return u.role !== 'company'; });
+    localStorage.setItem('workbee_users', JSON.stringify(users));
     localStorage.setItem('workbee_seeded_initial', 'true');
+
+    if (typeof WB_FIREBASE !== 'undefined') {
+        WB_FIREBASE.deleteAllCompanies();
+    }
+
     var sc = document.getElementById('search-companies');
     renderCompanies(sc ? sc.value.trim().toLowerCase() : '');
     updateStats();
-    showToast('All companies deleted successfully.', 'info');
+    showToast('All companies deleted successfully from system & cloud.', 'info');
 };
 window.deleteAllCompanies = window._deleteAllCompanies;
 
@@ -1132,26 +1229,50 @@ window._TJS = function (rid) {
 window.toggleJobStatus = window._TJS;
 
 window._DR = function (rid) {
-    if (!confirm('Delete requirement ' + rid + '?')) return;
+    if (!confirm('Delete requirement #' + rid + '?')) return;
+    // 1. Remove from workbee_requirements
     var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
     reqs = reqs.filter(function (r) { return String(r.id) !== String(rid); });
     localStorage.setItem('workbee_requirements', JSON.stringify(reqs));
-    renderRequirements(); updateStats(); showToast('Deleted.', 'info');
+
+    // 2. Remove from workbee_job_postings
+    var postings = JSON.parse(localStorage.getItem('workbee_job_postings') || '[]');
+    postings = postings.filter(function (p) { return String(p.id) !== String(rid); });
+    localStorage.setItem('workbee_job_postings', JSON.stringify(postings));
+
+    // 3. Delete from Firebase Cloud DB immediately
+    if (typeof WB_FIREBASE !== 'undefined') {
+        WB_FIREBASE.deleteRequirement(rid);
+    }
+
+    renderRequirements();
+    updateStats();
+    showToast('Requirement #' + rid + ' deleted from system & cloud.', 'info');
 };
 window.deleteRequirement = window._DR;
 
 window._deleteAllRequirements = function () {
     var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
-    if (!reqs.length) {
+    var postings = JSON.parse(localStorage.getItem('workbee_job_postings') || '[]');
+    var totalCount = Math.max(reqs.length, postings.length);
+
+    if (!totalCount) {
         alert('Job requirements list is already empty.');
         return;
     }
-    if (!confirm('Are you sure you want to delete ALL ' + reqs.length + ' job requirements? This cannot be undone.')) return;
+    if (!confirm('Are you sure you want to delete ALL ' + totalCount + ' job requirements? This will permanently delete them from system & cloud.')) return;
+
     localStorage.setItem('workbee_requirements', JSON.stringify([]));
+    localStorage.setItem('workbee_job_postings', JSON.stringify([]));
     localStorage.setItem('workbee_seeded_initial', 'true');
+
+    if (typeof WB_FIREBASE !== 'undefined') {
+        WB_FIREBASE.deleteAllRequirements();
+    }
+
     renderRequirements();
     updateStats();
-    showToast('All job requirements deleted successfully.', 'info');
+    showToast('All job requirements deleted successfully from system & cloud.', 'info');
 };
 window.deleteAllRequirements = window._deleteAllRequirements;
 
