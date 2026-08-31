@@ -1,7 +1,7 @@
 // WorkBee.lk Service Worker - PWA Offline Support
 // Version: 1.0.0
 
-const CACHE_NAME = 'workbee-v17';
+const CACHE_NAME = 'workbee-v18';
 const OFFLINE_PAGE = 'offline.html';
 
 // Files to cache for offline use (relative paths for GitHub Pages compatibility)

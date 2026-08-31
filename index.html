@@ -1064,15 +1064,15 @@
 
             <div class="stats-row">
                 <div class="stat-item">
-                    <div class="stat-num" data-target="0">0</div>
+                    <div class="stat-num" id="stat-workers-count" data-target="0">0</div>
                     <div class="stat-label" data-i18n="stat.verified">Verified Workers</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-num" data-target="0">0</div>
+                    <div class="stat-num" id="stat-companies-count" data-target="0">0</div>
                     <div class="stat-label" data-i18n="stat.partners">Partner Companies</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-num" data-target="99">0</div>
+                    <div class="stat-num" id="stat-match-count" data-target="99">0</div>
                     <div class="stat-label" data-i18n="stat.match_rate">Match Rate %</div>
                 </div>
             </div>
@@ -1413,15 +1413,27 @@
                 const companies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
                 const reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
 
-                // Unique worker count
+                // Unique registered worker count
                 const workerSet = new Set();
-                workers.forEach(w => { if (w.id || w.username || w.phone) workerSet.add(String(w.id || w.username || w.phone)); });
-                users.filter(u => u.role === 'worker').forEach(u => { if (u.username || (u.profileData && u.profileData.id)) workerSet.add(String(u.username || u.profileData.id)); });
+                workers.forEach(w => { 
+                    const key = w.id || w.username || w.phone;
+                    if (key) workerSet.add(String(key).toLowerCase()); 
+                });
+                users.filter(u => u.role === 'worker').forEach(u => { 
+                    const key = u.username || (u.profileData && (u.profileData.id || u.profileData.phone));
+                    if (key) workerSet.add(String(key).toLowerCase()); 
+                });
 
-                // Unique company count
+                // Unique registered company count
                 const companySet = new Set();
-                companies.forEach(c => { if (c.id || c.username || c.name || c.companyName) companySet.add(String(c.id || c.username || (c.name || c.companyName)).toLowerCase()); });
-                users.filter(u => u.role === 'company').forEach(u => { if (u.username || (u.profileData && (u.profileData.name || u.profileData.id))) companySet.add(String(u.username || u.profileData.id || u.profileData.name).toLowerCase()); });
+                companies.forEach(c => { 
+                    const key = c.id || c.username || c.name || c.companyName;
+                    if (key) companySet.add(String(key).toLowerCase()); 
+                });
+                users.filter(u => u.role === 'company').forEach(u => { 
+                    const key = u.username || (u.profileData && (u.profileData.name || u.profileData.id));
+                    if (key) companySet.add(String(key).toLowerCase()); 
+                });
 
                 const totalWorkers = workerSet.size;
                 const totalCompanies = companySet.size;
@@ -1434,9 +1446,9 @@
                     matchRate = (totalWorkers > 0 || totalCompanies > 0) ? 99 : 99;
                 }
 
-                const workerEl = document.querySelector('.stats-row .stat-item:nth-child(1) .stat-num');
-                const companyEl = document.querySelector('.stats-row .stat-item:nth-child(2) .stat-num');
-                const matchEl = document.querySelector('.stats-row .stat-item:nth-child(3) .stat-num');
+                const workerEl = document.getElementById('stat-workers-count') || document.querySelector('.stats-row .stat-item:nth-child(1) .stat-num');
+                const companyEl = document.getElementById('stat-companies-count') || document.querySelector('.stats-row .stat-item:nth-child(2) .stat-num');
+                const matchEl = document.getElementById('stat-match-count') || document.querySelector('.stats-row .stat-item:nth-child(3) .stat-num');
 
                 if (workerEl) {
                     workerEl.setAttribute('data-target', totalWorkers);
@@ -1458,12 +1470,17 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateSystemStats();
 
+            // Initial and interval cloud sync for real-time live numbers
             if (typeof WB_FIREBASE !== 'undefined') {
                 WB_FIREBASE.syncFromCloud().then(res => {
-                    if (res && res.updated) {
-                        updateSystemStats();
-                    }
+                    updateSystemStats();
                 }).catch(() => {});
+
+                setInterval(() => {
+                    WB_FIREBASE.syncFromCloud().then(res => {
+                        updateSystemStats();
+                    }).catch(() => {});
+                }, 6000);
             }
 
             // Stats Counter Animation
