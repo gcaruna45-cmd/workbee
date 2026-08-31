@@ -39,7 +39,42 @@ body {
   color: #ffffff;
   line-height: 1.6;
   overflow-x: hidden;
+  position: relative;
 }
+
+/* ============================================================
+   Honeycomb Background Pattern – WorkBee Brand Signature
+   A subtle, animated SVG hexagon grid that runs behind ALL pages.
+   Uses a ::before pseudo-element on body so it never breaks layout.
+   ============================================================ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  /* Inline SVG honeycomb pattern – yellow/amber gradient stroke */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='130' viewBox='0 0 112 130'%3E%3Cdefs%3E%3ClinearGradient id='hg' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23F59E0B' stop-opacity='0.22'/%3E%3Cstop offset='50%25' stop-color='%23FCD34D' stop-opacity='0.18'/%3E%3Cstop offset='100%25' stop-color='%23EA580C' stop-opacity='0.14'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='56,2 106,29 106,83 56,110 6,83 6,29' fill='none' stroke='url(%23hg)' stroke-width='1.5'/%3E%3Cpolygon points='56,67 106,94 106,148 56,175 6,148 6,94' fill='none' stroke='url(%23hg)' stroke-width='1.5'/%3E%3Cpolygon points='-0,34.5 50,61.5 50,115.5 0,142.5 -50,115.5 -50,61.5' fill='none' stroke='url(%23hg)' stroke-width='1.5'/%3E%3Cpolygon points='112,34.5 162,61.5 162,115.5 112,142.5 62,115.5 62,61.5' fill='none' stroke='url(%23hg)' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: 112px 130px;
+  background-repeat: repeat;
+
+  /* Slow drift animation */
+  animation: honeycombDrift 60s linear infinite;
+  opacity: 1;
+}
+
+@keyframes honeycombDrift {
+  0%   { background-position: 0px 0px; }
+  100% { background-position: 224px 260px; }
+}
+
+/* Ensure all direct children stack above the honeycomb */
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
 
 a {
   text-decoration: none;
