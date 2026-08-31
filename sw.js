@@ -1,7 +1,7 @@
 // WorkBee.lk Service Worker - PWA Offline Support
 // Version: 1.0.0
 
-const CACHE_NAME = 'workbee-v12';
+const CACHE_NAME = 'workbee-v15';
 const OFFLINE_PAGE = 'offline.html';
 
 // Files to cache for offline use (relative paths for GitHub Pages compatibility)
@@ -21,6 +21,7 @@ const STATIC_ASSETS = [
   'css/main.css',
   'css/components.css',
   'css/forms.css',
+  'js/firebase-config.js',
   'js/auth.js',
   'js/admin.js',
   'js/forms.js',

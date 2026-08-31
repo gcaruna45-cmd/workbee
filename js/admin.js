@@ -170,14 +170,58 @@ function initAdmin() {
             }
         });
     }
-    var bcp = document.getElementById('bc-preview-btn');
-    if (bcp) bcp.onclick = function () { updateBroadcastPreview(); var r = document.getElementById('bc-preview-result'); if (r) r.style.display = 'block'; };
     setupDataBackupHandlers();
     updateStats();
     renderWorkers();
     renderCompanies();
     renderRequirements();
+
+    // Trigger initial cloud sync from Firebase
+    if (typeof WB_FIREBASE !== 'undefined') {
+        WB_FIREBASE.syncFromCloud().then(function (res) {
+            if (res && res.updated) {
+                updateStats();
+                renderWorkers();
+                renderCompanies();
+                renderRequirements();
+            }
+        }).catch(function () {});
+
+        // Background auto-sync every 12 seconds for real-time registrations
+        if (window._wbSyncInterval) clearInterval(window._wbSyncInterval);
+        window._wbSyncInterval = setInterval(function () {
+            WB_FIREBASE.syncFromCloud().then(function (res) {
+                if (res && res.updated) {
+                    updateStats();
+                    renderWorkers();
+                    renderCompanies();
+                    renderRequirements();
+                }
+            }).catch(function () {});
+        }, 12000);
+    }
 }
+
+window.triggerCloudSync = async function () {
+    var btn = document.getElementById('btn-cloud-sync');
+    var txt = document.getElementById('cloud-sync-text');
+    if (txt) txt.textContent = 'Syncing...';
+    if (btn) btn.style.background = '#d97706';
+
+    if (typeof WB_FIREBASE !== 'undefined') {
+        var res = await WB_FIREBASE.syncFromCloud();
+        updateStats();
+        renderWorkers();
+        renderCompanies();
+        renderRequirements();
+        if (txt) txt.textContent = (res && res.success) ? 'Synced ✅' : 'Offline Mode';
+        if (btn) btn.style.background = (res && res.success) ? '#059669' : '#64748b';
+        setTimeout(function () {
+            if (txt) txt.textContent = 'Sync with Cloud';
+            if (btn) btn.style.background = '#0284c7';
+        }, 3000);
+    }
+};
 
 function getWorkersData() {
     var ws = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
@@ -2313,6 +2357,41 @@ function downloadCSV(dataArray, filename) {
     }, 500);
 }
 
+// Firebase Cloud Database Helpers for Admin
+window.saveFirebaseUrl = function () {
+    var inp = document.getElementById('cfg-firebase-url');
+    if (!inp) return;
+    var val = inp.value.trim();
+    if (typeof WB_FIREBASE !== 'undefined') {
+        WB_FIREBASE.setDbUrl(val);
+        alert(val ? '✅ Firebase Realtime Database URL saved successfully!' : 'Default Firebase Realtime Database URL restored.');
+        window.triggerCloudSync();
+    }
+};
+
+window.pushAllToCloud = async function () {
+    if (confirm('Push all local workers, companies, and requirements to your Firebase Cloud Database?')) {
+        if (typeof WB_FIREBASE !== 'undefined') {
+            var res = await WB_FIREBASE.syncToCloud();
+            if (res && res.success) {
+                alert('✅ All local records successfully uploaded to Firebase Cloud Database!');
+            } else {
+                alert('⚠️ Cloud push failed or database URL unreachable. Please check your Firebase Database URL and Rules.');
+            }
+        }
+    }
+};
+
+// Populate Firebase URL field on load if present
+document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+        var inp = document.getElementById('cfg-firebase-url');
+        if (inp && typeof WB_FIREBASE !== 'undefined') {
+            inp.value = WB_FIREBASE.getDbUrl();
+        }
+    }, 500);
+});
+
 // Global window exposure
 window.exportWorkersToExcel = exportWorkersToExcel;
 window.importWorkersFromExcel = importWorkersFromExcel;
@@ -2323,3 +2402,4 @@ window.exportMasterExcel = exportMasterExcel;
 window.importFullSystemBackup = importFullSystemBackup;
 window.downloadWorkerTemplate = downloadWorkerTemplate;
 window.downloadCompanyTemplate = downloadCompanyTemplate;
+

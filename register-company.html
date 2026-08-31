@@ -597,6 +597,21 @@
             localStorage.setItem('workbee_companies', JSON.stringify(existingCompanies));
             localStorage.setItem('workbee_seeded_initial', 'true');
 
+            // Save to Firebase Cloud DB (cross-device sync to Admin panel)
+            if (typeof WB_FIREBASE !== 'undefined') {
+                WB_FIREBASE.saveCompany(newCompany).catch(function () {});
+                if (compUsername) {
+                    WB_FIREBASE.saveUser({
+                        id: newCompany.userId || ('usr_' + Date.now()),
+                        username: compUsername.trim().toLowerCase(),
+                        password: compPassword,
+                        role: 'company',
+                        profileData: newCompany,
+                        createdAt: new Date().toISOString()
+                    }).catch(function () {});
+                }
+            }
+
             const refEl = document.getElementById('generatedCompRef');
             if(refEl) refEl.innerText = compId;
 
@@ -730,6 +745,11 @@
             localStorage.setItem('workbee_requirements', JSON.stringify(reqs));
             localStorage.setItem('workbee_seeded_initial', 'true');
 
+            // Save to Firebase Cloud DB (cross-device sync to Admin panel)
+            if (typeof WB_FIREBASE !== 'undefined') {
+                WB_FIREBASE.saveRequirement(newReq).catch(function () {});
+            }
+
             document.getElementById('generatedJobRef').innerText = reqId;
             document.getElementById('formJob').style.display = 'none';
             document.getElementById('successJob').style.display = 'block';
@@ -852,7 +872,9 @@
         try { sessionStorage.setItem('pwa_dismissed', '1'); } catch(e) {}
       };
     </script>
-<script src="js/auth.js"></script>`n</body>
+<script src="js/firebase-config.js"></script>
+<script src="js/auth.js"></script>
+</body>
 </html>
 
 

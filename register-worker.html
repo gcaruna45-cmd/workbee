@@ -765,6 +765,21 @@
             localStorage.setItem('workbee_worker_registrations', JSON.stringify(existingWorkers));
             localStorage.setItem('workbee_seeded_initial', 'true');
 
+            // Save to Firebase Cloud DB (cross-device sync to Admin panel)
+            if (typeof WB_FIREBASE !== 'undefined') {
+                WB_FIREBASE.saveWorker(newWorker).catch(function () {});
+                if (regUsername) {
+                    WB_FIREBASE.saveUser({
+                        id: newWorker.userId || ('usr_' + Date.now()),
+                        username: regUsername.trim().toLowerCase(),
+                        password: regPassword,
+                        role: 'worker',
+                        profileData: newWorker,
+                        createdAt: new Date().toISOString()
+                    }).catch(function () {});
+                }
+            }
+
             // Display Assigned ID on Success Screen
             const successIdEl = document.getElementById("assignedWorkerId");
             if(successIdEl) successIdEl.innerText = '#' + randomId;
@@ -1043,7 +1058,9 @@
         try { sessionStorage.setItem('pwa_dismissed', '1'); } catch(e) {}
       };
     </script>
-<script src="js/auth.js"></script>`n</body>
+<script src="js/firebase-config.js"></script>
+<script src="js/auth.js"></script>
+</body>
 </html>
 
 

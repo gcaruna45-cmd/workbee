@@ -50,24 +50,39 @@ const Auth = {
             let workers = JSON.parse(localStorage.getItem(AUTH_KEYS.WORKERS) || '[]');
             profileData.userId = userId;
             profileData.username = username;
+            profileData.status = profileData.status || 'pending';
+            profileData.registeredAt = profileData.registeredAt || new Date().toISOString();
             if (profileData.id) {
                 workers = workers.filter(w => w.id !== profileData.id);
                 workers.unshift(profileData);
                 localStorage.setItem(AUTH_KEYS.WORKERS, JSON.stringify(workers));
             }
+            // Save to Firebase cloud (cross-device visibility)
+            if (typeof WB_FIREBASE !== 'undefined') {
+                WB_FIREBASE.saveWorker(profileData).catch(function(){});
+                WB_FIREBASE.saveUser(newUser).catch(function(){});
+            }
         } else if (role === 'company') {
             let companies = JSON.parse(localStorage.getItem(AUTH_KEYS.COMPANIES) || '[]');
             profileData.userId = userId;
             profileData.username = username;
+            profileData.status = profileData.status || 'approved';
+            profileData.registeredAt = profileData.registeredAt || new Date().toISOString();
             if (profileData.id) {
                 companies = companies.filter(c => c.id !== profileData.id);
                 companies.unshift(profileData);
                 localStorage.setItem(AUTH_KEYS.COMPANIES, JSON.stringify(companies));
             }
+            // Save to Firebase cloud (cross-device visibility)
+            if (typeof WB_FIREBASE !== 'undefined') {
+                WB_FIREBASE.saveCompany(profileData).catch(function(){});
+                WB_FIREBASE.saveUser(newUser).catch(function(){});
+            }
         }
 
         return { success: true, user: newUser };
     },
+
 
     // Login User
     login: function (username, password) {

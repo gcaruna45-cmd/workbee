@@ -273,6 +273,7 @@
 
     </div>
 
+    <script src="js/firebase-config.js"></script>
     <script src="js/auth.js"></script>
     <script>
         let currentUser = null;
@@ -324,8 +325,7 @@
             postings.unshift(newJob);
             localStorage.setItem(AUTH_KEYS.JOB_POSTINGS, JSON.stringify(postings));
 
-            let reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
-            reqs.unshift({
+            const newReqObj = {
                 id: newJob.id,
                 company: newJob.companyName,
                 phone: newJob.companyPhone,
@@ -341,9 +341,15 @@
                 status: 'OPEN',
                 applicants: [],
                 postedDate: new Date().toISOString().split('T')[0]
-            });
+            };
+            reqs.unshift(newReqObj);
             localStorage.setItem('workbee_requirements', JSON.stringify(reqs));
             localStorage.setItem('workbee_seeded_initial', 'true');
+
+            // Save to Firebase Cloud DB
+            if (typeof WB_FIREBASE !== 'undefined') {
+                WB_FIREBASE.saveRequirement(newReqObj).catch(function () {});
+            }
 
             alert('Requirement submitted! WorkBee Admin will review and dispatch verified workers to your location.');
             document.getElementById('postJobForm').reset();
