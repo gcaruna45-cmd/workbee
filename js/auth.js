@@ -148,6 +148,7 @@ const Auth = {
     // Logout User
     logout: function () {
         localStorage.removeItem(AUTH_KEYS.SESSION);
+        localStorage.removeItem('wb_admin_auth');
         window.location.href = 'login.html';
     },
 

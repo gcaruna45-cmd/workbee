@@ -4,6 +4,24 @@ document.addEventListener('DOMContentLoaded', function () {
     checkAuth();
 });
 
+window.adminLogout = function () {
+    if (window._wbSyncInterval) {
+        clearInterval(window._wbSyncInterval);
+        window._wbSyncInterval = null;
+    }
+    localStorage.removeItem('wb_admin_auth');
+    localStorage.removeItem('workbee_session');
+    if (typeof AUTH_KEYS !== 'undefined' && AUTH_KEYS.SESSION) {
+        localStorage.removeItem(AUTH_KEYS.SESSION);
+    }
+    var loginGate = document.getElementById('login-gate');
+    var dashboard = document.getElementById('admin-dashboard');
+    if (loginGate) loginGate.style.display = 'flex';
+    if (dashboard) dashboard.style.display = 'none';
+    window.location.href = 'login.html';
+};
+window._logoutAdmin = window.adminLogout;
+
 function checkAuth() {
     var isAuth = localStorage.getItem('wb_admin_auth');
     var sessStr = localStorage.getItem('workbee_session');
@@ -13,8 +31,12 @@ function checkAuth() {
             if (sess && sess.role === 'admin') {
                 isAuth = 'true';
                 localStorage.setItem('wb_admin_auth', 'true');
+            } else {
+                isAuth = 'false';
             }
         } catch (e) {}
+    } else {
+        isAuth = localStorage.getItem('wb_admin_auth') === 'true' ? 'true' : 'false';
     }
 
     var loginGate = document.getElementById('login-gate');
@@ -114,11 +136,11 @@ function seedData() {
 
 function initAdmin() {
     seedData();
-    var logoutBtn = document.getElementById('admin-logout') || document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.onclick = function () {
-            localStorage.removeItem('wb_admin_auth');
-            window.location.reload();
+    var logoutBtns = document.querySelectorAll('#admin-logout, #logout-btn, .logout-btn');
+    for (var b = 0; b < logoutBtns.length; b++) {
+        logoutBtns[b].onclick = function (e) {
+            if (e) e.preventDefault();
+            window.adminLogout();
         };
     }
     var navItems = document.querySelectorAll('.nav-item, .admin-nav-item');
