@@ -186,19 +186,38 @@ function getWorkersData() {
 
     for (var i = 0; i < users.length; i++) {
         var u = users[i];
-        if (u.role === 'worker' && u.profileData) {
-            var p = u.profileData;
-            var exists = ws.some(function (w) {
-                return (w.id && p.id && String(w.id) === String(p.id)) ||
-                       (w.username && u.username && w.username.toLowerCase() === u.username.toLowerCase()) ||
-                       (w.phone && p.phone && w.phone.replace(/[^0-9]/g, '') === p.phone.replace(/[^0-9]/g, '')) ||
-                       (w.nic && p.nic && w.nic.toLowerCase() === p.nic.toLowerCase());
-            });
-            if (!exists) {
+        if (u.role === 'worker') {
+            var p = u.profileData || {};
+            var matchingIndex = -1;
+            for (var k = 0; k < ws.length; k++) {
+                var w = ws[k];
+                if ((w.id && p.id && String(w.id) === String(p.id)) ||
+                    (w.username && u.username && w.username.toLowerCase() === u.username.toLowerCase()) ||
+                    (w.phone && p.phone && w.phone.replace(/[^0-9]/g, '') === p.phone.replace(/[^0-9]/g, '')) ||
+                    (w.nic && p.nic && w.nic.toLowerCase() === p.nic.toLowerCase())) {
+                    matchingIndex = k;
+                    break;
+                }
+            }
+
+            if (matchingIndex !== -1) {
+                var existing = ws[matchingIndex];
+                var merged = Object.assign({}, p, existing);
+                merged.username = merged.username || u.username;
+                merged.id = merged.id || existing.id || p.id || ('WB-' + Math.floor(1000 + Math.random() * 9000));
+                merged.status = merged.status || existing.status || p.status || 'pending';
+                if (JSON.stringify(merged) !== JSON.stringify(existing)) {
+                    ws[matchingIndex] = merged;
+                    modified = true;
+                }
+            } else {
                 p.id = p.id || ('WB-' + Math.floor(1000 + Math.random() * 9000));
                 p.username = p.username || u.username;
                 p.status = p.status || 'pending';
                 p.date = p.date || u.createdAt || new Date().toISOString();
+                p.skills = p.skills || (p.category ? [p.category] : ['General']);
+                p.locations = p.locations || ['Colombo'];
+                p.shifts = p.shifts || ['Day'];
                 ws.unshift(p);
                 modified = true;
             }
@@ -224,18 +243,37 @@ function getCompaniesData() {
 
     for (var i = 0; i < users.length; i++) {
         var u = users[i];
-        if (u.role === 'company' && u.profileData) {
-            var cp = u.profileData;
-            var exists = cs.some(function (c) {
-                return (c.id && cp.id && String(c.id) === String(cp.id)) ||
-                       (c.username && u.username && c.username.toLowerCase() === u.username.toLowerCase()) ||
-                       (c.phone && cp.phone && c.phone.replace(/[^0-9]/g, '') === cp.phone.replace(/[^0-9]/g, '')) ||
-                       (c.name && cp.name && c.name.toLowerCase() === cp.name.toLowerCase()) ||
-                       (c.brn && cp.brn && c.brn.toLowerCase() === cp.brn.toLowerCase());
-            });
-            if (!exists) {
+        if (u.role === 'company') {
+            var cp = u.profileData || {};
+            var matchingIndex = -1;
+            for (var k = 0; k < cs.length; k++) {
+                var c = cs[k];
+                if ((c.id && cp.id && String(c.id) === String(cp.id)) ||
+                    (c.username && u.username && c.username.toLowerCase() === u.username.toLowerCase()) ||
+                    (c.phone && cp.phone && c.phone.replace(/[^0-9]/g, '') === cp.phone.replace(/[^0-9]/g, '')) ||
+                    (c.name && cp.name && c.name.toLowerCase() === cp.name.toLowerCase()) ||
+                    (c.companyName && cp.companyName && c.companyName.toLowerCase() === cp.companyName.toLowerCase()) ||
+                    (c.brn && cp.brn && c.brn.toLowerCase() === cp.brn.toLowerCase())) {
+                    matchingIndex = k;
+                    break;
+                }
+            }
+
+            if (matchingIndex !== -1) {
+                var existingC = cs[matchingIndex];
+                var mergedC = Object.assign({}, cp, existingC);
+                mergedC.username = mergedC.username || u.username;
+                mergedC.id = mergedC.id || existingC.id || cp.id || ('C-' + Math.floor(1000 + Math.random() * 9000));
+                mergedC.name = mergedC.name || mergedC.companyName || cp.name || cp.companyName || u.username || 'Company';
+                mergedC.status = mergedC.status || existingC.status || cp.status || 'approved';
+                if (JSON.stringify(mergedC) !== JSON.stringify(existingC)) {
+                    cs[matchingIndex] = mergedC;
+                    modified = true;
+                }
+            } else {
                 cp.id = cp.id || ('C-' + Math.floor(1000 + Math.random() * 9000));
                 cp.username = cp.username || u.username;
+                cp.name = cp.name || cp.companyName || u.username || 'Company';
                 cp.status = cp.status || 'approved';
                 cp.date = cp.date || u.createdAt || new Date().toISOString();
                 cs.unshift(cp);
@@ -256,8 +294,14 @@ function getRequirementsData() {
 
     for (var i = 0; i < postings.length; i++) {
         var p = postings[i];
-        var exists = reqs.some(function (r) { return String(r.id) === String(p.id); });
-        if (!exists) {
+        var matchingIdx = -1;
+        for (var k = 0; k < reqs.length; k++) {
+            if (String(reqs[k].id) === String(p.id)) {
+                matchingIdx = k;
+                break;
+            }
+        }
+        if (matchingIdx === -1) {
             reqs.unshift({
                 id: p.id || ('JOB-' + Math.floor(1000 + Math.random() * 9000)),
                 company: p.companyName || p.company || 'Client',
@@ -351,10 +395,10 @@ window._VWD = function (id) {
     var old = document.getElementById('wb-wmodal');
     if (old) old.parentNode.removeChild(old);
 
-    var ws = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+    var ws = getWorkersData();
     var w = null;
     for (var i = 0; i < ws.length; i++) {
-        if (String(ws[i].id) === String(id)) { w = ws[i]; break; }
+        if (String(ws[i].id) === String(id) || (ws[i].username && String(ws[i].username) === String(id))) { w = ws[i]; break; }
     }
     if (!w) { alert('Worker #' + id + ' not found!'); return; }
 
@@ -426,10 +470,10 @@ window._editWorker = function (id) {
     var old = document.getElementById('wb-wedit-modal');
     if (old) old.parentNode.removeChild(old);
 
-    var ws = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
+    var ws = getWorkersData();
     var w = null;
     for (var i = 0; i < ws.length; i++) {
-        if (String(ws[i].id) === String(id)) { w = ws[i]; break; }
+        if (String(ws[i].id) === String(id) || (ws[i].username && String(ws[i].username) === String(id))) { w = ws[i]; break; }
     }
     if (!w) { alert('Worker #' + id + ' not found!'); return; }
 
@@ -626,10 +670,10 @@ window._viewCompany = function (id) {
     var old = document.getElementById('wb-cmodal');
     if (old) old.parentNode.removeChild(old);
 
-    var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    var cs = getCompaniesData();
     var c = null;
     for (var i = 0; i < cs.length; i++) {
-        if (String(cs[i].id || cs[i].name) === String(id) || String(cs[i].name) === String(id)) { c = cs[i]; break; }
+        if (String(cs[i].id || cs[i].name) === String(id) || String(cs[i].name) === String(id) || (cs[i].username && String(cs[i].username) === String(id))) { c = cs[i]; break; }
     }
     if (!c) { alert('Company not found!'); return; }
 
@@ -702,10 +746,10 @@ window._editCompany = function (id) {
     var old = document.getElementById('wb-cedit-modal');
     if (old) old.parentNode.removeChild(old);
 
-    var cs = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
+    var cs = getCompaniesData();
     var c = null;
     for (var i = 0; i < cs.length; i++) {
-        if (String(cs[i].id || cs[i].name) === String(id) || String(cs[i].name) === String(id)) { c = cs[i]; break; }
+        if (String(cs[i].id || cs[i].name) === String(id) || String(cs[i].name) === String(id) || (cs[i].username && String(cs[i].username) === String(id))) { c = cs[i]; break; }
     }
     if (!c) { alert('Company not found!'); return; }
 
@@ -865,7 +909,7 @@ window._viewRequirement = function (rid) {
     var old = document.getElementById('wb-rmodal');
     if (old) old.parentNode.removeChild(old);
 
-    var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+    var reqs = getRequirementsData();
     var r = null;
     for (var i = 0; i < reqs.length; i++) {
         if (String(reqs[i].id) === String(rid)) { r = reqs[i]; break; }
@@ -929,7 +973,7 @@ window._editRequirement = function (rid) {
     var old = document.getElementById('wb-redit-modal');
     if (old) old.parentNode.removeChild(old);
 
-    var reqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
+    var reqs = getRequirementsData();
     var r = null;
     for (var i = 0; i < reqs.length; i++) {
         if (String(reqs[i].id) === String(rid)) { r = reqs[i]; break; }
