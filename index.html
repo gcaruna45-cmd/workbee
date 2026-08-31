@@ -1197,64 +1197,6 @@
         </div>
     </section>
 
-    <!-- 6. Worker Directory Preview -->
-    <section id="preview" class="animate-on-scroll">
-        <div class="section-header">
-            <h2 data-i18n="preview.title">Browse Verified Workers</h2>
-            <p data-i18n="preview.subtitle">A sneak peek into our diverse talent pool</p>
-        </div>
-        
-        <div class="workers-grid" id="index-workers-grid">
-            <!-- Dynamically loaded from localStorage by script below -->
-        </div>
-    </section>
-
-    <script>
-    (function loadIndexWorkers() {
-        const grid = document.getElementById('index-workers-grid');
-        if (!grid) return;
-
-        const allWorkers = JSON.parse(localStorage.getItem('workbee_worker_registrations') || '[]');
-        const approved = allWorkers.filter(w => w.status === 'approved');
-
-        // Fallback static data if no approved workers yet
-        const fallback = [
-            { id: 'WB-9041', lastName: 'Perera', age: 29, experience: 3, category: 'Hotel & Hospitality', skills: ['Kitchen Helper', 'Steward'], locations: ['Colombo', 'Gampaha'], shifts: ['Day', 'Night'] },
-            { id: 'WB-3827', lastName: 'Fernando', age: 34, experience: 6, category: 'Construction', skills: ['Mason', 'Carpenter'], locations: ['Kandy', 'Matale'], shifts: ['Day'] },
-            { id: 'WB-7265', lastName: 'Silva', age: 26, experience: 2, category: 'Cleaning Services', skills: ['Commercial Cleaning'], locations: ['Colombo', 'Kalutara'], shifts: ['Flexible'] }
-        ];
-
-        const display = approved.length > 0 ? approved.slice(0, 3) : fallback;
-
-        grid.innerHTML = display.map(w => {
-            const name = w.lastName || w.name || 'Worker';
-            const age = w.age || '—';
-            const exp = w.experience || 0;
-            const skillsArr = Array.isArray(w.skills) ? w.skills : (w.skills ? [w.skills] : [w.category || '']);
-            const locs = Array.isArray(w.locations) ? w.locations : (w.locations ? [w.locations] : ['—']);
-            const shiftsArr = Array.isArray(w.shifts) ? w.shifts : (w.shifts ? [w.shifts] : ['—']);
-            const skillTags = [w.category, ...skillsArr].filter(Boolean).slice(0, 3).map(s => `<span class="skill-tag">${s}</span>`).join('');
-
-            return `
-            <div class="worker-card">
-                <div class="worker-header">
-                    <span class="worker-id">${w.id || 'WB-XXXX'}</span>
-                    <span class="badge-available"><div class="pulse-dot"></div> Available Now</span>
-                </div>
-                <div class="worker-info-row">${name}</div>
-                <div class="worker-meta">${age} Yrs | ${exp} Yrs Exp</div>
-                <div class="skill-tags">${skillTags}</div>
-                <div class="divider"></div>
-                <div class="worker-details">
-                    <div class="detail-item">📍 ${locs.join(' / ')}</div>
-                    <div class="detail-item">⏰ ${shiftsArr.join(' / ')}</div>
-                    <div class="detail-item">📅 Available Now</div>
-                </div>
-                <a href="register-company.html" class="btn-primary btn-full">🐝 Request Worker via Admin</a>
-            </div>`;
-        }).join('');
-    })();
-    </script>
 
     <!-- 7. Testimonials -->
     <section id="testimonials" style="background: white;" class="animate-on-scroll">
