@@ -72,6 +72,12 @@ const WB_FIREBASE = (function () {
             return await apiRequest('requirements/' + key, 'PUT', req);
         },
 
+        saveAssignedJob: async function (job) {
+            if (!job) return;
+            const key = sanitizeKey(job.id);
+            return await apiRequest('assigned_jobs/' + key, 'PUT', job);
+        },
+
         saveUser: async function (user) {
             if (!user) return;
             const key = sanitizeKey(user.username || user.id);
@@ -118,6 +124,17 @@ const WB_FIREBASE = (function () {
                 return { success: true };
             } catch (err) {
                 console.warn('[Firebase deleteRequirement Error]:', err);
+                return { success: false, error: err };
+            }
+        },
+
+        deleteAssignedJob: async function (id) {
+            if (!id) return;
+            try {
+                await apiRequest('assigned_jobs/' + sanitizeKey(id), 'DELETE');
+                return { success: true };
+            } catch (err) {
+                console.warn('[Firebase deleteAssignedJob Error]:', err);
                 return { success: false, error: err };
             }
         },
@@ -171,6 +188,16 @@ const WB_FIREBASE = (function () {
             }
         },
 
+        deleteAllAssignedJobs: async function () {
+            try {
+                await apiRequest('assigned_jobs', 'DELETE');
+                return { success: true };
+            } catch (err) {
+                console.warn('[Firebase deleteAllAssignedJobs Error]:', err);
+                return { success: false, error: err };
+            }
+        },
+
         // ---- READ ALL FROM CLOUD ----
         getAllWorkers: async function () {
             const data = await apiRequest('workers');
@@ -190,6 +217,12 @@ const WB_FIREBASE = (function () {
             return Object.values(data).filter(Boolean);
         },
 
+        getAllAssignedJobs: async function () {
+            const data = await apiRequest('assigned_jobs');
+            if (!data) return [];
+            return Object.values(data).filter(Boolean);
+        },
+
         getAllUsers: async function () {
             const data = await apiRequest('users');
             if (!data) return [];
@@ -199,11 +232,12 @@ const WB_FIREBASE = (function () {
         // ---- SYNC CLOUD -> LOCAL STORAGE (Crucial for Admin Dashboard) ----
         syncFromCloud: async function () {
             try {
-                const [cloudWorkers, cloudCompanies, cloudReqs, cloudUsers] = await Promise.all([
+                const [cloudWorkers, cloudCompanies, cloudReqs, cloudUsers, cloudAssignedJobs] = await Promise.all([
                     this.getAllWorkers(),
                     this.getAllCompanies(),
                     this.getAllRequirements(),
-                    this.getAllUsers()
+                    this.getAllUsers(),
+                    this.getAllAssignedJobs()
                 ]);
 
                 let localUpdated = false;
@@ -268,6 +302,21 @@ const WB_FIREBASE = (function () {
                     localUpdated = true;
                 }
 
+                // Sync Assigned Jobs
+                if (cloudAssignedJobs && cloudAssignedJobs.length > 0) {
+                    let localJobs = JSON.parse(localStorage.getItem('workbee_assigned_jobs') || '[]');
+                    cloudAssignedJobs.forEach(cj => {
+                        const idx = localJobs.findIndex(lj => String(lj.id) === String(cj.id));
+                        if (idx !== -1) {
+                            localJobs[idx] = Object.assign({}, localJobs[idx], cj);
+                        } else {
+                            localJobs.unshift(cj);
+                        }
+                    });
+                    localStorage.setItem('workbee_assigned_jobs', JSON.stringify(localJobs));
+                    localUpdated = true;
+                }
+
                 return { success: true, updated: localUpdated };
             } catch (err) {
                 console.warn('[Firebase Sync Error]:', err);
@@ -282,12 +331,14 @@ const WB_FIREBASE = (function () {
                 const localCompanies = JSON.parse(localStorage.getItem('workbee_companies') || '[]');
                 const localReqs = JSON.parse(localStorage.getItem('workbee_requirements') || '[]');
                 const localUsers = JSON.parse(localStorage.getItem('workbee_users') || '[]');
+                const localAssignedJobs = JSON.parse(localStorage.getItem('workbee_assigned_jobs') || '[]');
 
                 const promises = [];
                 localWorkers.forEach(w => promises.push(this.saveWorker(w)));
                 localCompanies.forEach(c => promises.push(this.saveCompany(c)));
                 localReqs.forEach(r => promises.push(this.saveRequirement(r)));
                 localUsers.forEach(u => promises.push(this.saveUser(u)));
+                localAssignedJobs.forEach(j => promises.push(this.saveAssignedJob(j)));
 
                 await Promise.all(promises);
                 return { success: true };

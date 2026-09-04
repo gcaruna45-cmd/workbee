@@ -861,6 +861,9 @@
                 <a class="nav-item" data-target="tab-requirements">
                     <span>📋</span> Requirements
                 </a>
+                <a class="nav-item" data-target="tab-confirmed-jobs">
+                    <span>✅</span> Confirm Jobs
+                </a>
                 <a class="nav-item" data-target="tab-broadcast">
                     <span>📡</span> Broadcast
                 </a>
@@ -1050,6 +1053,44 @@
                                 </tr>
                             </thead>
                             <tbody id="requirements-tbody">
+                                <!-- Populated by admin.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 7b. Confirm Jobs Tab (Admin Only) -->
+                <div class="tab-content" id="tab-confirmed-jobs">
+                    <div class="tab-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h2>Confirmed & Assigned Jobs</h2>
+                            <p style="font-size: 0.82rem; color: #64748B; margin-top: 2px;">Track worker acceptance status (කැමතියි / අකමැතියි) for dispatched requirements.</p>
+                        </div>
+                        <div class="tab-filters" id="confirmed-jobs-filters">
+                            <button class="filter-btn active" onclick="window._filterConfirmedJobs('all', this)">All</button>
+                            <button class="filter-btn" onclick="window._filterConfirmedJobs('accepted', this)">Accepted (කැමතියි)</button>
+                            <button class="filter-btn" onclick="window._filterConfirmedJobs('rejected', this)">Rejected (අකමැතියි)</button>
+                            <button class="filter-btn" onclick="window._filterConfirmedJobs('pending', this)">Pending</button>
+                        </div>
+                        <div class="search-box">
+                            <span>🔍</span>
+                            <input type="text" id="search-confirmed-jobs" placeholder="Search by worker, company, phone, ref...">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="confirmed-jobs-table">
+                            <thead>
+                                <tr>
+                                    <th>Job Ref</th>
+                                    <th>Company / Employer</th>
+                                    <th>Assigned Worker</th>
+                                    <th>Work Details</th>
+                                    <th>Pay & Duration</th>
+                                    <th>Worker Decision</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="confirmed-jobs-tbody">
                                 <!-- Populated by admin.js -->
                             </tbody>
                         </table>

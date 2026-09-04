@@ -203,6 +203,22 @@
                 </div>
             </div>
             
+            <!-- Admin Assigned Jobs Section -->
+            <div class="section-box" id="admin-assigned-jobs-section" style="border: 2px solid #F59E0B; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+                    <div>
+                        <h3 style="font-size:1.15rem;font-weight:700;color:#F59E0B;display:flex;align-items:center;gap:8px;">
+                            <span>⚡</span> Admin Assigned Jobs (ඔබට යොමු කළ රැකියා)
+                        </h3>
+                        <p style="font-size:0.8rem;color:#94a3b8;margin-top:2px;">WorkBee Admin විසින් ඔබව තෝරාගෙන යොමු කර ඇති රැකියා. පහතින් ඔබේ තීරණය ලබා දෙන්න.</p>
+                    </div>
+                    <span style="font-size:0.8rem;background:#F59E0B;color:#0f172a;font-weight:700;padding:4px 12px;border-radius:12px;" id="assigned-job-count">0 Offers</span>
+                </div>
+                <div id="assigned-job-list">
+                    <p style="color:#94a3b8;font-size:0.9rem;">Checking for jobs assigned by Admin...</p>
+                </div>
+            </div>
+
             <!-- Matching Jobs -->
             <div class="section-box">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
@@ -236,8 +252,30 @@
             if (!currentUser) return;
 
             renderProfile();
+            renderAssignedJobs();
             renderJobs();
             renderApplications();
+
+            // Cloud sync for real-time assigned jobs
+            if (typeof WB_FIREBASE !== 'undefined') {
+                WB_FIREBASE.syncFromCloud().then(function(res) {
+                    if (res && res.updated) {
+                        renderAssignedJobs();
+                        renderJobs();
+                        renderApplications();
+                    }
+                }).catch(function() {});
+
+                setInterval(function() {
+                    WB_FIREBASE.syncFromCloud().then(function(res) {
+                        if (res && res.updated) {
+                            renderAssignedJobs();
+                            renderJobs();
+                            renderApplications();
+                        }
+                    }).catch(function() {});
+                }, 12000);
+            }
         });
 
         function renderProfile() {
@@ -373,6 +411,157 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        function renderAssignedJobs() {
+            const container = document.getElementById('assigned-job-list');
+            const countEl = document.getElementById('assigned-job-count');
+            if (!container) return;
+
+            const allAssigned = JSON.parse(localStorage.getItem(AUTH_KEYS.ASSIGNED_JOBS) || '[]');
+            const p = (currentUser && currentUser.profileData) || {};
+            const myUname = (currentUser && currentUser.username || '').toLowerCase();
+            const myId = String((currentUser && currentUser.id) || '');
+            const myProfId = String(p.id || '');
+            const myPhone = String(p.phone || '').replace(/[^0-9]/g, '');
+            const myNic = String(p.nic || '').trim().toLowerCase();
+
+            // Filter jobs assigned to this worker
+            const myJobs = allAssigned.filter(j => {
+                const jwId = String(j.workerId || '');
+                const jwPhone = String(j.workerPhone || '').replace(/[^0-9]/g, '');
+                const jwNic = String(j.workerNic || '').trim().toLowerCase();
+                const jwUname = String(j.workerUsername || '').toLowerCase();
+
+                if (myProfId && jwId === myProfId) return true;
+                if (myId && jwId === myId) return true;
+                if (myUname && jwUname && jwUname === myUname) return true;
+                if (myPhone && jwPhone && (myPhone === jwPhone || (myPhone.length >= 9 && jwPhone.endsWith(myPhone.slice(-9))))) return true;
+                if (myNic && jwNic && myNic === jwNic) return true;
+                return false;
+            });
+
+            if (countEl) countEl.innerText = myJobs.length + ' Offer' + (myJobs.length !== 1 ? 's' : '');
+
+            if (myJobs.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:24px 16px;background:rgba(15,23,42,0.6);border-radius:12px;border:1px dashed #334155;">
+                        <p style="font-size:1rem;color:#cbd5e1;margin-bottom:4px;">📭 ඔබට Admin මඟින් යොමු කළ නව රැකියා නොමැත.</p>
+                        <p style="font-size:0.8rem;color:#64748b;">Admin විසින් ඔබේ සුදුසුකම් වලට ගැලපෙන රැකියාවක් තෝරා එවූ විට මෙහි දිස්වනු ඇත.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = myJobs.map(j => {
+                const isPending = !j.status || j.status === 'pending';
+                const isAccepted = j.status === 'accepted';
+                const isRejected = j.status === 'rejected';
+                const skillsStr = Array.isArray(j.skills) ? j.skills.join(', ') : (j.skills || 'General');
+
+                let decisionUI = '';
+                if (isPending) {
+                    decisionUI = `
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                            <button onclick="respondToJob('${j.id}', 'accepted')" style="background:#10B981;color:white;border:none;padding:10px 18px;border-radius:8px;font-weight:700;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+                                ✅ මම කැමතියි (Accept)
+                            </button>
+                            <button onclick="respondToJob('${j.id}', 'rejected')" style="background:#ef4444;color:white;border:none;padding:10px 18px;border-radius:8px;font-weight:700;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+                                ❌ අකමැතියි (Decline)
+                            </button>
+                        </div>
+                    `;
+                } else if (isAccepted) {
+                    decisionUI = `
+                        <div style="background:rgba(16,185,129,0.15);border:1px solid #10B981;border-radius:10px;padding:12px 14px;">
+                            <div style="color:#34D399;font-weight:700;font-size:0.92rem;display:flex;align-items:center;gap:6px;">
+                                <span>✅</span> ඔබ මෙම රැකියාව භාරගෙන ඇත (Accepted)
+                            </div>
+                            <div style="font-size:0.78rem;color:#94a3b8;margin-top:2px;">
+                                WorkBee Admin විසින් ඔබව අමතා ඉදිරි කටයුතු සිදු කරනු ඇත.
+                            </div>
+                            <a href="https://wa.me/94787823328?text=${encodeURIComponent('Hello WorkBee Admin, I have ACCEPTED Job Ref #' + j.reqId + ' for ' + (j.company || 'Client') + '.')}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;background:#25D366;color:white;text-decoration:none;padding:6px 12px;border-radius:6px;font-size:0.78rem;font-weight:700;margin-top:8px;">
+                                💬 WhatsApp Admin (+94 78 782 3328)
+                            </a>
+                        </div>
+                    `;
+                } else if (isRejected) {
+                    decisionUI = `
+                        <div style="background:rgba(239,68,68,0.15);border:1px solid #ef4444;border-radius:10px;padding:12px 14px;">
+                            <div style="color:#f87171;font-weight:700;font-size:0.92rem;display:flex;align-items:center;gap:6px;">
+                                <span>❌</span> ඔබ මෙම රැකියාව ප්‍රතික්ෂේප කර ඇත (Declined)
+                            </div>
+                            <button onclick="respondToJob('${j.id}', 'accepted')" style="background:transparent;border:1px solid #10b981;color:#34d399;padding:4px 10px;border-radius:6px;font-size:0.75rem;cursor:pointer;margin-top:8px;font-weight:600;">
+                                ↩️ කැමති ලෙස වෙනස් කරන්න
+                            </button>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div style="background:#0f172a;border:1px solid ${isAccepted ? '#10b981' : (isRejected ? '#ef4444' : '#F59E0B')};border-radius:14px;padding:18px;margin-bottom:14px;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;border-bottom:1px solid #1e293b;padding-bottom:10px;">
+                            <div>
+                                <span style="font-size:0.75rem;background:rgba(245,158,11,0.2);color:#F59E0B;padding:2px 8px;border-radius:6px;font-weight:700;">JOB REF: #${j.reqId}</span>
+                                <h4 style="font-size:1.1rem;color:#f8fafc;margin:6px 0 2px;">🏢 ${j.company || 'WorkBee Client'}</h4>
+                                <div style="font-size:0.85rem;color:#38bdf8;font-weight:600;">🛠️ ${skillsStr}</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:0.8rem;color:#94a3b8;">Daily Pay:</div>
+                                <div style="color:#4ade80;font-weight:700;font-size:1.1rem;">LKR ${Number(j.payRate || 0).toLocaleString()} <span style="font-size:0.75rem;color:#94a3b8;">/day</span></div>
+                            </div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:8px;font-size:0.83rem;color:#cbd5e1;margin-bottom:16px;">
+                            <div>📍 <strong>Location:</strong> ${j.district || 'All Island'}${j.town ? ' (' + j.town + ')' : ''}</div>
+                            <div>🕒 <strong>Shift:</strong> ${j.shifts || 'Day'}</div>
+                            <div>📅 <strong>Dates:</strong> ${j.fromDate || 'ASAP'} to ${j.toDate || 'N/A'} (${j.totalDays || 1}d)</div>
+                            <div>🍱 <strong>Meals:</strong> ${j.meals || 'N/A'}</div>
+                            ${j.desc ? `<div style="grid-column:1/-1;color:#94a3b8;">📝 <strong>Notes:</strong> ${j.desc}</div>` : ''}
+                        </div>
+                        <div>
+                            ${decisionUI}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function respondToJob(assignId, response) {
+            let allAssigned = JSON.parse(localStorage.getItem(AUTH_KEYS.ASSIGNED_JOBS) || '[]');
+            let targetJob = null;
+            for (let i = 0; i < allAssigned.length; i++) {
+                if (String(allAssigned[i].id) === String(assignId)) {
+                    allAssigned[i].status = response;
+                    allAssigned[i].workerResponse = response;
+                    allAssigned[i].respondedAt = new Date().toISOString();
+                    targetJob = allAssigned[i];
+                    break;
+                }
+            }
+
+            if (!targetJob) {
+                alert('Job assignment not found.');
+                return;
+            }
+
+            localStorage.setItem(AUTH_KEYS.ASSIGNED_JOBS, JSON.stringify(allAssigned));
+
+            // Sync with Firebase Cloud so Admin sees it in real-time
+            if (typeof WB_FIREBASE !== 'undefined' && WB_FIREBASE.saveAssignedJob) {
+                try {
+                    await WB_FIREBASE.saveAssignedJob(targetJob);
+                } catch(e) {
+                    console.warn('[Firebase saveAssignedJob error]:', e);
+                }
+            }
+
+            if (response === 'accepted') {
+                alert('ස්තූතියි! ඔබ රැකියාව භාරගත් බව Admin හට දන්වන ලදී. WorkBee Admin ඉක්මනින් ඔබව අමතනු ඇත.');
+            } else {
+                alert('ඔබ මෙම රැකියාව ප්‍රතික්ෂේප කළ බව සටහන් විය.');
+            }
+
+            renderAssignedJobs();
         }
     </script>
 </body>

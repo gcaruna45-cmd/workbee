@@ -164,6 +164,7 @@ function initAdmin() {
                         'tab-workers': 'Workers',
                         'tab-companies': 'Companies',
                         'tab-requirements': 'Requirements',
+                        'tab-confirmed-jobs': 'Confirm Jobs',
                         'tab-broadcast': 'Broadcast',
                         'tab-backup': 'Backup & Restore'
                     };
@@ -173,6 +174,7 @@ function initAdmin() {
                 if (target === 'tab-workers') renderWorkers();
                 if (target === 'tab-companies') renderCompanies();
                 if (target === 'tab-requirements') renderRequirements();
+                if (target === 'tab-confirmed-jobs') renderConfirmedJobs();
                 if (target === 'tab-broadcast') updateBroadcastPreview();
             });
         })(navItems[i]);
@@ -181,6 +183,8 @@ function initAdmin() {
     if (si) si.addEventListener('input', function () { renderWorkers(this.value.trim().toLowerCase()); });
     var sc = document.getElementById('search-companies');
     if (sc) sc.addEventListener('input', function () { renderCompanies(this.value.trim().toLowerCase()); });
+    var scj = document.getElementById('search-confirmed-jobs');
+    if (scj) scj.addEventListener('input', function () { renderConfirmedJobs(null, this.value.trim().toLowerCase()); });
     var wf = document.getElementById('worker-filters');
     if (wf) {
         wf.addEventListener('click', function (e) {
@@ -197,6 +201,7 @@ function initAdmin() {
     renderWorkers();
     renderCompanies();
     renderRequirements();
+    renderConfirmedJobs();
 
     // Trigger initial cloud sync from Firebase
     if (typeof WB_FIREBASE !== 'undefined') {
@@ -206,6 +211,7 @@ function initAdmin() {
                 renderWorkers();
                 renderCompanies();
                 renderRequirements();
+                renderConfirmedJobs();
             }
         }).catch(function () {});
 
@@ -218,6 +224,7 @@ function initAdmin() {
                     renderWorkers();
                     renderCompanies();
                     renderRequirements();
+                    renderConfirmedJobs();
                 }
             }).catch(function () {});
         }, 12000);
@@ -236,6 +243,7 @@ window.triggerCloudSync = async function () {
         renderWorkers();
         renderCompanies();
         renderRequirements();
+        renderConfirmedJobs();
         if (txt) txt.textContent = (res && res.success) ? 'Synced ✅' : 'Offline Mode';
         if (btn) btn.style.background = (res && res.success) ? '#059669' : '#64748b';
         setTimeout(function () {
@@ -1505,11 +1513,64 @@ window._CFD = function (reqId) {
     }
     localStorage.setItem('workbee_requirements', JSON.stringify(reqs));
     renderRequirements();
-    var cp = req ? String(req.phone || '').replace(/[^0-9]/g, '') : '';
+
+    // Save assigned job records for dispatched workers
+    var assignedJobs = JSON.parse(localStorage.getItem('workbee_assigned_jobs') || '[]');
+    var nowIso = new Date().toISOString();
     var cn = req ? (req.company || 'Client') : 'Client';
     var di = req ? (req.district || 'N/A') : 'N/A';
     var pr = req ? Number(req.payRate || 0).toLocaleString() : '0';
     var ml = req && req.meals ? (Array.isArray(req.meals) ? req.meals.join(', ') : req.meals) : 'N/A';
+
+    for (var i = 0; i < sel.length; i++) {
+        var sw = sel[i];
+        var assignId = 'assign_' + reqId + '_' + String(sw.id).replace(/[^a-zA-Z0-9]/g, '_');
+        var existingIdx = assignedJobs.findIndex(function(j) { return String(j.id) === assignId; });
+        var assignRec = {
+            id: assignId,
+            reqId: String(reqId),
+            company: cn,
+            phone: req ? (req.phone || '') : '',
+            skills: req ? (Array.isArray(req.skills) ? req.skills : [req.skills || req.industry || 'General']) : ['General'],
+            district: di,
+            town: req ? (req.town || '') : '',
+            fromDate: req ? (req.fromDate || '') : '',
+            toDate: req ? (req.toDate || '') : '',
+            totalDays: req ? (req.totalDays || 1) : 1,
+            shifts: req ? (req.shifts || 'Day') : 'Day',
+            payRate: req ? (req.payRate || 0) : 0,
+            totalPay: req ? (req.totalPay || 0) : 0,
+            meals: ml,
+            urgency: req ? (req.urgency || 'Normal') : 'Normal',
+            desc: req ? (req.desc || '') : '',
+            workerId: String(sw.id),
+            workerName: sw.name,
+            workerPhone: sw.phone,
+            workerNic: sw.nic,
+            workerSkills: sw.skills,
+            status: 'pending',
+            workerResponse: null,
+            assignedAt: nowIso,
+            respondedAt: null
+        };
+        if (existingIdx !== -1) {
+            if (assignedJobs[existingIdx].status && assignedJobs[existingIdx].status !== 'pending') {
+                assignRec.status = assignedJobs[existingIdx].status;
+                assignRec.workerResponse = assignedJobs[existingIdx].workerResponse;
+                assignRec.respondedAt = assignedJobs[existingIdx].respondedAt;
+            }
+            assignedJobs[existingIdx] = assignRec;
+        } else {
+            assignedJobs.unshift(assignRec);
+        }
+        if (typeof WB_FIREBASE !== 'undefined' && WB_FIREBASE.saveAssignedJob) {
+            WB_FIREBASE.saveAssignedJob(assignRec);
+        }
+    }
+    localStorage.setItem('workbee_assigned_jobs', JSON.stringify(assignedJobs));
+    renderConfirmedJobs();
+
+    var cp = req ? String(req.phone || '').replace(/[^0-9]/g, '') : '';
     var wl = '';
     for (var i = 0; i < sel.length; i++) { wl += (i + 1) + '. ' + sel[i].name + ' | Ph: ' + sel[i].phone + ' | NIC: ' + sel[i].nic + '\n'; }
     var msg = 'WorkBee.lk Dispatch\n\nEmployer: ' + cn + '\nJob: #' + reqId + '\nLocation: ' + di + '\n\nWorkers (' + sel.length + '):\n' + wl + '\nPay: LKR ' + pr + '\nMeals: ' + ml + '\n\nRef: DISPATCH-' + reqId;
@@ -1519,10 +1580,123 @@ window._CFD = function (reqId) {
     if (!m) return;
     var b = m.querySelector('div');
     if (!b) return;
-    b.innerHTML = '<div style="text-align:center;padding:10px 0;"><div style="width:72px;height:72px;background:#10B981;border-radius:50%;color:white;font-size:2.5rem;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">OK</div><h2 style="color:#0f172a;margin-bottom:8px;">Dispatch Confirmed!</h2><p style="color:#64748b;margin-bottom:20px;">Job <strong>#' + reqId + '</strong> dispatched. <strong>' + sel.length + '</strong> worker(s) assigned.</p><div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:12px;padding:14px;text-align:left;color:#1e3a8a;margin-bottom:16px;"><strong>Employer:</strong> ' + cn + '<br><strong>Phone:</strong> ' + (req ? req.phone : 'N/A') + '<br><strong>Workers:</strong> ' + sel.length + '</div><div style="display:flex;flex-direction:column;gap:10px;"><a href="' + wu + '" target="_blank" style="display:block;text-align:center;text-decoration:none;padding:14px;background:#25D366;color:white;border-radius:10px;font-weight:bold;">Send WhatsApp to Employer</a><button onclick="window._CDM()" style="padding:12px;background:#0f172a;color:white;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">Close</button></div></div>';
-    showToast('Job #' + reqId + ' dispatched!', 'success');
+    b.innerHTML = '<div style="text-align:center;padding:10px 0;"><div style="width:72px;height:72px;background:#10B981;border-radius:50%;color:white;font-size:2.5rem;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">OK</div><h2 style="color:#0f172a;margin-bottom:8px;">Dispatch Confirmed!</h2><p style="color:#64748b;margin-bottom:20px;">Job <strong>#' + reqId + '</strong> dispatched. <strong>' + sel.length + '</strong> worker(s) assigned and notified.</p><div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:12px;padding:14px;text-align:left;color:#1e3a8a;margin-bottom:16px;"><strong>Employer:</strong> ' + cn + '<br><strong>Phone:</strong> ' + (req ? req.phone : 'N/A') + '<br><strong>Workers:</strong> ' + sel.length + '</div><div style="display:flex;flex-direction:column;gap:10px;"><a href="' + wu + '" target="_blank" style="display:block;text-align:center;text-decoration:none;padding:14px;background:#25D366;color:white;border-radius:10px;font-weight:bold;">Send WhatsApp to Employer</a><button onclick="window._CDM()" style="padding:12px;background:#0f172a;color:white;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">Close</button></div></div>';
+    showToast('Job #' + reqId + ' dispatched & sent to workers!', 'success');
 };
 window.executeManualDispatch = window._CFD;
+
+// ----------------- CONFIRMED JOBS TAB -----------------
+var _confirmedJobsFilter = 'all';
+
+window._filterConfirmedJobs = function (status, btnEl) {
+    _confirmedJobsFilter = status;
+    var container = document.getElementById('confirmed-jobs-filters');
+    if (container) {
+        var btns = container.querySelectorAll('.filter-btn');
+        for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+    }
+    if (btnEl) btnEl.classList.add('active');
+    renderConfirmedJobs();
+};
+
+window._deleteAssignedJob = async function (assignId) {
+    if (!confirm('Are you sure you want to remove this assigned job record?')) return;
+    var list = JSON.parse(localStorage.getItem('workbee_assigned_jobs') || '[]');
+    list = list.filter(function (j) { return String(j.id) !== String(assignId); });
+    localStorage.setItem('workbee_assigned_jobs', JSON.stringify(list));
+    if (typeof WB_FIREBASE !== 'undefined' && WB_FIREBASE.deleteAssignedJob) {
+        await WB_FIREBASE.deleteAssignedJob(assignId);
+    }
+    renderConfirmedJobs();
+    showToast('Assigned job record deleted.', 'info');
+};
+
+function renderConfirmedJobs(filterStatus, search) {
+    var tbody = document.getElementById('confirmed-jobs-tbody');
+    if (!tbody) return;
+
+    var filter = filterStatus || _confirmedJobsFilter || 'all';
+    var q = search !== undefined ? search : ((document.getElementById('search-confirmed-jobs') || {}).value || '').trim().toLowerCase();
+
+    var list = JSON.parse(localStorage.getItem('workbee_assigned_jobs') || '[]');
+
+    var filtered = list.filter(function (item) {
+        if (filter === 'accepted' && item.status !== 'accepted') return false;
+        if (filter === 'rejected' && item.status !== 'rejected') return false;
+        if (filter === 'pending' && item.status !== 'pending') return false;
+
+        if (q) {
+            var s = [
+                item.reqId,
+                item.company,
+                item.workerName,
+                item.workerPhone,
+                item.workerNic,
+                item.workerId,
+                item.district,
+                Array.isArray(item.skills) ? item.skills.join(' ') : item.skills
+            ].join(' ').toLowerCase();
+            if (s.indexOf(q) === -1) return false;
+        }
+        return true;
+    });
+
+    tbody.innerHTML = '';
+    if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:26px;color:#64748b;">No assigned jobs found matching current filters.</td></tr>';
+        return;
+    }
+
+    for (var i = 0; i < filtered.length; i++) {
+        var j = filtered[i];
+        var tr = document.createElement('tr');
+
+        // Status badge
+        var statusBadge = '';
+        if (j.status === 'accepted') {
+            var dt = j.respondedAt ? new Date(j.respondedAt).toLocaleString() : '';
+            statusBadge = '<span style="background:#dcfce7;color:#15803d;border:1px solid #86efac;padding:4px 10px;border-radius:20px;font-weight:700;font-size:0.8rem;display:inline-flex;align-items:center;gap:4px;">' +
+                '🟢 Accepted (කැමතියි)</span>' +
+                (dt ? '<br><small style="color:#64748b;font-size:0.72rem;">' + dt + '</small>' : '');
+        } else if (j.status === 'rejected') {
+            var dt = j.respondedAt ? new Date(j.respondedAt).toLocaleString() : '';
+            statusBadge = '<span style="background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;padding:4px 10px;border-radius:20px;font-weight:700;font-size:0.8rem;display:inline-flex;align-items:center;gap:4px;">' +
+                '🔴 Rejected (අකමැතියි)</span>' +
+                (dt ? '<br><small style="color:#64748b;font-size:0.72rem;">' + dt + '</small>' : '');
+        } else {
+            statusBadge = '<span style="background:#fef3c7;color:#b45309;border:1px solid #fde68a;padding:4px 10px;border-radius:20px;font-weight:700;font-size:0.8rem;display:inline-flex;align-items:center;gap:4px;">' +
+                '⏳ Pending Decision</span>';
+        }
+
+        // WhatsApp links
+        var wpPhone = String(j.workerPhone || '').replace(/[^0-9]/g, '');
+        var wpWorkerUrl = wpPhone ? ('https://wa.me/94' + wpPhone.replace(/^0/, '') + '?text=' + encodeURIComponent('WorkBee.lk - Hello ' + j.workerName + ', regarding your job assignment #' + j.reqId + ' for ' + j.company + '.')) : '#';
+        
+        var compPhone = String(j.phone || '').replace(/[^0-9]/g, '');
+        var compStatusText = j.status === 'accepted' ? 'has ACCEPTED your job offer!' : (j.status === 'rejected' ? 'is unable to accept this assignment.' : 'status is currently pending decision.');
+        var wpCompUrl = compPhone ? ('https://wa.me/94' + compPhone.replace(/^0/, '') + '?text=' + encodeURIComponent('WorkBee.lk - Update for Job #' + j.reqId + ': Worker ' + j.workerName + ' ' + compStatusText)) : '#';
+
+        var skillsStr = Array.isArray(j.skills) ? j.skills.join(', ') : (j.skills || 'General');
+
+        tr.innerHTML = '<td><strong style="color:#F59E0B;">#' + j.reqId + '</strong></td>' +
+            '<td><strong>' + (j.company || 'Client') + '</strong><br><small style="color:#64748b;">Ph: ' + (j.phone || 'N/A') + '</small></td>' +
+            '<td><strong style="color:#0f172a;">' + j.workerName + '</strong> <span style="font-size:0.75rem;color:#64748b;">(#' + j.workerId + ')</span><br>' +
+            '<small style="color:#334155;">📞 ' + j.workerPhone + ' | NIC: ' + (j.workerNic || 'N/A') + '</small></td>' +
+            '<td><span style="font-weight:600;color:#0284c7;">' + skillsStr + '</span><br>' +
+            '<small style="color:#64748b;">📍 ' + (j.district || 'N/A') + ' | ' + (j.shifts || 'Day') + '</small></td>' +
+            '<td>' + (j.fromDate || 'N/A') + ' - ' + (j.toDate || 'N/A') + ' (' + (j.totalDays || 1) + 'd)<br>' +
+            '<strong style="color:#059669;font-size:0.85rem;">LKR ' + Number(j.totalPay || 0).toLocaleString() + '</strong></td>' +
+            '<td>' + statusBadge + '</td>' +
+            '<td style="white-space:nowrap;">' +
+            (wpPhone ? '<a href="' + wpWorkerUrl + '" target="_blank" style="display:inline-block;background:#25D366;color:white;text-decoration:none;padding:5px 9px;border-radius:6px;font-size:0.75rem;font-weight:bold;margin-right:4px;" title="Chat with Worker">💬 Worker</a>' : '') +
+            (compPhone ? '<a href="' + wpCompUrl + '" target="_blank" style="display:inline-block;background:#0284c7;color:white;text-decoration:none;padding:5px 9px;border-radius:6px;font-size:0.75rem;font-weight:bold;margin-right:4px;" title="Notify Employer">📞 Employer</a>' : '') +
+            '<button onclick="window._deleteAssignedJob(\'' + j.id + '\')" style="background:#ef4444;color:white;border:none;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:bold;" title="Delete Record">🗑️</button>' +
+            '</td>';
+
+        tbody.appendChild(tr);
+    }
+}
+window.renderConfirmedJobs = renderConfirmedJobs;
 
 function updateBroadcastPreview() {
     var cat = (document.getElementById('bc-category') || {}).value || 'all';

@@ -6,7 +6,8 @@ const AUTH_KEYS = {
     WORKERS: 'workbee_worker_registrations',
     COMPANIES: 'workbee_companies',
     JOB_POSTINGS: 'workbee_job_postings',
-    APPLICATIONS: 'workbee_job_applications'
+    APPLICATIONS: 'workbee_job_applications',
+    ASSIGNED_JOBS: 'workbee_assigned_jobs'
 };
 
 // Initialize auth storage if empty
@@ -19,6 +20,9 @@ const AUTH_KEYS = {
     }
     if (!localStorage.getItem(AUTH_KEYS.APPLICATIONS)) {
         localStorage.setItem(AUTH_KEYS.APPLICATIONS, JSON.stringify([]));
+    }
+    if (!localStorage.getItem(AUTH_KEYS.ASSIGNED_JOBS)) {
+        localStorage.setItem(AUTH_KEYS.ASSIGNED_JOBS, JSON.stringify([]));
     }
 })();
 
